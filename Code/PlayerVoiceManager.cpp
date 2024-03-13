@@ -107,7 +107,6 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 
 		sm_playerVoices.emplace(player->id, std::move(v_new_voice));
 		DebugOutL("Player voice created for player ", player->id);
-		DebugOutL(__FUNCTION__, " -> ID: ", player->id, ", Character: ", player->character_id);
 		return;
 	}
 
