@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseMaxOptimization|x64">
+      <Configuration>ReleaseMaxOptimization</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{52468b9c-003c-4f81-a9c4-01aeaf38ca40}</ProjectGuid>
+    <RootNamespace>SMProximityVoiceChat</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SM-ProximityVoiceChat</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMaxOptimization|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMaxOptimization|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Build\$(ProjectName)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Junk\$(ProjectName)-$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Build\$(ProjectName)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Junk\$(ProjectName)-$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMaxOptimization|x64'">
+    <OutDir>$(SolutionDir)Build\$(ProjectName)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Junk\$(ProjectName)-$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMaxOptimization|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <DebugInformationFormat>None</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\PlayerVoiceManager.cpp" />
+    <ClCompile Include="Code\VoiceManager.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\Color.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\CreationManager.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\DirectoryManager.cpp" />
+    <ClCompile Include="Code\main.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\MyPlayer.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\PointerGetters.cpp" />
+    <ClCompile Include="Code\Utils\Console.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\PlayerVoiceManager.hpp" />
+    <ClInclude Include="Code\Utils\BufferReader.hpp" />
+    <ClInclude Include="Code\Utils\BufferWriter.hpp" />
+    <ClInclude Include="Code\Utils\MathUtils.hpp" />
+    <ClInclude Include="Code\VoiceManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\AudioManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\Aligned16Base.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Character.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\CharacterManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\BodyJointPhysicsProxy.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\ChildShape.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\Joint.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\JointPhysicsProxy.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\RigidBody.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\Shape.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\GameState.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\HudGui2.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\InGameGuiManagerInterface.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\PaintToolGui.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\Harvestable.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestableManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestablePhysicsProxy.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\InputManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\NetObjManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\ListenServer.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\NetworkClient.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\NetworkServer.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkClient.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkSend.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkServer.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Physics\CharacterPhysicsProxy.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Player.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\PlayerManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\StaticValues.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Tool\ClientTool.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Tool\PaintTool.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Util\Color.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\CreationManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\DirectoryManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\GuiBase.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\GuiInterface.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\GuiSystemManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\InGameGuiManager.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\InputTarget.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\InventoryGui.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Tool\IToolImpl.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Tool\IToolNetworkData.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\MyPlayer.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\NetObj.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Physics\Physics.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Physics\PhysicsProxy.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\Task.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Tool\Tool.hpp" />
+    <ClInclude Include="Code\Utils\ConColors.hpp" />
+    <ClInclude Include="Code\Utils\Console.hpp" />
+    <ClInclude Include="Code\win_include.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\config.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Util\Memory.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Util\StaticVariable.hpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
