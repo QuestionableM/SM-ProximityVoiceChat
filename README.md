@@ -5,6 +5,9 @@ A Scrap Mechanic DLL mod which adds the Proximity Voice Chat into the game
 - Hold V to talk into the game voice chat
 - All players must have the DLL installed, including the server host
 
+# TODO
+- Add a way to control the volume of other players
+- Add a way to change the push to talk keybind
 
 # How to download and enable the mod
 
