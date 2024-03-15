@@ -4,6 +4,7 @@
 #include "SmSdk/CharacterManager.hpp"
 #include "SmSdk/PlayerManager.hpp"
 #include "SmSdk/AudioManager.hpp"
+#include "SmSdk/MyPlayer.hpp"
 
 #include "Utils/Console.hpp"
 
@@ -53,10 +54,19 @@ void PlayerVoiceManager::Update()
 	PlayerVoiceManager::RemoveDeadVoices();
 }
 
+bool is_player_local(Player* pl)
+{
+	MyPlayer* v_player = MyPlayer::GetInstance();
+	if (!v_player || !v_player->player) return false;
+	
+	return v_player->player->steam_id == pl->steam_id;
+}
+
 void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 {
 	//Players without the characters should not be processed
-	if (player->character_id == -1) return;
+	if (player->character_id == -1 || is_player_local(player))
+		return;
 
 	AudioManager* v_aud_mgr = AudioManager::GetInstance();
 	if (!v_aud_mgr) return;
@@ -99,7 +109,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 		v_new_voice->m_pChannel->setMode(FMOD_3D);
 		v_new_voice->m_pChannel->set3DConeSettings(30.0f, 360.0f, 0.01f);
 		v_new_voice->m_pChannel->set3DMinMaxDistance(0.01f, 10000.0f);
-		v_new_voice->m_pChannel->setVolume(200.0f);
+		v_new_voice->m_pChannel->setVolume(300.0f);
 		v_new_voice->m_pChannel->setReverbProperties(0, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(1, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(2, 0.0f);

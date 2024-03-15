@@ -2,6 +2,8 @@
 
 #include "SmSdk/Network/NetworkServer.hpp"
 
+#include <MyGUI.h>
+
 #include <cstddef>
 #include <cstdint>
 
@@ -48,6 +50,12 @@ public:
 	static void StartVoiceRecording();
 	static void StopVoiceRecording();
 	static void UpdateVoiceRecording();
+
+	////UI FUNCTIONS
+
+	static void CreateSpeakerImage();
+	static MyGUI::ImageBox* GetSpeakerImageBox(MyGUI::Widget* main_panel);
+	static void UpdateSpeakerUiIcon();
 
 private:
 	static bool sm_isVoiceRecording;

@@ -77,14 +77,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\FreeImage\Include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDIr)Dependencies\FreeImage\DLL\$(PlatformShortName);$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib;FreeImage.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -96,7 +96,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\FreeImage\Include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
     </ClCompile>
@@ -105,8 +105,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDIr)Dependencies\FreeImage\DLL\$(PlatformShortName);$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib;FreeImage.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMaxOptimization|x64'">
@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\MyGUIEngine\include;$(SolutionDir)Dependencies\boost_uuid\include;$(SolutionDir)Dependencies\FreeImage\Include;$(SolutionDir)Dependencies\MinHook\include;$(SolutionDir)Dependencies\jsoncpp\include;$(SolutionDIr)Dependencies\SmSdk\include;$(SolutionDIr)Dependencies\FMOD\include;$(SolutionDir)Dependencies\steam\include;$(SolutionDir)Dependencies\lz4\Include;$(SolutionDir)Dependencies\bullet3;$(SolutionDir)Code</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -129,12 +129,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDIr)Dependencies\FreeImage\DLL\$(PlatformShortName);$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib;FreeImage.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Code\DllGlobals.cpp" />
     <ClCompile Include="Code\PlayerVoiceManager.cpp" />
+    <ClCompile Include="Code\Utils\TextureLoader.cpp" />
     <ClCompile Include="Code\VoiceManager.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\Color.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\CreationManager.cpp" />
@@ -145,10 +147,12 @@
     <ClCompile Include="Code\Utils\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\DllGlobals.hpp" />
     <ClInclude Include="Code\PlayerVoiceManager.hpp" />
     <ClInclude Include="Code\Utils\BufferReader.hpp" />
     <ClInclude Include="Code\Utils\BufferWriter.hpp" />
     <ClInclude Include="Code\Utils\MathUtils.hpp" />
+    <ClInclude Include="Code\Utils\TextureLoader.hpp" />
     <ClInclude Include="Code\VoiceManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\AudioManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\Aligned16Base.hpp" />
@@ -204,6 +208,13 @@
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\config.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Util\Memory.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Util\StaticVariable.hpp" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SM-ProximityVoiceChat.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\speaker_icon_white.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

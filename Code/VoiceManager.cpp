@@ -1,18 +1,24 @@
 #include "VoiceManager.hpp"
 
 #include "SmSdk/Gui/GuiSystemManager.hpp"
+#include "SmSdk/Gui/InGameGuiManager.hpp"
 #include "SmSdk/InputManager.hpp"
 #include "SmSdk/GameState.hpp"
 #include "SmSdk/MyPlayer.hpp"
 
+#include "Utils/TextureLoader.hpp"
 #include "Utils/BufferWriter.hpp"
 #include "Utils/BufferReader.hpp"
 #include "Utils/Console.hpp"
+#include "DllGlobals.hpp"
 
 #include "PlayerVoiceManager.hpp"
 
 #include <steam/steam_api.h>
 #include <lz4/lz4.h>
+
+#include "../resource.h"
+
 
 
 VoiceManager::fClientPacketHandler VoiceManager::o_clientPacketHandler = nullptr;
@@ -135,6 +141,7 @@ void VoiceManager::StartVoiceRecording()
 	if (!sm_isVoiceRecording)
 	{
 		sm_isVoiceRecording = true;
+		VoiceManager::UpdateSpeakerUiIcon();
 		SteamUser()->StartVoiceRecording();
 	}
 }
@@ -144,6 +151,7 @@ void VoiceManager::StopVoiceRecording()
 	if (sm_isVoiceRecording)
 	{
 		sm_isVoiceRecording = false;
+		VoiceManager::UpdateSpeakerUiIcon();
 		SteamUser()->StopVoiceRecording();
 	}
 }
@@ -220,4 +228,80 @@ void VoiceManager::UpdateVoiceRecording()
 			DebugErrorL("Couldn't send the packet to server host");
 		}
 	}
+}
+
+////////////////UI FUNCTIONS/////////////////
+
+void VoiceManager::CreateSpeakerImage()
+{
+	MyGUI::RenderManager* v_rend_mgr = MyGUI::RenderManager::getInstancePtr();
+	if (v_rend_mgr->getTexture("SpeakerIcon"))
+		return;
+
+	MyGUI::ITexture* v_new_tex = v_rend_mgr->createTexture("SpeakerIcon");
+	FIBITMAP* v_fibitmap;
+
+	TexLoader::TexLoadResult v_res = TexLoader::LoadTextureFromResource(&v_fibitmap, MAKEINTRESOURCE(IDB_PNG1), L"PNG", FIF_PNG);
+	if (v_res != TexLoader::TexLoadResult_Success)
+	{
+		AttachDebugConsole();
+		DebugErrorL(TexLoader::TexLoadResultToString(v_res));
+		return;
+	}
+
+	const int v_img_width = int(FreeImage_GetWidth(v_fibitmap));
+	const int v_img_height = int(FreeImage_GetHeight(v_fibitmap));
+	BYTE* v_img_bits = FreeImage_GetBits(v_fibitmap);
+
+	v_new_tex->createManual(v_img_width, v_img_height,
+		MyGUI::TextureUsage::Write | MyGUI::TextureUsage::Static, MyGUI::PixelFormat::R8G8B8A8);
+	void* v_img_mem = v_new_tex->lock(MyGUI::TextureUsage::Write);
+	std::memcpy(v_img_mem, v_img_bits, v_img_width * v_img_height * 4);
+	v_new_tex->unlock();
+
+	FreeImage_Unload(v_fibitmap);
+}
+
+MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* main_panel)
+{
+	MyGUI::Widget* v_widget = main_panel->findWidget("SpeakerIcon");
+	if (v_widget)
+	{
+		if (v_widget->isType<MyGUI::ImageBox>())
+			return v_widget->castType<MyGUI::ImageBox>();
+
+		return nullptr;
+	}
+
+	VoiceManager::CreateSpeakerImage();
+	MyGUI::ImageBox* v_new_img_box = main_panel->createWidgetReal<MyGUI::ImageBox>(
+		"ImageBox", MyGUI::FloatCoord(0.0f, 0.0f, 0.0f, 0.0f), MyGUI::Align::Default, "SpeakerIcon")->castType<MyGUI::ImageBox>();
+
+	v_new_img_box->setVisible(false);
+	v_new_img_box->setImageTexture("SpeakerIcon");
+
+	return v_new_img_box;
+}
+
+void VoiceManager::UpdateSpeakerUiIcon()
+{
+	InGameGuiManager* v_gui_mgr = InGameGuiManager::GetInstance();
+	if (!v_gui_mgr || !v_gui_mgr->m_pHudGui) return;
+
+	MyGUI::ImageBox* v_speaker_icon = VoiceManager::GetSpeakerImageBox(v_gui_mgr->m_pHudGui->m_pMainPanel);
+	if (!v_speaker_icon) return;
+
+	MyGUI::Widget* v_main_panel = v_gui_mgr->m_pHudGui->m_pMainPanel;
+	const float v_aspect_ratio = float(v_main_panel->getWidth()) / float(v_main_panel->getHeight());
+	const int v_icon_sz = int(50.0f * v_aspect_ratio);
+	const int v_icon_spacing = int(20.0f * v_aspect_ratio);
+
+	v_speaker_icon->setSize(v_icon_sz, v_icon_sz);
+
+	v_speaker_icon->setPosition(MyGUI::IntPoint(
+		v_main_panel->getWidth() - v_speaker_icon->getWidth() - v_icon_spacing,
+		(v_main_panel->getHeight() - v_speaker_icon->getHeight()) / 2
+	));
+
+	v_speaker_icon->setVisible(VoiceManager::sm_isVoiceRecording);
 }

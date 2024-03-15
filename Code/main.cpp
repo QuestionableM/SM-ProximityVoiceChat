@@ -1,6 +1,7 @@
 #include "Utils/BufferWriter.hpp"
 #include "Utils/BufferReader.hpp"
 #include "Utils/Console.hpp"
+#include "DllGlobals.hpp"
 
 #include "PlayerVoiceManager.hpp"
 #include "VoiceManager.hpp"
@@ -32,8 +33,10 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);
 }
 
-static void process_attach()
+static void process_attach(HMODULE hMod)
 {
+	DllGlobals::SelfModule = hMod;
+
 	AttachDebugConsole();
 
 	if (MH_Initialize() != MH_OK)
@@ -74,7 +77,7 @@ BOOL APIENTRY DllMain(
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		process_attach();
+		process_attach(hModule);
 		break;
 	case DLL_PROCESS_DETACH:
 		process_detach(hModule);
