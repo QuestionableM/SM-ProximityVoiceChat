@@ -4,6 +4,7 @@
 #include "DllGlobals.hpp"
 
 #include "PlayerVoiceManager.hpp"
+#include "CustomOptionsMenu.hpp"
 #include "VoiceManager.hpp"
 
 #include <steam/steam_api.h>
@@ -51,6 +52,8 @@ static void process_attach(HMODULE hMod)
 
 	if (EASY_CLASS_HOOK(0x416D60, VoiceManager, clientPacketHandler) != MH_OK) return;
 	if (EASY_CLASS_HOOK(0x8C6380, VoiceManager, serverPacketHandler) != MH_OK) return;
+	if (EASY_CLASS_HOOK(0x3CA740, CustomOptionsMenu, Constructor) != MH_OK) return;
+	if (EASY_CLASS_HOOK(0x3CB570, CustomOptionsMenu, Initialize) != MH_OK) return;
 	if (EASY_HOOK(0x6D3D10, perframeUpdate) != MH_OK) return;
 
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;

@@ -32,6 +32,7 @@ public:
 public:
 	FMOD::Sound* m_pSound = nullptr;
 	FMOD::Channel* m_pChannel = nullptr;
+	float m_fVolume = 1.0f;
 
 	std::mutex m_voiceMutex;
 	std::vector<std::uint8_t> m_voiceData;
@@ -49,6 +50,6 @@ private:
 	static void UpdatePlayerSounds();
 	static void RemoveDeadVoices();
 
-private:
+public:
 	static std::unordered_map<int, std::shared_ptr<PlayerVoice>> sm_playerVoices;
 };

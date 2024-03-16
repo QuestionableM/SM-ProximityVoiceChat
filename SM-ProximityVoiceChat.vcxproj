@@ -134,25 +134,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Code\CustomOptionsMenu.cpp" />
     <ClCompile Include="Code\DllGlobals.cpp" />
     <ClCompile Include="Code\PlayerVoiceManager.cpp" />
     <ClCompile Include="Code\Utils\TextureLoader.cpp" />
+    <ClCompile Include="Code\VoiceChatSettingsTab.cpp" />
     <ClCompile Include="Code\VoiceManager.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\Color.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\CreationManager.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\DirectoryManager.cpp" />
     <ClCompile Include="Code\main.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\MyPlayer.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\OptionsSubMenuBase.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\PointerGetters.cpp" />
     <ClCompile Include="Code\Utils\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\CustomOptionsMenu.hpp" />
     <ClInclude Include="Code\DllGlobals.hpp" />
     <ClInclude Include="Code\PlayerVoiceManager.hpp" />
     <ClInclude Include="Code\Utils\BufferReader.hpp" />
     <ClInclude Include="Code\Utils\BufferWriter.hpp" />
     <ClInclude Include="Code\Utils\MathUtils.hpp" />
     <ClInclude Include="Code\Utils\TextureLoader.hpp" />
+    <ClInclude Include="Code\VoiceChatSettingsTab.hpp" />
     <ClInclude Include="Code\VoiceManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\AudioManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Base\Aligned16Base.hpp" />
@@ -165,9 +170,21 @@
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\RigidBody.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\Shape.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\GameState.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\AudioOptionsMenu.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\CompoundButton.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\ControlOptionsMenu.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\DisplayOptionsMenu.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\GameplayOptionsMenu.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\GraphicsOptionsMenu.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\HudGui2.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\InGameGuiManagerInterface.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\MainMenuRootGui.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsItemBase.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsItemSlider.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsMenu.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsSubMenuBase.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\PaintToolGui.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\RadioButtonSet.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\Harvestable.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestableManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestablePhysicsProxy.hpp" />
@@ -179,6 +196,7 @@
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkClient.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkSend.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Network\SteamNetworkServer.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\offsets.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Physics\CharacterPhysicsProxy.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Player.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\PlayerManager.hpp" />
