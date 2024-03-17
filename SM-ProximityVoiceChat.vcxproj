@@ -148,6 +148,7 @@
     <ClCompile Include="Dependencies\SmSdk\src\OptionsSubMenuBase.cpp" />
     <ClCompile Include="Dependencies\SmSdk\src\PointerGetters.cpp" />
     <ClCompile Include="Code\Utils\Console.cpp" />
+    <ClCompile Include="Dependencies\SmSdk\src\VerticalStackBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\CustomOptionsMenu.hpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsSubMenuBase.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\PaintToolGui.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\RadioButtonSet.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\VerticalStackBox.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\Harvestable.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestableManager.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Harvestable\HarvestablePhysicsProxy.hpp" />

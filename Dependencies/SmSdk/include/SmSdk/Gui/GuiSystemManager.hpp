@@ -26,6 +26,34 @@ public:
 		return v_gui_sys_mgr->m_bMouseVisible;
 	}
 
+	float getOptionItemSize() const
+	{
+		return float(this->screen_height) * (1.0f / 720.0f);
+	}
+
+	float getOptionItemSize2() const
+	{
+		return float(this->screen_height) * (1.0f / 1080.0f);
+	}
+
+	static int ProcessScroll(
+		int some_val,
+		int scroll_distance,
+		int top_pos,
+		int scroll_val,
+		float item_size)
+	{
+		if (some_val <= 0)
+			return 0;
+
+		const int v_scroll_clamped = (scroll_val <= 0)
+			? -scroll_distance : scroll_distance;
+
+		const int v_val = top_pos - int(v_scroll_clamped * -item_size);
+
+		return std::min(std::max(-some_val, v_val), 0);
+	}
+
 private:
 	/* 0x0000 */ char pad_0x0[0x18];
 public:

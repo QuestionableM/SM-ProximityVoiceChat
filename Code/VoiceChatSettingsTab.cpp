@@ -7,33 +7,14 @@
 
 #include "Utils/Console.hpp"
 
-template<typename ...ArgList>
-void call_vftable_func(std::size_t func_id, const ArgList& ...args)
-{
-	using fFuncType = void(*)(ArgList...);
-
-	void** v_vftable = Memory::Read<void**>(SM_VTBL_OPTIONS_SUB_MENU_BASE_OFFSET);
-	reinterpret_cast<fFuncType>(v_vftable[func_id])(args...);
-}
-
 VoiceChatSettingsTab::VoiceChatSettingsTab()
+	: OptionsSubMenuBase()
 {
-	void* v_old_vftable = *reinterpret_cast<void**>(this);
-	OptionsSubMenuBase::GameConstructor(this);
-	*reinterpret_cast<void**>(this) = v_old_vftable;
 }
 
 void VoiceChatSettingsTab::initialize(MyGUI::Widget* parent)
 {
-	call_vftable_func(1, this, parent);
-
-	AttachDebugConsole();
-	DebugOutL(__FUNCTION__);
-}
-
-void VoiceChatSettingsTab::cleanSomething()
-{
-	call_vftable_func(2, this);
+	OptionsSubMenuBase::initialize(parent);
 
 	AttachDebugConsole();
 	DebugOutL(__FUNCTION__);
@@ -41,15 +22,26 @@ void VoiceChatSettingsTab::cleanSomething()
 
 void VoiceChatSettingsTab::openMenu()
 {
-	call_vftable_func(3, this);
+	for (int a = 0; a < 100; a++)
+	{
+		VerticalStackBox& v_cur_stack_box = (a % 2) ? m_leftStackBox : m_rightStackBox;
+
+		MyGUI::Widget* v_new_widget = v_cur_stack_box.createNewOption();
+		auto v_new_slider = std::make_shared<OptionsItemSlider>(
+			v_new_widget, std::to_string(a), "Test" + std::to_string(a), 0.0f, 1.0f, 500,
+			[](std::size_t value) -> void {}
+		);
+
+		m_optionItems.push_back(std::move(v_new_slider));
+	}
 
 	for (const auto& v_cur_voice : PlayerVoiceManager::sm_playerVoices)
 	{
 		Player* v_pPlayer = PlayerManager::GetPlayer(v_cur_voice.first);
 		if (!v_pPlayer) continue;
 
-		MyGUI::Widget* v_new_widget = this->options1.createNewOption();
-		OptionsItemSlider* v_new_slider = new OptionsItemSlider(
+		MyGUI::Widget* v_new_widget = m_leftStackBox.createNewOption();
+		auto v_new_slider = std::make_shared<OptionsItemSlider>(
 			v_new_widget, v_pPlayer->name, "VolumeSlider", 0.0f, 1.0f, 500,
 			[v_pl_id = v_cur_voice.first](std::size_t value) -> void {
 				const float v_flt_val = *reinterpret_cast<float*>(&value);
@@ -63,7 +55,12 @@ void VoiceChatSettingsTab::openMenu()
 				v_plVoice->m_fVolume = v_flt_val * 50.0f;
 			}
 		);
+
+		m_optionItems.push_back(std::move(v_new_slider));
 	}
+
+	this->updateScrollArea();
+	OptionsSubMenuBase::openMenu();
 
 	AttachDebugConsole();
 	DebugOutL(__FUNCTION__);
@@ -71,7 +68,7 @@ void VoiceChatSettingsTab::openMenu()
 
 void VoiceChatSettingsTab::closeMenu()
 {
-	call_vftable_func(4, this);
+	OptionsSubMenuBase::closeMenu();
 
 	AttachDebugConsole();
 	DebugOutL(__FUNCTION__);
@@ -79,8 +76,6 @@ void VoiceChatSettingsTab::closeMenu()
 
 void VoiceChatSettingsTab::onUpdate()
 {
-	call_vftable_func(5, this);
-	
 	AttachDebugConsole();
 	DebugOutL(__FUNCTION__);
 }
@@ -93,8 +88,6 @@ void VoiceChatSettingsTab::restoreDefaults()
 
 void VoiceChatSettingsTab::someFunc4()
 {
-	call_vftable_func(9, this);
-
 	AttachDebugConsole();
 	DebugOutL(__FUNCTION__);
 }

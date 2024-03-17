@@ -4,8 +4,10 @@
 
 class OptionsItemBase
 {
-private:
-	/* 0x0000 */ char pad_0x0[0x8];
+public:
+	virtual ~OptionsItemBase() = default;
+	virtual void update() = 0;
+
 public:
 	/* 0x0008 */ MyGUI::Widget* widget;
 }; // Size: 0x10

@@ -35,6 +35,9 @@ public:
 		v_constructor(this, widget, caption, name, min_value, max_value, scroll_range, callback);
 	}
 
+	virtual ~OptionsItemSlider() = default;
+	void update() override { /* implemented by the game */ }
+
 private:
 	/* 0x0010 */ char pad_0x10[0x10];
 public:

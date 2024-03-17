@@ -12,6 +12,9 @@ public:
 		Memory::OverwriteVftable(this, SM_VTBL_GAMEPLAY_OPTIONS_MENU_OFFSET);
 	}
 
+	virtual ~GameplayOptionsMenu() = default;
+	void restoreDefaults() override { /* implemented by the game */ }
+
 }; // Size: 0x168
 
 static_assert(sizeof(GameplayOptionsMenu) == 0x168, "GameplayOptionsMenu: Incorrect Size");

@@ -57,6 +57,9 @@
     <ClCompile Include="Dependencies\SmSdk\src\OptionsSubMenuBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\SmSdk\src\VerticalStackBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\Utils\ConColors.hpp">
@@ -288,6 +291,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\OptionsItemSlider.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\VerticalStackBox.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

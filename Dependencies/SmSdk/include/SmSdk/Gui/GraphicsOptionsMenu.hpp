@@ -18,6 +18,9 @@ public:
 		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_GRAPHICS_OPTIONS_MENU_OFFSET)(this);
 	}
 
+	virtual ~GraphicsOptionsMenu() = default;
+	void restoreDefaults() override { /* implemented by the game */ }
+
 public:
 	/* 0x0168 */ MyGUI::Button* some_button;
 	/* 0x0170 */ std::shared_ptr<OptionsItemDropDown> shader_quality_dropdown;

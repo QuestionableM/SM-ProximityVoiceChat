@@ -14,6 +14,9 @@ public:
 		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_DISPLAY_OPTIONS_MENU_OFFSET)(this);
 	}
 
+	virtual ~DisplayOptionsMenu() = default;
+	void restoreDefaults() override { /* implemented by the game */ }
+
 private:
 	/* 0x0168 */ char pad_0x168[0xD0];
 }; // Size: 0x238
