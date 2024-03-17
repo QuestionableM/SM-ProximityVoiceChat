@@ -168,3 +168,12 @@ MyGUI::Widget* VerticalStackBox::createNewOption()
 	this->updateScrollBar();
 	return v_new_widget;
 }
+
+void VerticalStackBox::clearItems()
+{
+	for (MyGUI::Widget* v_cur_widget : m_vecWidgets)
+		m_pEmptyPanel->_destroyChildWidget(v_cur_widget);
+
+	m_vecWidgets.clear();
+	m_pEmptyPanel->setSize(m_pEmptyPanel->getWidth(), 0);
+}

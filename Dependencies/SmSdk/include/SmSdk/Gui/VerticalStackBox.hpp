@@ -16,6 +16,7 @@ public:
 	void onItemScroll(MyGUI::Widget* caller, int scroll_val);
 	void updateScrollBar();
 	MyGUI::Widget* createNewOption();
+	void clearItems();
 
 public:
 	/* 0x0000 */ MyGUI::IntSize m_itemSize;
