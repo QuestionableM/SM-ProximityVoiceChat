@@ -3,6 +3,7 @@
 #include "Utils/Console.hpp"
 #include "DllGlobals.hpp"
 
+#include "VoiceSettingsStorage.hpp"
 #include "PlayerVoiceManager.hpp"
 #include "CustomOptionsMenu.hpp"
 #include "VoiceManager.hpp"
@@ -29,6 +30,8 @@ static bool ms_mhHooksAttached = false;
 static void (*o_perframeUpdate)(void*, float, void*, void*, void*) = nullptr;
 static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFrameSettings)
 {
+	VoiceSettingsStorage::Update(dt);
+
 	PlayerVoiceManager::Update();
 	VoiceManager::UpdateVoiceRecording();
 	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);

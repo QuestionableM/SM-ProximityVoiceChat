@@ -5,9 +5,10 @@
 #include <SmSdk/Gui/ControlOptionsMenu.hpp>
 #include <SmSdk/Gui/DisplayOptionsMenu.hpp>
 #include <SmSdk/Gui/AudioOptionsMenu.hpp>
-#include <SmSdk/Gui/MainMenuRootGui.hpp>
-
 #include <SmSdk/Gui/GuiSystemManager.hpp>
+#include <SmSdk/Gui/MainMenuRootGui.hpp>
+#include <SmSdk/GameState.hpp>
+
 #include <SmSdk/Util/Memory.hpp>
 #include <SmSdk/offsets.hpp>
 
@@ -37,7 +38,9 @@ OptionsMenu* CustomOptionsMenu::h_Constructor(
 	self->m_mapSubMenus["Audio"] = std::make_shared<AudioOptionsMenu>();
 	self->m_mapSubMenus["Display"] = std::make_shared<DisplayOptionsMenu>();
 	self->m_mapSubMenus["Graphics"] = std::make_shared<GraphicsOptionsMenu>();
-	self->m_mapSubMenus["ProximityVoiceChat"] = std::make_shared<VoiceChatSettingsTab>();
+
+	if (GameState::IsCurrentOrNextGameState(GameState_PlayState))
+		self->m_mapSubMenus["ProximityVoiceChat"] = std::make_shared<VoiceChatSettingsTab>();
 
 	self->m_currentTab = self->m_mapSubMenus[self->is_server ? "Gameplay" : "Controls"];
 	return self;
@@ -72,7 +75,10 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 			self->m_pMainPanel);
 	}
 
+	const bool v_is_play_state = GameState::IsCurrentOrNextGameState(GameState_PlayState);
+
 	//Add custom tabs here
+	if (v_is_play_state)
 	{
 		MyGUI::Widget* v_gfx_widget = self->m_pMainPanel->findWidget("Graphics");
 		MyGUI::Widget* v_display_widget = self->m_pMainPanel->findWidget("Display");
@@ -110,7 +116,8 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 	v_tabButtons.push_back(self->m_pMainPanel->findWidget("Graphics")->castType<MyGUI::Button>());
 
 	//Custom tab
-	v_tabButtons.push_back(self->m_pMainPanel->findWidget("ProximityVoiceChat")->castType<MyGUI::Button>());
+	if (v_is_play_state)
+		v_tabButtons.push_back(self->m_pMainPanel->findWidget("ProximityVoiceChat")->castType<MyGUI::Button>());
 
 	for (auto& v_cur_tab : self->m_mapSubMenus)
 	{

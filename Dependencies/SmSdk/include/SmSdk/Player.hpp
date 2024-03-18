@@ -46,9 +46,14 @@ struct PlayerScriptData
 
 static_assert(sizeof(PlayerScriptData) == 0x8, "PlayerScriptData: Incorrect Size");
 
+class Character;
+
 class Player
 {
 public:
+	Character* getCharacter() const;
+	bool characterExists() const;
+
 	/* 0x0000 */ std::shared_ptr<Player> self_ptr;
 	/* 0x0010 */ __int32 id;
 	/* 0x0014 */ __int32 character_id;

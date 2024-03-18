@@ -15,24 +15,21 @@ class PlayerVoice
 public:
 	static FMOD_RESULT F_CALL pcm_callback(FMOD_SOUND* sound, void* data, unsigned int datalen);
 	
-	void push_voice(char* buffer, std::size_t buffer_size)
-	{
-		std::lock_guard<std::mutex> v_lock_g(m_voiceMutex);
-
-		std::uint8_t* v_data_start = reinterpret_cast<std::uint8_t*>(buffer);
-		m_voiceData.insert(m_voiceData.end(), v_data_start, v_data_start + buffer_size);
-	}
+	PlayerVoice(std::uint64_t steam_id, int player_id);
+	~PlayerVoice();
 	
-	~PlayerVoice()
-	{
-		if (m_pSound)
-			m_pSound->release();
-	}
+	void push_voice(char* buffer, std::size_t buffer_size);
+	
+	void setVolume(float new_volume);
+	float getVolume();
 
 public:
-	FMOD::Sound* m_pSound = nullptr;
-	FMOD::Channel* m_pChannel = nullptr;
-	float m_fVolume = 1.0f;
+	FMOD::Sound* m_pSound;
+	FMOD::Channel* m_pChannel;
+
+	std::uint64_t m_steamId;
+	int m_playerId;
+	float m_fVolume;
 
 	std::mutex m_voiceMutex;
 	std::vector<std::uint8_t> m_voiceData;

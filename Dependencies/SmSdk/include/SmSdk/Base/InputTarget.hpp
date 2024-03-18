@@ -3,7 +3,12 @@
 class InputTarget
 {
 public:
-	virtual ~InputTarget() = default;
+	virtual void onKeyPress(int key) { /* implemented by the game */ }
+	virtual void onKeyRelease(int key) { /* implemented by the game */ }
+	virtual void onMouseKeyPress(int mouse_key) { /* implemented by the game */ }
+	virtual void onMouseKeyRelease(int mouse_key) { /* implemented by the game */ }
+	virtual void func5() { /* implemented by the game */ }
+	virtual void func6() { /* implemented by the game */ }
 
 }; // Size: 0x8
 

@@ -51,19 +51,6 @@ GET_INSTANCE_DEFINE(Physics, SM_PHYSICS_OFFSET);
 
 PTR_GETTER_DEFINE(GameState, GetCurrentState, SM_CURRENT_GAME_STATE_OFFSET);
 
-SteamNetworkClient* GameState::GetSteamNetworkClient()
-{
-	GameState* v_cur_state = GameState::GetCurrentState();
-	if (v_cur_state)
-	{
-		void* v_state_vtbl = *reinterpret_cast<void**>(v_cur_state);
-		if (Memory::ToLocalAddress(v_state_vtbl) == SM_VTBL_GAME_STATE_OFFSET)
-			return reinterpret_cast<PlayState*>(v_cur_state)->steam_network_client.get();
-	}
-
-	return nullptr;
-}
-
 //STATIC VARIABLE DEFINITIONS
 
 StaticValues::PaintToolEraseLimiterType StaticValues::sm_paintToolEraseLimiter{};

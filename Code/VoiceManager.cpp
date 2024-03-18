@@ -176,7 +176,7 @@ void VoiceManager::UpdateVoiceRecording()
 	Player* v_player;
 
 	if (!get_recording_pointers(&v_network, &v_player)
-		|| v_player->character_id == -1
+		|| !v_player->characterExists()
 		|| GuiSystemManager::IsMouseVisible())
 	{
 		VoiceManager::StopVoiceRecording();

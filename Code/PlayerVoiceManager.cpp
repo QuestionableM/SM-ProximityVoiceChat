@@ -6,6 +6,8 @@
 #include "SmSdk/AudioManager.hpp"
 #include "SmSdk/MyPlayer.hpp"
 
+#include "VoiceSettingsStorage.hpp"
+#include "Utils/MathUtils.hpp"
 #include "Utils/Console.hpp"
 
 std::unordered_map<int, std::shared_ptr<PlayerVoice>> PlayerVoiceManager::sm_playerVoices = {};
@@ -33,6 +35,47 @@ FMOD_RESULT F_CALL PlayerVoice::pcm_callback(FMOD_SOUND* sound, void* data, unsi
 	
 	return FMOD_OK;
 }
+
+PlayerVoice::PlayerVoice(std::uint64_t steam_id, int player_id)
+	: m_pSound(nullptr),
+	m_pChannel(nullptr),
+	m_steamId(steam_id),
+	m_fVolume(VoiceSettingsStorage::GetPlayerVolume(m_steamId)),
+	m_voiceMutex(),
+	m_voiceData()
+{
+
+}
+
+PlayerVoice::~PlayerVoice()
+{
+	if (m_pSound)
+		m_pSound->release();
+}
+
+void PlayerVoice::push_voice(char* buffer, std::size_t buffer_size)
+{
+	std::lock_guard<std::mutex> v_lock_g(m_voiceMutex);
+
+	std::uint8_t* v_data_start = reinterpret_cast<std::uint8_t*>(buffer);
+	m_voiceData.insert(m_voiceData.end(), v_data_start, v_data_start + buffer_size);
+}
+
+void PlayerVoice::setVolume(float new_volume)
+{
+	m_fVolume = new_volume;
+	VoiceSettingsStorage::StorePlayerVolume(m_steamId, m_fVolume);
+}
+
+float PlayerVoice::getVolume()
+{
+	if (m_fVolume <= 1.0f)
+		return m_fVolume;
+
+	return MathUtil::lerp(1.0f, 50.0f, m_fVolume - 1.0f);
+}
+
+////////////////////PLAYER VOICE MANAGER/////////////////////
 
 PlayerVoice* PlayerVoiceManager::GetVoice(int player_id)
 {
@@ -65,7 +108,7 @@ bool is_player_local(Player* pl)
 void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 {
 	//Players without the characters should not be processed
-	if (player->character_id == -1 || is_player_local(player))
+	if (!player->characterExists() || is_player_local(player))
 		return;
 
 	AudioManager* v_aud_mgr = AudioManager::GetInstance();
@@ -75,7 +118,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 	{
 		AttachDebugConsole();
 
-		auto v_new_voice = std::make_shared<PlayerVoice>();
+		auto v_new_voice = std::make_shared<PlayerVoice>(player->steam_id, player->id);
 
 		FMOD_CREATESOUNDEXINFO v_info;
 		std::memset(&v_info, 0, sizeof(v_info));
@@ -119,13 +162,10 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 		return;
 	}
 
-	auto v_voice_iter = sm_playerVoices.find(player->id);
-	if (v_voice_iter == sm_playerVoices.end()) return;
-
-	PlayerVoice* v_pl_voice = v_voice_iter->second.get();
+	PlayerVoice* v_pl_voice = PlayerVoiceManager::GetVoice(player->id);
 	if (!v_pl_voice) return;
 
-	Character* v_char = CharacterManager::GetCharacter(player->character_id);
+	Character* v_char = player->getCharacter();
 	if (!v_char) return;
 
 	const float v_actual_yaw = v_char->yaw + DirectX::XM_PIDIV2;
@@ -136,7 +176,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 	const FMOD_VECTOR v_obj_pos{ v_bt_obj_pos.x(), v_bt_obj_pos.z(), v_bt_obj_pos.y() };
 	const FMOD_VECTOR v_obj_vel{ v_char->velocity.x, v_char->velocity.z, v_char->velocity.y };
 	v_pl_voice->m_pChannel->set3DAttributes(&v_obj_pos, &v_obj_vel);
-	v_pl_voice->m_pChannel->setVolume(300.0f * v_pl_voice->m_fVolume);
+	v_pl_voice->m_pChannel->setVolume(300.0f * v_pl_voice->getVolume());
 }
 
 void PlayerVoiceManager::UpdatePlayerSounds()
@@ -157,7 +197,7 @@ void PlayerVoiceManager::RemoveDeadVoices()
 	for (auto v_iter = sm_playerVoices.begin(); v_iter != sm_playerVoices.end();)
 	{
 		Player* v_cur_player = PlayerManager::GetPlayer(v_iter->first);
-		if (v_cur_player != nullptr && v_cur_player->character_id > -1)
+		if (v_cur_player != nullptr && v_cur_player->characterExists())
 		{
 			v_iter++;
 			continue;
