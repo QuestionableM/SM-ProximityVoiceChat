@@ -72,7 +72,7 @@ float PlayerVoice::getVolume()
 	if (m_fVolume <= 1.0f)
 		return m_fVolume;
 
-	return MathUtil::lerp(1.0f, 50.0f, m_fVolume - 1.0f);
+	return MathUtil::lerp(1.0f, 5.0f, m_fVolume - 1.0f);
 }
 
 ////////////////////PLAYER VOICE MANAGER/////////////////////
@@ -149,9 +149,9 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 			return;
 		}
 
-		v_new_voice->m_pChannel->setMode(FMOD_3D);
-		v_new_voice->m_pChannel->set3DConeSettings(30.0f, 360.0f, 0.01f);
-		v_new_voice->m_pChannel->set3DMinMaxDistance(0.01f, 10000.0f);
+		v_new_voice->m_pChannel->setMode(FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF);
+		v_new_voice->m_pChannel->set3DConeSettings(75.0f, 360.0f, 0.1f);
+		v_new_voice->m_pChannel->set3DMinMaxDistance(0.0f, 30.0f);
 		v_new_voice->m_pChannel->setReverbProperties(0, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(1, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(2, 0.0f);
@@ -176,7 +176,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 	const FMOD_VECTOR v_obj_pos{ v_bt_obj_pos.x(), v_bt_obj_pos.z(), v_bt_obj_pos.y() };
 	const FMOD_VECTOR v_obj_vel{ v_char->velocity.x, v_char->velocity.z, v_char->velocity.y };
 	v_pl_voice->m_pChannel->set3DAttributes(&v_obj_pos, &v_obj_vel);
-	v_pl_voice->m_pChannel->setVolume(300.0f * v_pl_voice->getVolume());
+	v_pl_voice->m_pChannel->setVolume(v_pl_voice->getVolume());
 }
 
 void PlayerVoiceManager::UpdatePlayerSounds()
