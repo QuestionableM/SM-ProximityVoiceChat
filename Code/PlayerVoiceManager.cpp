@@ -1,10 +1,11 @@
 #include "PlayerVoiceManager.hpp"
 
-#include "SmSdk/Physics/CharacterPhysicsProxy.hpp"
-#include "SmSdk/CharacterManager.hpp"
-#include "SmSdk/PlayerManager.hpp"
-#include "SmSdk/AudioManager.hpp"
-#include "SmSdk/MyPlayer.hpp"
+#include <SmSdk/Physics/CharacterPhysicsProxy.hpp>
+#include <SmSdk/CharacterManager.hpp>
+#include <SmSdk/PlayerManager.hpp>
+#include <SmSdk/AudioManager.hpp>
+#include <SmSdk/GameSettings.hpp>
+#include <SmSdk/MyPlayer.hpp>
 
 #include "VoiceSettingsStorage.hpp"
 #include "Utils/MathUtils.hpp"
@@ -105,7 +106,7 @@ bool is_player_local(Player* pl)
 	return v_player->player->steam_id == pl->steam_id;
 }
 
-void PlayerVoiceManager::UpdatePlayerSound(Player* player)
+void PlayerVoiceManager::UpdatePlayerSound(Player* player, float master_volume)
 {
 	//Players without the characters should not be processed
 	if (!player->characterExists() || is_player_local(player))
@@ -176,7 +177,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player)
 	const FMOD_VECTOR v_obj_pos{ v_bt_obj_pos.x(), v_bt_obj_pos.z(), v_bt_obj_pos.y() };
 	const FMOD_VECTOR v_obj_vel{ v_char->velocity.x, v_char->velocity.z, v_char->velocity.y };
 	v_pl_voice->m_pChannel->set3DAttributes(&v_obj_pos, &v_obj_vel);
-	v_pl_voice->m_pChannel->setVolume(v_pl_voice->getVolume());
+	v_pl_voice->m_pChannel->setVolume(v_pl_voice->getVolume() * master_volume);
 }
 
 void PlayerVoiceManager::UpdatePlayerSounds()
@@ -184,11 +185,13 @@ void PlayerVoiceManager::UpdatePlayerSounds()
 	PlayerManager* v_pl_mgr = PlayerManager::GetInstance();
 	if (!v_pl_mgr) return;
 
+	const float v_master_volume = GameSettings::GetMasterVolume();
+
 	for (const auto& v_cur_iter : v_pl_mgr->id_to_player_map)
 	{
 		if (!v_cur_iter.second) continue;
 
-		PlayerVoiceManager::UpdatePlayerSound(v_cur_iter.second.get());
+		PlayerVoiceManager::UpdatePlayerSound(v_cur_iter.second.get(), v_master_volume);
 	}
 }
 

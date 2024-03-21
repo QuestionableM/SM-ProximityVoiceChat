@@ -317,6 +317,9 @@
     <ClInclude Include="Code\PlayerVoiceSlider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\GameSettings.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SM-ProximityVoiceChat.rc">

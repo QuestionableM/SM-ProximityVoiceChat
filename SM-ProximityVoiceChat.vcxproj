@@ -177,6 +177,7 @@
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\JointPhysicsProxy.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\RigidBody.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Creation\Shape.hpp" />
+    <ClInclude Include="Dependencies\SmSdk\include\SmSdk\GameSettings.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\GameState.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\AudioOptionsMenu.hpp" />
     <ClInclude Include="Dependencies\SmSdk\include\SmSdk\Gui\CompoundButton.hpp" />

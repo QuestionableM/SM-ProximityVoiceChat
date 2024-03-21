@@ -9,6 +9,7 @@
 #include "SmSdk/AudioManager.hpp"
 #include "SmSdk/InputManager.hpp"
 #include "SmSdk/StaticValues.hpp"
+#include "SmSdk/GameSettings.hpp"
 #include "SmSdk/MyPlayer.hpp"
 #include "SmSdk/GameState.hpp"
 
@@ -43,6 +44,7 @@ GET_INSTANCE_DEFINE(PlayerManager, SM_PLAYER_MANAGER_OFFSET);
 GET_INSTANCE_DEFINE(NetObjManager, SM_NET_OBJ_MANAGER_OFFSET);
 GET_INSTANCE_DEFINE(AudioManager, SM_AUDIO_MANAGER_OFFSET);
 GET_INSTANCE_DEFINE(InputManager, SM_INPUT_MANAGER_OFFSET);
+GET_INSTANCE_DEFINE(GameSettings, SM_GAME_SETTINGS_OFFSET);
 GET_INSTANCE_DEFINE(MyPlayer, SM_MY_PLAYER_OFFSET);
 
 #if defined(SMSDK_ENABLE_PHYSICS)

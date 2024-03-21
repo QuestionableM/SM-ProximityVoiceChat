@@ -53,6 +53,7 @@ public:
 		v_pAudioMgr->_playSound(sound_name, world_id);
 	}
 
+public:
 	/* 0x0008 */ std::shared_ptr<struct AudioEventManager> audio_event_mgr;
 	/* 0x0018 */ std::mutex m_mutex;
 	/* 0x0068 */ FMOD::Studio::System* fmod_studio_system;
@@ -69,7 +70,7 @@ private:
 public:
 	/* 0x0198 */ std::map<std::string, std::string> name_to_fmod_path;
 	/* 0x01A8 */ std::map<std::size_t, std::string> some_hash_to_fmod_path;
-	/* 0x01B8 */ std::map<std::string, std::shared_ptr<struct AudioEvent>> name_to_event_ptr;
+	/* 0x01B8 */ std::map<std::string, std::shared_ptr<AudioEvent>> name_to_event_ptr;
 private:
 	/* 0x01C8 */ char pad_0x1C8[0x100];
 public:
@@ -77,5 +78,18 @@ public:
 private:
 	/* 0x02CC */ char pad_0x2CC[0xC];
 }; // Size: 0x2D8
+
+static_assert(offsetof(AudioManager, AudioManager::audio_event_mgr) == 0x8, "AudioManager::audio_event_mgr: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::m_mutex) == 0x18, "AudioManager::m_mutex: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::fmod_studio_system) == 0x68, "AudioManager::fmod_studio_system: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::fmod_system) == 0x70, "AudioManager::fmod_system: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::fmod_advanced_settings) == 0x78, "AudioManager::fmod_advanced_settings: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::m_masterVolume) == 0xE0, "AudioManager::m_masterVolume: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::m_oldMasterVolume) == 0xE4, "AudioManager::m_oldMasterVolume: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::event_queue) == 0xF8, "AudioManager::event_queue: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::name_to_fmod_path) == 0x198, "AudioManager::name_to_fmod_path: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::some_hash_to_fmod_path) == 0x1A8, "AudioManager::some_hash_to_fmod_path: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::name_to_event_ptr) == 0x1B8, "AudioManager::name_to_event_ptr: Incorrect offset");
+static_assert(offsetof(AudioManager, AudioManager::fmod_init_flags) == 0x2C8, "AudioManager::fmod_init_flags: Incorrect offset");
 
 static_assert(sizeof(AudioManager) == 0x2D8, "AudioManager: Incorrect Size");
