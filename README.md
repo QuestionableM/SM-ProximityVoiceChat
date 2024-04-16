@@ -29,5 +29,4 @@ There are 2 ways to enable the ProximityVoiceChat module:
 </details>
 
 # TODO
-- Add a way to control the volume of other players
 - Add a way to change the push to talk keybind
