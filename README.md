@@ -1,5 +1,7 @@
 # SM-ProximityVoiceChat
-A Scrap Mechanic DLL mod which adds the Proximity Voice Chat into the game
+A Scrap Mechanic DLL mod which adds the Proximity Voice Chat into the game<br/>
+
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/QuestionableM/SM-ProximityVoiceChat/total)
 
 # How to use
 - Hold V to talk into the game voice chat
