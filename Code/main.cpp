@@ -53,11 +53,19 @@ static void process_attach(HMODULE hMod)
 
 	const std::uintptr_t v_mod_base = std::uintptr_t(GetModuleHandle(NULL));
 
+#if defined(_SM_VERSION_070_771)
+	if (EASY_CLASS_HOOK(0x406AC0, VoiceManager, clientPacketHandler) != MH_OK) return;
+	if (EASY_CLASS_HOOK(0x8CE980, VoiceManager, serverPacketHandler) != MH_OK) return;
+	if (EASY_CLASS_HOOK(0x3BCC20, CustomOptionsMenu, Constructor) != MH_OK) return;
+	if (EASY_CLASS_HOOK(0x3BD850, CustomOptionsMenu, Initialize) != MH_OK) return;
+	if (EASY_HOOK(0x6D2D60, perframeUpdate) != MH_OK) return;
+#else
 	if (EASY_CLASS_HOOK(0x416D60, VoiceManager, clientPacketHandler) != MH_OK) return;
 	if (EASY_CLASS_HOOK(0x8C6380, VoiceManager, serverPacketHandler) != MH_OK) return;
 	if (EASY_CLASS_HOOK(0x3CA740, CustomOptionsMenu, Constructor) != MH_OK) return;
 	if (EASY_CLASS_HOOK(0x3CB570, CustomOptionsMenu, Initialize) != MH_OK) return;
 	if (EASY_HOOK(0x6D3D10, perframeUpdate) != MH_OK) return;
+#endif
 
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;
 }

@@ -81,17 +81,28 @@ void VoiceManager::h_clientPacketHandler(
 static char g_compressedServerPacket[VC_BUFFER_SIZE];
 void VoiceManager::h_serverPacketHandler(
 	NetworkServer* server,
+#if defined(_SM_VERSION_070_771)
+	std::uint64_t steam_id,
+#else
 	std::uint64_t* steam_id,
+#endif
 	void* packet_data,
 	int packet_size)
 {
+	const std::uint64_t steam_id_num
+#if defined(_SM_VERSION_070_771)
+		= steam_id;
+#else
+		= *steam_id;
+#endif
+
 	const std::uint8_t v_packet_id = *reinterpret_cast<char*>(packet_data);
 	if (v_packet_id == C_ID_VOICE_PACKET)
 	{
 		const std::uint64_t v_local_steam_id = SteamUser()->GetSteamID().ConvertToUint64();
 
-		//Do not play the host audio to host
-		if (*steam_id != v_local_steam_id)
+		// Do not play the host audio to host
+		if (steam_id_num != v_local_steam_id)
 			VoiceManager::PlayVoicePacket(reinterpret_cast<char*>(packet_data) + 1);
 
 		g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
@@ -109,7 +120,7 @@ void VoiceManager::h_serverPacketHandler(
 
 		for (const auto& v_cur_iter : server->network_send->steam_id_to_connection)
 		{
-			if (v_cur_iter.first == *steam_id || v_cur_iter.first == v_local_steam_id)
+			if (v_cur_iter.first == steam_id_num || v_cur_iter.first == v_local_steam_id)
 				continue;
 
 			EResult v_result = SteamNetworkingSockets()->SendMessageToConnection(

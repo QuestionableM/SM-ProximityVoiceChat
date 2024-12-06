@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SmSdk/Network/NetworkServer.hpp"
+#include <SmSdk/offsets.hpp>
 
 #include <MyGUI.h>
 
@@ -22,7 +23,16 @@ class VoiceManager
 {
 public:
 	using fClientPacketHandler = void (*)(void*, int, void*, int, char);
-	using fServerPacketHandler = void (*)(NetworkServer*, std::uint64_t*, void*, int);
+	using fServerPacketHandler = void (*)(
+		NetworkServer*,
+	#if defined(_SM_VERSION_070_771)
+		std::uint64_t,
+	#else
+		std::uint64_t*,
+	#endif
+		void*,
+		int
+	);
 
 	///PACKET PROCESSING FUNCTIONS
 
@@ -41,7 +51,11 @@ public:
 
 	static void h_serverPacketHandler(
 		NetworkServer* server,
+	#if defined(_SM_VERSION_070_771)
+		std::uint64_t steam_id,
+	#else
 		std::uint64_t* steam_id,
+	#endif
 		void* packet_data,
 		int packet_size);
 

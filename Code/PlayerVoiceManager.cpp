@@ -173,7 +173,7 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player, float master_volume)
 	FMOD_VECTOR v_data{ std::cos(v_actual_yaw), std::sin(v_actual_yaw), 0.0f };
 	v_pl_voice->m_pChannel->set3DConeOrientation(&v_data);
 
-	const btVector3& v_bt_obj_pos = v_char->physics_proxy->m_pTickRaycastCollisionObject->getWorldTransform().getOrigin();
+	const btVector3& v_bt_obj_pos = v_char->m_pPhysicsProxy->m_pTickRaycastCollisionObject->getWorldTransform().getOrigin();
 	const FMOD_VECTOR v_obj_pos{ v_bt_obj_pos.x(), v_bt_obj_pos.z(), v_bt_obj_pos.y() };
 	const FMOD_VECTOR v_obj_vel{ v_char->velocity.x, v_char->velocity.z, v_char->velocity.y };
 	v_pl_voice->m_pChannel->set3DAttributes(&v_obj_pos, &v_obj_vel);

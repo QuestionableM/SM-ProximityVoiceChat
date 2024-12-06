@@ -38,6 +38,9 @@ public:
 	virtual bool someFunc2() { return 0; }
 	virtual bool someFunc3() { return 0; }
 	virtual void restoreDefaults() = 0;
+#if defined(_SM_VERSION_070_771)
+	virtual void someFunc5() {}
+#endif
 	virtual void someFunc4() {}
 
 public:
