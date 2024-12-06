@@ -6,6 +6,8 @@
 #include "Network/ListenServer.hpp"
 #include "Base/InputTarget.hpp"
 
+#include "SmSdk/unreferenced_params.hpp"
+
 #include <memory>
 
 enum EGameStateType : std::uint32_t
@@ -25,7 +27,7 @@ public:
 
 	virtual void func8() { /* implemented by the game */ }
 	virtual void func9() { /* implemented by the game */ }
-	virtual void update(float delta_time) { /* implemented by the game */ }
+	virtual void update(float delta_time) { SMSDK_UNREF(delta_time); /* implemented by the game */ }
 	virtual void func11() { /* implemented by the game */ }
 	virtual void func12() { /* implemented by the game */ }
 	virtual void func13() { /* implemented by the game */ }

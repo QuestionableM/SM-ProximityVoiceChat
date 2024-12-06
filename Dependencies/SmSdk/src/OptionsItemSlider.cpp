@@ -1,12 +1,15 @@
 #include "SmSdk/Gui/OptionsItemSlider.hpp"
 
+#if defined(SMSDK_ENABLE_MYGUI)
+
 OptionsItemSlider::OptionsItemSlider(
 	MyGUI::Widget* widget,
 	const std::string& caption,
 	float min_value,
 	float max_value,
-	std::size_t scroll_range)
-	: OptionsItemBase(),
+	std::size_t scroll_range
+) :
+	OptionsItemBase(),
 	m_pSlider(nullptr),
 	m_pValueTextBox(nullptr),
 	m_uSteps(scroll_range),
@@ -33,13 +36,15 @@ void OptionsItemSlider::updateValueText()
 	m_pValueTextBox->setCaption(std::to_string(m_pSlider->getScrollPosition()));
 }
 
-inline float lerp(float a, float b, float f)
+inline static float lerp(float a, float b, float f)
 {
 	return a + f * (b - a);
 }
 
-float OptionsItemSlider::getFraction()
+float OptionsItemSlider::getFraction() const
 {
 	const float v_fraction = float(m_pSlider->getScrollPosition()) / float(m_uSteps);
 	return lerp(m_fMinValue, m_fMaxValue, v_fraction);
 }
+
+#endif

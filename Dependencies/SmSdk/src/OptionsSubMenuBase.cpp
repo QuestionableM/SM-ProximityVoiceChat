@@ -1,8 +1,12 @@
 #include "SmSdk/Gui/OptionsSubMenuBase.hpp"
 #include "SmSdk/Gui/GuiSystemManager.hpp"
 
-OptionsSubMenuBase::OptionsSubMenuBase()
-	: m_pSubMenuWidget(nullptr),
+#include "SmSdk/unreferenced_params.hpp"
+
+#if defined(SMSDK_ENABLE_MYGUI)
+
+OptionsSubMenuBase::OptionsSubMenuBase() :
+	m_pSubMenuWidget(nullptr),
 	m_pContainerHostPanel(nullptr),
 	m_pContainer(nullptr),
 	m_pScrollBar(nullptr),
@@ -11,10 +15,13 @@ OptionsSubMenuBase::OptionsSubMenuBase()
 	m_rightStackBox(m_itemSize),
 	m_optionItems(),
 	m_scrollValue(0),
-	m_containerPos(0, 0) {}
+	m_containerPos(0, 0)
+{}
 
 void OptionsSubMenuBase::onScrollChangePos(MyGUI::ScrollBar* caller, std::size_t pos)
 {
+	SMSDK_UNREF(caller);
+
 	m_containerPos.top = -int(pos);
 	m_pContainer->setPosition(m_containerPos);
 	this->someFunc4();
@@ -22,6 +29,8 @@ void OptionsSubMenuBase::onScrollChangePos(MyGUI::ScrollBar* caller, std::size_t
 
 void OptionsSubMenuBase::onScroll(MyGUI::Widget* caller, int scroll_val)
 {
+	SMSDK_UNREF(caller);
+
 	m_containerPos.top = GuiSystemManager::ProcessScroll(
 		m_scrollValue, m_itemSize.height, m_containerPos.top, scroll_val,
 		GuiSystemManager::GetInstance()->getOptionItemSize());
@@ -131,3 +140,5 @@ void OptionsSubMenuBase::closeMenu()
 {
 	m_pSubMenuWidget->setVisible(false);
 }
+
+#endif

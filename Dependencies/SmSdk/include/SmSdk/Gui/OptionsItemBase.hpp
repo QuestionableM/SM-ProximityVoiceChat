@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MyGUI.h>
+#include "SmSdk/mygui_include.hpp"
 
 class OptionsItemBase
 {

@@ -1,10 +1,11 @@
 #pragma once
 
-#include <MyGUI.h>
+#include "SmSdk/mygui_include.hpp"
 
 class VerticalStackBox
 {
 public:
+#if defined(SMSDK_ENABLE_MYGUI)
 	VerticalStackBox(MyGUI::IntSize item_sz);
 
 	void onParentChangeCoord(MyGUI::Widget* caller);
@@ -17,6 +18,7 @@ public:
 	void updateScrollBar();
 	MyGUI::Widget* createNewOption();
 	void clearItems();
+#endif
 
 public:
 	/* 0x0000 */ MyGUI::IntSize m_itemSize;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <steam/steam_api.h>
+#include "SmSdk/steamapi_include.hpp"
 
 #include <unordered_map>
 #include <memory>

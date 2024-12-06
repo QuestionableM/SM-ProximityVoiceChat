@@ -10,7 +10,7 @@
 
 namespace Memory
 {
-	inline static std::uintptr_t ToLocalAddress(void* ptr)
+	inline static std::uintptr_t ToLocalAddress(const void* ptr)
 	{
 		return std::uintptr_t(ptr) - std::uintptr_t(GetModuleHandle(NULL));
 	}

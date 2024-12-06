@@ -1,12 +1,13 @@
 #pragma once
 
-#include <SmSdk/Util/Memory.hpp>
-#include <SmSdk/offsets.hpp>
+#include "SmSdk/unreferenced_params.hpp"
+#include "SmSdk/mygui_include.hpp"
+#include "SmSdk/Util/Memory.hpp"
+#include "SmSdk/offsets.hpp"
 
 #include "VerticalStackBox.hpp"
 #include "OptionsItemBase.hpp"
 
-#include <MyGUI.h>
 #include <vector>
 
 class OptionsSubMenuBase
@@ -18,9 +19,12 @@ public:
 		Memory::Read<fSubMenuBaseConstructor>(SM_CONSTRUCTOR_OPTIONS_SUB_MENU_BASE_OFFSET)(self);
 	}
 
+#if defined(SMSDK_ENABLE_MYGUI)
 	OptionsSubMenuBase();
+#endif
 	virtual ~OptionsSubMenuBase() = default;
 
+#if defined(SMSDK_ENABLE_MYGUI)
 	void onScrollChangePos(MyGUI::ScrollBar* caller, std::size_t pos);
 	void onScroll(MyGUI::Widget* caller, int scroll_val);
 	void updateScrollArea();
@@ -28,11 +32,13 @@ public:
 	//Does not update the scroll bar
 	void clearSilent();
 	void clear();
+#endif
 
-	virtual void initialize(MyGUI::Widget* parent);
-	virtual void cleanOptionItems();
-	virtual void openMenu();
-	virtual void closeMenu();
+	virtual void initialize(MyGUI::Widget* parent) DEFAULT_IMPL_UNREF(parent);
+
+	virtual void cleanOptionItems() DEFAULT_IMPL();
+	virtual void openMenu() DEFAULT_IMPL();
+	virtual void closeMenu() DEFAULT_IMPL();
 
 	virtual void onUpdate() {}
 	virtual bool someFunc2() { return 0; }

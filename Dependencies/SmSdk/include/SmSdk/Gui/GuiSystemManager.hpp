@@ -1,17 +1,13 @@
 #pragma once
 
-#include "win_include.hpp"
-#include "MyGUI.h"
+#include "SmSdk/mygui_include.hpp"
+#include "SmSdk/win_include.hpp"
 
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <memory>
-
-namespace MyGUI
-{
-	class DirectX11Platform {};
-}
+#include <map>
 
 class GuiSystemManager
 {

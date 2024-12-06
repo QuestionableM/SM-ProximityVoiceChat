@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include <boost/uuid/uuid.hpp>
+#include "SmSdk/boost_include.hpp"
 #include <DirectXMath.h>
 
 struct PlayerGarments
