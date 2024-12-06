@@ -8,12 +8,15 @@
 #include "CustomOptionsMenu.hpp"
 #include "VoiceManager.hpp"
 
+#include "SmSdk/TimestampCheck.hpp"
 #include <steam/steam_api.h>
 #include <fmod/fmod.hpp>
 #include <lz4/lz4.h>
 
 #include <Windows.h>
 #include <MinHook.h>
+
+#pragma comment(lib, "User32.lib")
 
 static bool ms_mhInitialized = false;
 static bool ms_mhHooksAttached = false;
@@ -39,6 +42,16 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 
 static void process_attach(HMODULE hMod)
 {
+	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_070_771))
+	{
+		MessageBoxA(
+			NULL,
+			"Your game version is unsupposed by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.0.771",
+			"Unsupported Version",
+			MB_ICONWARNING);
+		return;
+	}
+
 	DllGlobals::SelfModule = hMod;
 
 	AttachDebugConsole();
