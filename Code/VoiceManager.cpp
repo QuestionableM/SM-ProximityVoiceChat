@@ -81,20 +81,11 @@ void VoiceManager::h_clientPacketHandler(
 static char g_compressedServerPacket[VC_BUFFER_SIZE];
 void VoiceManager::h_serverPacketHandler(
 	NetworkServer* server,
-#if defined(_SM_VERSION_070_771)
-	std::uint64_t steam_id,
-#else
-	std::uint64_t* steam_id,
-#endif
+	STEAM_ID_TYPE steam_id,
 	void* packet_data,
 	int packet_size)
 {
-	const std::uint64_t steam_id_num
-#if defined(_SM_VERSION_070_771)
-		= steam_id;
-#else
-		= *steam_id;
-#endif
+	const std::uint64_t steam_id_num = DEREF_STEAM_ID(steam_id);
 
 	const std::uint8_t v_packet_id = *reinterpret_cast<char*>(packet_data);
 	if (v_packet_id == C_ID_VOICE_PACKET)

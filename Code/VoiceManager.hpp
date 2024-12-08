@@ -19,17 +19,21 @@
 	//buffer data (buffer size) - the compressed sound buffer
 */
 
+#if _SM_VERSION_NUM >= 070771
+#	define STEAM_ID_TYPE std::uint64_t
+#	define DEREF_STEAM_ID(steam_id) steam_id
+#else
+#	define STEAM_ID_TYPE std::uint64_t*
+#	define DEREF_STEAM_ID(steam_id) *steam_id
+#endif
+
 class VoiceManager
 {
 public:
 	using fClientPacketHandler = void (*)(void*, int, void*, int, char);
 	using fServerPacketHandler = void (*)(
 		NetworkServer*,
-	#if defined(_SM_VERSION_070_771)
-		std::uint64_t,
-	#else
-		std::uint64_t*,
-	#endif
+		STEAM_ID_TYPE,
 		void*,
 		int
 	);
@@ -51,11 +55,7 @@ public:
 
 	static void h_serverPacketHandler(
 		NetworkServer* server,
-	#if defined(_SM_VERSION_070_771)
-		std::uint64_t steam_id,
-	#else
-		std::uint64_t* steam_id,
-	#endif
+		STEAM_ID_TYPE steam_id,
 		void* packet_data,
 		int packet_size);
 

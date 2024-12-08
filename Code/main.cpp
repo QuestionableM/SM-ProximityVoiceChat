@@ -40,13 +40,33 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);
 }
 
+#if _SM_VERSION_NUM == 071772
+#	define PVC_CLIENT_PACKET_HANDLER 0x406AC0
+#	define PVC_SERVER_PACKET_HANDLER 0x8CE770
+#	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCC20
+#	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD850
+#	define PVC_PERFRAME_UPDATE 0x6D2B00
+#elif _SM_VERSION_NUM == 070771
+#	define PVC_CLIENT_PACKET_HANDLER 0x406AC0
+#	define PVC_SERVER_PACKET_HANDLER 0x8CE980
+#	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCC20
+#	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD850
+#	define PVC_PERFRAME_UPDATE 0x6D2D60
+#else
+#	define PVC_CLIENT_PACKET_HANDLER 0x416D60
+#	define PVC_SERVER_PACKET_HANDLER 0x8C6380
+#	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3CA740
+#	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3CB570
+#	define PVC_PERFRAME_UPDATE 0x6D3D10
+#endif
+
 static void process_attach(HMODULE hMod)
 {
-	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_070_771))
+	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_071_772))
 	{
 		MessageBoxA(
 			NULL,
-			"Your game version is unsupposed by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.0.771",
+			"Your game version is not supported by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.1.772\n\nPress OK to continue loading without the mod.",
 			"Unsupported Version",
 			MB_ICONWARNING);
 		return;
@@ -65,20 +85,11 @@ static void process_attach(HMODULE hMod)
 	ms_mhInitialized = true;
 
 	const std::uintptr_t v_mod_base = std::uintptr_t(GetModuleHandle(NULL));
-
-#if defined(_SM_VERSION_070_771)
-	if (EASY_CLASS_HOOK(0x406AC0, VoiceManager, clientPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x8CE980, VoiceManager, serverPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x3BCC20, CustomOptionsMenu, Constructor) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x3BD850, CustomOptionsMenu, Initialize) != MH_OK) return;
-	if (EASY_HOOK(0x6D2D60, perframeUpdate) != MH_OK) return;
-#else
-	if (EASY_CLASS_HOOK(0x416D60, VoiceManager, clientPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x8C6380, VoiceManager, serverPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x3CA740, CustomOptionsMenu, Constructor) != MH_OK) return;
-	if (EASY_CLASS_HOOK(0x3CB570, CustomOptionsMenu, Initialize) != MH_OK) return;
-	if (EASY_HOOK(0x6D3D10, perframeUpdate) != MH_OK) return;
-#endif
+	if (EASY_CLASS_HOOK(PVC_CLIENT_PACKET_HANDLER, VoiceManager, clientPacketHandler) != MH_OK) return;
+	if (EASY_CLASS_HOOK(PVC_SERVER_PACKET_HANDLER, VoiceManager, serverPacketHandler) != MH_OK) return;
+	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR, CustomOptionsMenu, Constructor) != MH_OK) return;
+	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_INITIALIZE, CustomOptionsMenu, Initialize) != MH_OK) return;
+	if (EASY_HOOK(PVC_PERFRAME_UPDATE, perframeUpdate) != MH_OK) return;
 
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;
 }
