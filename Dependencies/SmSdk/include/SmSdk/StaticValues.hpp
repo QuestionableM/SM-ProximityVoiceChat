@@ -1,12 +1,13 @@
 #pragma once
 
 #include "SmSdk/Util/StaticVariable.hpp"
+#include "SmSdk/offsets.hpp"
 
 class StaticValues
 {
 public:
-	using PaintToolPaintLimiterType = StaticVariable<std::int32_t, 0x3F060D>;
-	using PaintToolEraseLimiterType = StaticVariable<std::int32_t, 0x3F0D9B>;
+	using PaintToolPaintLimiterType = StaticVariable<std::int32_t, SM_VAR_PAINT_DRAG_LIMITER>;
+	using PaintToolEraseLimiterType = StaticVariable<std::int32_t, SM_VAR_PAINT_ERASE_LIMITER>;
 
 	//A limiter for paint tool paint function
 	static PaintToolPaintLimiterType sm_paintToolPaintLimiter;
