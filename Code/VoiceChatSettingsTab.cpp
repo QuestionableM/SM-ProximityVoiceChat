@@ -99,17 +99,17 @@ void VoiceChatSettingsTab::onUpdate()
 	std::size_t v_voice_count = 0;
 	for (const auto& v_cur_voice : PlayerVoiceManager::sm_playerVoices)
 	{
-		Player* v_voice_owner = PlayerManager::GetPlayer(v_cur_voice.first);
+		SM::Player* v_voice_owner = SM::PlayerManager::GetPlayer(v_cur_voice.first);
 		if (!v_voice_owner) continue;
 
-		VerticalStackBox& v_stack_box = ((v_voice_count % 2) == 0)
+		SM::VerticalStackBox& v_stack_box = ((v_voice_count % 2) == 0)
 			? m_leftStackBox : m_rightStackBox;
 
 		MyGUI::Widget* v_new_widget = v_stack_box.createNewOption();
 		auto v_new_slider = std::make_shared<PlayerVoiceSlider>(
-			v_new_widget, v_voice_owner->name, v_voice_owner->id);
+			v_new_widget, v_voice_owner->m_name, v_voice_owner->m_iId);
 
-		m_optionItems.push_back(std::move(v_new_slider));
+		m_vecOptionItems.push_back(std::move(v_new_slider));
 		v_voice_count++;
 	}
 

@@ -43,7 +43,7 @@ public:
 	static void Update();
 
 private:
-	static void UpdatePlayerSound(Player* player, float master_volume);
+	static void UpdatePlayerSound(SM::Player* player, float master_volume);
 	static void UpdatePlayerSounds();
 	static void RemoveDeadVoices();
 

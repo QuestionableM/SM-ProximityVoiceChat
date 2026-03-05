@@ -10,6 +10,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bullet3", "bullet3\bullet3.vcxproj", "{8C6CD4F9-3844-4A08-B6AF-7F7796978FCB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SM-ProximityVoiceChat", "SM-ProximityVoiceChat.vcxproj", "{52468B9C-003C-4F81-A9C4-01AEAF38CA40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C6CD4F9-3844-4A08-B6AF-7F7796978FCB} = {8C6CD4F9-3844-4A08-B6AF-7F7796978FCB}
+		{DD2380CE-3216-409E-87FA-3BD90B5A9ED5} = {DD2380CE-3216-409E-87FA-3BD90B5A9ED5}
+		{E99195B0-24EE-40F9-B673-38CCFFCDD225} = {E99195B0-24EE-40F9-B673-38CCFFCDD225}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

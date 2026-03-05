@@ -32,7 +32,7 @@ class VoiceManager
 public:
 	using fClientPacketHandler = void (*)(void*, int, void*, int, char);
 	using fServerPacketHandler = void (*)(
-		NetworkServer*,
+		SM::NetworkServer*,
 		STEAM_ID_TYPE,
 		void*,
 		int
@@ -54,7 +54,7 @@ public:
 		char bInitialization);
 
 	static void h_serverPacketHandler(
-		NetworkServer* server,
+		SM::NetworkServer* server,
 		STEAM_ID_TYPE steam_id,
 		void* packet_data,
 		int packet_size);

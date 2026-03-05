@@ -4,7 +4,7 @@
 
 #include <unordered_set>
 
-class VoiceChatSettingsTab : public OptionsSubMenuBase
+class VoiceChatSettingsTab : public SM::OptionsSubMenuBase
 {
 public:
 	VoiceChatSettingsTab();

@@ -98,28 +98,28 @@ void PlayerVoiceManager::Update()
 	PlayerVoiceManager::RemoveDeadVoices();
 }
 
-bool is_player_local(Player* pl)
+bool is_player_local(SM::Player* pl)
 {
-	MyPlayer* v_player = MyPlayer::GetInstance();
-	if (!v_player || !v_player->player) return false;
+	SM::MyPlayer* v_player = SM::MyPlayer::GetInstance();
+	if (!v_player || !v_player->m_player) return false;
 	
-	return v_player->player->steam_id == pl->steam_id;
+	return v_player->m_player->m_steamId == pl->m_steamId;
 }
 
-void PlayerVoiceManager::UpdatePlayerSound(Player* player, float master_volume)
+void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, float master_volume)
 {
 	//Players without the characters should not be processed
 	if (!player->characterExists() || is_player_local(player))
 		return;
 
-	AudioManager* v_aud_mgr = AudioManager::GetInstance();
+	SM::AudioManager* v_aud_mgr = SM::AudioManager::GetInstance();
 	if (!v_aud_mgr) return;
 
-	if (!PlayerVoiceManager::PlayerHasVoice(player->id))
+	if (!PlayerVoiceManager::PlayerHasVoice(player->m_iId))
 	{
 		AttachDebugConsole();
 
-		auto v_new_voice = std::make_shared<PlayerVoice>(player->steam_id, player->id);
+		auto v_new_voice = std::make_shared<PlayerVoice>(player->m_steamId, player->m_iId);
 
 		FMOD_CREATESOUNDEXINFO v_info;
 		std::memset(&v_info, 0, sizeof(v_info));
@@ -132,62 +132,62 @@ void PlayerVoiceManager::UpdatePlayerSound(Player* player, float master_volume)
 		v_info.pcmreadcallback = PlayerVoice::pcm_callback;
 		v_info.userdata = v_new_voice.get();
 
-		FMOD_RESULT v_hr = v_aud_mgr->fmod_system->createStream(
+		FMOD_RESULT v_hr = v_aud_mgr->m_pFmodSystem->createStream(
 			nullptr, FMOD_OPENUSER | FMOD_LOOP_NORMAL, &v_info, &v_new_voice->m_pSound);
 
 		if (v_hr != FMOD_OK)
 		{
-			DebugOutL("Couldn't create the sound for player ", player->id);
+			DebugOutL("Couldn't create the sound for player ", player->m_iId);
 			return;
 		}
 
-		v_hr = v_aud_mgr->fmod_system->playSound(
+		v_hr = v_aud_mgr->m_pFmodSystem->playSound(
 			v_new_voice->m_pSound, nullptr, false, &v_new_voice->m_pChannel);
 
 		if (v_hr != FMOD_OK)
 		{
-			DebugOutL("Couldn't play the sound for player ", player->id);
+			DebugOutL("Couldn't play the sound for player ", player->m_iId);
 			return;
 		}
 
 		v_new_voice->m_pChannel->setMode(FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF);
 		v_new_voice->m_pChannel->set3DConeSettings(75.0f, 360.0f, 0.1f);
-		v_new_voice->m_pChannel->set3DMinMaxDistance(0.0f, 30.0f);
+		v_new_voice->m_pChannel->set3DMinMaxDistance(0.0f, 90.0f);
 		v_new_voice->m_pChannel->setReverbProperties(0, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(1, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(2, 0.0f);
 		v_new_voice->m_pChannel->setReverbProperties(3, 0.0f);
 
-		sm_playerVoices.emplace(player->id, std::move(v_new_voice));
-		DebugOutL("Player voice created for player ", player->id);
+		sm_playerVoices.emplace(player->m_iId, std::move(v_new_voice));
+		DebugOutL("Player voice created for player ", player->m_iId);
 		return;
 	}
 
-	PlayerVoice* v_pl_voice = PlayerVoiceManager::GetVoice(player->id);
+	PlayerVoice* v_pl_voice = PlayerVoiceManager::GetVoice(player->m_iId);
 	if (!v_pl_voice) return;
 
-	Character* v_char = player->getCharacter();
+	SM::Character* v_char = player->getCharacter();
 	if (!v_char) return;
 
-	const float v_actual_yaw = v_char->yaw + DirectX::XM_PIDIV2;
+	const float v_actual_yaw = v_char->m_fYaw + DirectX::XM_PIDIV2;
 	FMOD_VECTOR v_data{ std::cos(v_actual_yaw), std::sin(v_actual_yaw), 0.0f };
 	v_pl_voice->m_pChannel->set3DConeOrientation(&v_data);
 
 	const btVector3& v_bt_obj_pos = v_char->m_pPhysicsProxy->m_pTickRaycastCollisionObject->getWorldTransform().getOrigin();
 	const FMOD_VECTOR v_obj_pos{ v_bt_obj_pos.x(), v_bt_obj_pos.z(), v_bt_obj_pos.y() };
-	const FMOD_VECTOR v_obj_vel{ v_char->velocity.x, v_char->velocity.z, v_char->velocity.y };
+	const FMOD_VECTOR v_obj_vel{ v_char->m_velocity.x, v_char->m_velocity.z, v_char->m_velocity.y };
 	v_pl_voice->m_pChannel->set3DAttributes(&v_obj_pos, &v_obj_vel);
 	v_pl_voice->m_pChannel->setVolume(v_pl_voice->getVolume() * master_volume);
 }
 
 void PlayerVoiceManager::UpdatePlayerSounds()
 {
-	PlayerManager* v_pl_mgr = PlayerManager::GetInstance();
+	SM::PlayerManager* v_pl_mgr = SM::PlayerManager::GetInstance();
 	if (!v_pl_mgr) return;
 
-	const float v_master_volume = GameSettings::GetMasterVolume();
+	const float v_master_volume = SM::GameSettings::GetMasterVolume();
 
-	for (const auto& v_cur_iter : v_pl_mgr->id_to_player_map)
+	for (const auto& v_cur_iter : v_pl_mgr->m_mapIdToPlayers)
 	{
 		if (!v_cur_iter.second) continue;
 
@@ -199,7 +199,7 @@ void PlayerVoiceManager::RemoveDeadVoices()
 {
 	for (auto v_iter = sm_playerVoices.begin(); v_iter != sm_playerVoices.end();)
 	{
-		Player* v_cur_player = PlayerManager::GetPlayer(v_iter->first);
+		SM::Player* v_cur_player = SM::PlayerManager::GetPlayer(v_iter->first);
 		if (v_cur_player != nullptr && v_cur_player->characterExists())
 		{
 			v_iter++;

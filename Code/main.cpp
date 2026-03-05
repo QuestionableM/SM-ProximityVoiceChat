@@ -40,7 +40,13 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);
 }
 
-#if _SM_VERSION_NUM == 073776
+#if _SM_VERSION_NUM == 0x074778
+#	define PVC_CLIENT_PACKET_HANDLER 0x406A60
+#	define PVC_SERVER_PACKET_HANDLER 0x8CE7C0
+#	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCBC0
+#	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD7F0
+#	define PVC_PERFRAME_UPDATE 0x6D2B00
+#elif _SM_VERSION_NUM == 0x073776
 #	define PVC_CLIENT_PACKET_HANDLER 0x406A60
 #	define PVC_SERVER_PACKET_HANDLER 0x8CE7E0
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCBC0
@@ -74,11 +80,11 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 
 static void process_attach(HMODULE hMod)
 {
-	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_073_776))
+	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_074_778))
 	{
 		MessageBoxA(
 			NULL,
-			"Your game version is not supported by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.3.776\n\nPress OK to continue loading without the mod.",
+			"Your game version is not supported by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.4.778\n\nPress OK to continue loading without the mod.",
 			"Unsupported Version",
 			MB_ICONWARNING);
 		return;

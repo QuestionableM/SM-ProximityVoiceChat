@@ -80,7 +80,7 @@ void VoiceManager::h_clientPacketHandler(
 
 static char g_compressedServerPacket[VC_BUFFER_SIZE];
 void VoiceManager::h_serverPacketHandler(
-	NetworkServer* server,
+	SM::NetworkServer* server,
 	STEAM_ID_TYPE steam_id,
 	void* packet_data,
 	int packet_size)
@@ -109,7 +109,7 @@ void VoiceManager::h_serverPacketHandler(
 			return;
 		}
 
-		for (const auto& v_cur_iter : server->network_send->steam_id_to_connection)
+		for (const auto& v_cur_iter : server->m_pNetworkSend->m_mapSteamIdToConnection)
 		{
 			if (v_cur_iter.first == steam_id_num || v_cur_iter.first == v_local_steam_id)
 				continue;
@@ -158,15 +158,15 @@ void VoiceManager::StopVoiceRecording()
 	}
 }
 
-static bool get_recording_pointers(SteamNetworkClient** client, Player** player)
+static bool get_recording_pointers(SM::SteamNetworkClient** client, SM::Player** player)
 {
-	*client = GameState::GetSteamNetworkClient();
+	*client = SM::GameState::GetSteamNetworkClient();
 	if (!(*client)) return false;
 
-	MyPlayer* v_local_pl = MyPlayer::GetInstance();
-	if (!v_local_pl || !v_local_pl->player) return false;
+	SM::MyPlayer* v_local_pl = SM::MyPlayer::GetInstance();
+	if (!v_local_pl || !v_local_pl->m_player) return false;
 
-	*player = v_local_pl->player.get();
+	*player = v_local_pl->m_player.get();
 	return true;
 }
 
@@ -174,18 +174,18 @@ static char m_packetBuffer[VC_BUFFER_SIZE];
 static char m_compressedPacket[VC_BUFFER_SIZE];
 void VoiceManager::UpdateVoiceRecording()
 {
-	SteamNetworkClient* v_network;
-	Player* v_player;
+	SM::SteamNetworkClient* v_network;
+	SM::Player* v_player;
 
 	if (!get_recording_pointers(&v_network, &v_player)
 		|| !v_player->characterExists()
-		|| GuiSystemManager::IsMouseVisible())
+		|| SM::GuiSystemManager::IsMouseVisible())
 	{
 		VoiceManager::StopVoiceRecording();
 		return;
 	}
 
-	if (InputManager::IsKeyHeld('V'))
+	if (SM::InputManager::IsKeyHeld('V'))
 		VoiceManager::StartVoiceRecording();
 	else
 		VoiceManager::StopVoiceRecording();
@@ -206,7 +206,7 @@ void VoiceManager::UpdateVoiceRecording()
 		sizeof(m_packetBuffer) - v_voice_buffer_offset,
 		&v_bytes);
 
-	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->id;
+	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_iId;
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;
@@ -219,7 +219,7 @@ void VoiceManager::UpdateVoiceRecording()
 	if (v_compressed_size > 0)
 	{
 		const EResult v_result = SteamNetworkingSockets()->SendMessageToConnection(
-			v_network->host_connection,
+			v_network->m_hostConnection,
 			m_compressedPacket,
 			v_compressed_size + 1,
 			k_EP2PSendUnreliableNoDelay,
@@ -287,7 +287,7 @@ MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* main_panel)
 
 void VoiceManager::UpdateSpeakerUiIcon()
 {
-	InGameGuiManager* v_gui_mgr = InGameGuiManager::GetInstance();
+	SM::InGameGuiManager* v_gui_mgr = SM::InGameGuiManager::GetInstance();
 	if (!v_gui_mgr || !v_gui_mgr->m_pHudGui) return;
 
 	MyGUI::ImageBox* v_speaker_icon = VoiceManager::GetSpeakerImageBox(v_gui_mgr->m_pHudGui->m_pMainPanel);

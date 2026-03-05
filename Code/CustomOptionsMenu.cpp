@@ -19,40 +19,40 @@ CustomOptionsMenu::fConstructor CustomOptionsMenu::o_Constructor = nullptr;
 CustomOptionsMenu::fInitialize CustomOptionsMenu::o_Initialize = nullptr;
 
 
-OptionsMenu* CustomOptionsMenu::h_Constructor(
+SM::OptionsMenu* CustomOptionsMenu::h_Constructor(
 	OptionsMenu* self,
-	MainMenuRootGui* root_gui,
+	SM::MainMenuRootGui* root_gui,
 	bool is_server)
 {
 	std::memset(self, 0, sizeof(OptionsMenu));
 	self = new (self)OptionsMenu;
 
-	Memory::OverwriteVftable(self, SM_VTBL_OPTIONS_MENU_OFFSET);
+	SM::Memory::OverwriteVftable(self, SM_VTBL_OPTIONS_MENU_OFFSET);
 	self->m_pMenuRootGui = root_gui;
-	self->is_server = is_server;
+	self->m_bIsServer = is_server;
 
-	if (self->is_server)
-		self->m_mapSubMenus["Gameplay"] = std::make_shared<GameplayOptionsMenu>();
+	if (self->m_bIsServer)
+		self->m_mapSubMenus["Gameplay"] = std::make_shared<SM::GameplayOptionsMenu>();
 
-	self->m_mapSubMenus["Controls"] = std::make_shared<ControlOptionsMenu>();
-	self->m_mapSubMenus["Audio"] = std::make_shared<AudioOptionsMenu>();
-	self->m_mapSubMenus["Display"] = std::make_shared<DisplayOptionsMenu>();
-	self->m_mapSubMenus["Graphics"] = std::make_shared<GraphicsOptionsMenu>();
+	self->m_mapSubMenus["Controls"] = std::make_shared<SM::ControlOptionsMenu>();
+	self->m_mapSubMenus["Audio"] = std::make_shared<SM::AudioOptionsMenu>();
+	self->m_mapSubMenus["Display"] = std::make_shared<SM::DisplayOptionsMenu>();
+	self->m_mapSubMenus["Graphics"] = std::make_shared<SM::GraphicsOptionsMenu>();
 
-	if (GameState::IsCurrentOrNextGameState(GameState_PlayState))
+	if (SM::GameState::IsCurrentOrNextGameState(SM::GameState_PlayState))
 		self->m_mapSubMenus["ProximityVoiceChat"] = std::make_shared<VoiceChatSettingsTab>();
 
-	self->m_currentTab = self->m_mapSubMenus[self->is_server ? "Gameplay" : "Controls"];
+	self->m_pCurrentTab = self->m_mapSubMenus[self->m_bIsServer ? "Gameplay" : "Controls"];
 	return self;
 }
 
 void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 {
-	GuiSystemManager* v_sys_mgr = GuiSystemManager::GetInstance();
+	SM::GuiSystemManager* v_sys_mgr = SM::GuiSystemManager::GetInstance();
 
 	const MyGUI::IntCoord v_panel_coord(
-		v_sys_mgr->screen_left, v_sys_mgr->screen_top,
-		v_sys_mgr->screen_width, v_sys_mgr->screen_height);
+		v_sys_mgr->m_iScreenLeft, v_sys_mgr->m_iScreenTop,
+		v_sys_mgr->m_iScreenWidth, v_sys_mgr->m_iScreenHeight);
 
 	self->m_pMainPanel = MyGUI::Gui::getInstancePtr()->createWidget<MyGUI::Widget>(
 		"PanelEmpty", v_panel_coord, MyGUI::Align::Default, "MainMenu", "OptionsMenu");
@@ -60,7 +60,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 	MyGUI::LayoutManager::getInstancePtr()->loadLayout(
 		"$GAME_DATA/Gui/Layouts/Common/MenuBackButton.layout", "", self->m_pMainPanel);
 
-	if (self->is_server)
+	if (self->m_bIsServer)
 	{
 		MyGUI::LayoutManager::getInstancePtr()->loadLayout(
 			"$GAME_DATA/Gui/Layouts/Options/Options_InGameMenu.layout",
@@ -75,7 +75,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 			self->m_pMainPanel);
 	}
 
-	const bool v_is_play_state = GameState::IsCurrentOrNextGameState(GameState_PlayState);
+	const bool v_is_play_state = SM::GameState::IsCurrentOrNextGameState(SM::GameState_PlayState);
 
 	//Add custom tabs here
 	if (v_is_play_state)
@@ -104,10 +104,10 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 	v_back_widget->eventMouseButtonClick += MyGUI::newDelegate(
 		(CustomOptionsMenu*)self, &CustomOptionsMenu::backPanelMouseClick);
 
-	self->compound_button = std::make_shared<CompoundButton>(v_back_widget);
+	self->m_pCompoundButton = std::make_shared<SM::CompoundButton>(v_back_widget);
 
 	std::vector<MyGUI::Button*> v_tabButtons;
-	if (self->is_server)
+	if (self->m_bIsServer)
 		v_tabButtons.push_back(self->m_pMainPanel->findWidget("Gameplay")->castType<MyGUI::Button>());
 
 	v_tabButtons.push_back(self->m_pMainPanel->findWidget("Controls")->castType<MyGUI::Button>());
@@ -121,7 +121,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 
 	for (auto& v_cur_tab : self->m_mapSubMenus)
 	{
-		if (v_cur_tab.second != self->m_currentTab)
+		if (v_cur_tab.second != self->m_pCurrentTab)
 			continue;
 
 		MyGUI::Button* v_selectedTab = self->m_pMainPanel->findWidget(
@@ -147,7 +147,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 		v_tab_offset += v_cur_tab_width;
 	}
 
-	self->radio_btn_set = std::make_shared<RadioButtonSet>(v_tabButtons);
+	self->m_pRadioButtonSet = std::make_shared<SM::RadioButtonSet>(v_tabButtons);
 
 	//Initialize all the tabs
 	MyGUI::Widget* v_optHostPanel = self->m_pMainPanel->findWidget("OptionsHostPanel");
@@ -164,7 +164,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 
 	self->m_pMainPanel->setVisible(self->m_bSomeFlag);
 	if (self->m_bSomeFlag)
-		self->m_currentTab->openMenu();
+		self->m_pCurrentTab->openMenu();
 }
 
 void CustomOptionsMenu::backPanelMouseClick(MyGUI::Widget* widget)
@@ -175,7 +175,7 @@ void CustomOptionsMenu::backPanelMouseClick(MyGUI::Widget* widget)
 
 void CustomOptionsMenu::defaultButtonClick(MyGUI::Widget* widget)
 {
-	m_currentTab->restoreDefaults();
+	m_pCurrentTab->restoreDefaults();
 }
 
 void CustomOptionsMenu::switchTabCallback(MyGUI::Widget* widget)
@@ -184,12 +184,12 @@ void CustomOptionsMenu::switchTabCallback(MyGUI::Widget* widget)
 	if (v_iter == m_mapSubMenus.end())
 		return;
 
-	if (v_iter->second != m_currentTab)
+	if (v_iter->second != m_pCurrentTab)
 	{
-		if (m_currentTab)
-			m_currentTab->closeMenu();
+		if (m_pCurrentTab)
+			m_pCurrentTab->closeMenu();
 
 		v_iter->second->openMenu();
-		m_currentTab = v_iter->second;
+		m_pCurrentTab = v_iter->second;
 	}
 }

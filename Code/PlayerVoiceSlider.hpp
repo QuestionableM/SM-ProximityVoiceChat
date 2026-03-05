@@ -2,7 +2,7 @@
 
 #include <SmSdk/Gui/OptionsItemSlider.hpp>
 
-class PlayerVoiceSlider : public OptionsItemSlider
+class PlayerVoiceSlider : public SM::OptionsItemSlider
 {
 public:
 	PlayerVoiceSlider(
