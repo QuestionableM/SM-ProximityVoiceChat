@@ -1,7 +1,7 @@
 # SM-ProximityVoiceChat
 A Scrap Mechanic DLL mod which adds Proximity Voice Chat into the game.<br/>
 
-### Supported game version (v1.3): Scrap Mechanic v0.6.6.729
+### Supported game version (v1.3.4): Scrap Mechanic v0.7.4.778
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/QuestionableM/SM-ProximityVoiceChat/total)
 
