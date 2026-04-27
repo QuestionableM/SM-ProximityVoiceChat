@@ -1,8 +1,9 @@
 #pragma once
 
+#include "SmSdk/config.hpp"
+
 #include <string>
 #include <cmath>
-#include "SmSdk/config.hpp"
 
 SMSDK_BEGIN_NAMESPACE
 
@@ -13,51 +14,35 @@ union Color;
 
 union ColorBGRA
 {
-	uint32_t data;
-	struct
-	{
-		uint8_t b, g, r, a;
-	};
-
 	ColorBGRA() = default;
-	ColorBGRA(Color color);
+	ColorBGRA(const Color color);
+
+	std::uint32_t data;
+	struct { std::uint8_t b, g, r, a; };
 };
 
 union Color
 {
-	uint32_t data;
-	struct
-	{
-		uint8_t r, g, b, a;
-	};
-	uint8_t colArr[4];
-
 	Color() = default;
-	Color(const std::string& col);
-	Color(uint32_t col);
-	Color(uint64_t col);
-	Color(ColorBGRA col);
+	SMSDK_API Color(const ColorBGRA col);
+	SMSDK_API Color(const std::uint32_t col);
+	SMSDK_API Color(const std::uint64_t col);
+	SMSDK_API Color(const std::string& col);
 
-	float getFloat(size_t iIdx);
-	void setFloat(size_t iIdx, float fVal);
+	SMSDK_API float getFloat(const std::size_t iIdx) const;
+	SMSDK_API void setFloat(const std::size_t iIdx, const float fVal);
 
-	inline std::string toHexStringRGB() const
-	{
-		char buffer[10];
-		sprintf_s(buffer, "%02X%02X%02X", uint32_t(this->r), uint32_t(this->g), uint32_t(this->b));
+	SMSDK_API std::string toHexStringRGB() const;
+	SMSDK_API bool operator==(const Color other) const noexcept;
 
-		return std::string(buffer, 6);
-	}
+	static SMSDK_API void RGBtoHSV(const Color col, float& fH, float& fS, float& fV);
+	static SMSDK_API std::uint32_t RatioToRGB(const double dRatio);
 
-	inline bool operator==(Color other) const noexcept
-	{
-		return this->data == other.data;
-	}
+	std::uint32_t data;
+	struct { std::uint8_t r, g, b, a; };
+	std::uint8_t colArr[4];
 };
 
 #pragma warning(pop)
-
-void RGBtoHSV(Color col, float& fH, float& fS, float& fV);
-uint32_t RatioToRGB(double dRatio);
 
 SMSDK_END_NAMESPACE

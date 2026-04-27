@@ -2,6 +2,7 @@
 
 #include "SmSdk/Tool/IToolImpl.hpp"
 #include "SmSdk/Tool/Tool.hpp"
+#include "SmSdk/Util/Hashing.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -19,6 +20,17 @@ enum AnimationFlag : uint32_t
 
 struct ToolAnimationEntry
 {
+	ToolAnimationEntry(
+		const std::string_view& animName,
+		const std::string_view& nextAnim,
+		const float animBegin,
+		const float animEnd,
+		const float animTime,
+		const float animWeight,
+		const float animSpeed,
+		const std::uint32_t animFlags
+	);
+
 	/* 0x0000 */ SDK_PUB std::string m_animName;
 	/* 0x0020 */ SDK_PUB std::string m_nextAnim;
 	/* 0x0040 */ SDK_PUB float m_fAnimBegin;
@@ -56,63 +68,23 @@ static_assert(sizeof(ToolAnimationList) == 0x220, "ToolAnimationList: Incorrect 
 
 struct ToolAnimationData
 {
-	SDK_PUB void setAnimation(const std::string& name)
-	{
-		auto iter = m_mapAnimationData.find(name);
-		if (iter == m_mapAnimationData.end())
-			return;
+	SDK_PUB SMSDK_API void setAnimation(const std::string_view& name);
+	SDK_PUB SMSDK_API bool hasAnimation(const std::string_view& name) const;
+	SDK_PUB SMSDK_API void resetAnimation(const std::string_view& name);
 
-		m_currentAnim = name;
-		iter->second.m_fAnimTime = 0.0f;
-		m_fAnimBegin = 0.2f;
-	}
+	SDK_PUB SMSDK_API void addNewAnimation(
+		const std::string_view& name,
+		const std::string_view& startAnim,
+		const std::string_view& nextAnim,
+		const float animBegin = 0.0f,
+		const float animEnd = 1.0f,
+		const float playbackSpeed = 1.0f,
+		const std::uint32_t flags = 256);
 
-	SDK_PUB bool hasAnimation(const std::string& name) const
-	{
-		return m_mapAnimationData.find(name) != m_mapAnimationData.end();
-	}
-
-	SDK_PUB void resetAnimation(const std::string& name)
-	{
-		auto iter = m_mapAnimationData.find(name);
-		if (iter == m_mapAnimationData.end())
-			return;
-
-		iter->second.m_fAnimTime = 0.0f;
-		iter->second.m_fWeight = 0.0f;
-	}
-
-	SDK_PUB void addNewAnimation(
-	    const std::string& name,
-	    const std::string& startAnim,
-	    const std::string& nextAnim,
-	    float animBegin = 0.0f,
-	    float animEnd = 1.0f,
-	    float playbackSpeed = 1.0f,
-	    uint32_t flags = 256)
-	{
-		ToolAnimationEntry newEntry;
-		newEntry.m_animName = startAnim;
-		newEntry.m_nextAnim = nextAnim;
-		newEntry.m_fAnimTime = 0.0f;
-		newEntry.m_fAnimBegin = animBegin;
-		newEntry.m_fAnimEnd = animEnd;
-		newEntry.m_fWeight = 0.0f;
-		newEntry.m_fPlaybackSpeed = playbackSpeed;
-		newEntry.m_uFlags = flags;
-
-		m_mapAnimationData.emplace(name, newEntry);
-	}
-
-	SDK_PUB void removeAnimation(const std::string& name)
-	{
-		auto iter = m_mapAnimationData.find(name);
-		if (iter != m_mapAnimationData.end())
-			m_mapAnimationData.erase(iter);
-	}
+	SDK_PUB SMSDK_API void removeAnimation(const std::string_view& name);
 
 	/* 0x0000 */ SDK_PUB ClientTool* m_pToolPtr;
-	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, ToolAnimationEntry> m_mapAnimationData;
+	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, ToolAnimationEntry, Hashing::StringHash, std::equal_to<>> m_mapAnimationData;
 	/* 0x0048 */ SDK_PUB std::string m_currentAnim;
 	/* 0x0068 */ SDK_PUB ToolAnimationList m_toolAnimList;
 	/* 0x0288 */ SDK_PUB float m_fAnimBegin;
@@ -123,21 +95,21 @@ static_assert(sizeof(ToolAnimationData) == 0x290, "ToolAnimationData: Incorrect 
 
 class ClientTool : public IToolImpl
 {
-	SDK_PUB inline void setTpAnimation(const std::string& name)
-	{
-		m_tpAnims.setAnimation(name);
-	}
+	SDK_PUB SMSDK_API void setTpAnimation(const std::string_view& name);
+	SDK_PUB SMSDK_API void setFpAnimation(const std::string_view& name);
+	SDK_PUB SMSDK_API void setFpAndTpAnimation(const std::string_view& name);
 
-	SDK_PUB inline void setFpAnimation(const std::string& name)
-	{
-		m_fpAnims.setAnimation(name);
-	}
+	SDK_PUB SMSDK_API bool getBlockSprint() const;
+	SDK_PUB SMSDK_API void setBlockSprint(const bool value);
 
-	SDK_PUB inline void setFpAndTpAnimation(const std::string& name)
-	{
-		this->setFpAnimation(name);
-		this->setTpAnimation(name);
-	}
+	SDK_PUB SMSDK_API bool getInteractionTextSuppressed() const;
+	SDK_PUB SMSDK_API void setInteractionTextSuppressed(const bool value);
+
+	SDK_PUB SMSDK_API float getDispersionFraction() const;
+	SDK_PUB SMSDK_API void setDispersionFraction(const float value);
+
+	SDK_PUB SMSDK_API float getCrosshairAlpha() const;
+	SDK_PUB SMSDK_API void setCrosshairAlpha(const float value);
 
 	/* 0x0008 */ SDK_PUB ToolAnimationData m_tpAnims;
 	/* 0x0298 */ SDK_PUB ToolAnimationData m_fpAnims;
@@ -146,7 +118,7 @@ class ClientTool : public IToolImpl
 	/* 0x0539 */ SDK_PRI char pad_0x539[0x3];
 	/* 0x053C */ SDK_PUB float m_fDispersionFraction;
 	/* 0x0540 */ SDK_PUB float m_fCrosshairAlpha;
-	/* 0x0544 */ SDK_PUB bool m_fInteractionTextSuppressed;
+	/* 0x0544 */ SDK_PUB bool m_interactionTextSuppressed;
 	/* 0x0545 */ SDK_PRI char pad_0x545[0x3];
 }; // Size: 0x548
 

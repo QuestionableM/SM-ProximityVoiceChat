@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SmSdk/Util/Hashing.hpp"
 #include "SmSdk/config.hpp"
 
 #include <unordered_map>
@@ -13,14 +14,14 @@ class DirectoryManager
 
 	SDK_PUB static DirectoryManager* GetInstance();
 
-	SDK_PUB bool getReplacement(const std::string& key, std::string& replacement);
+	SDK_PUB bool getReplacement(const std::string_view& key, std::string_view& replacement);
 	SDK_PUB bool replacePathR(std::string& path);
 
 	SDK_PUB static bool ReplacePathR(std::string& path);
-	SDK_PUB static bool GetReplacement(const std::string& key, std::string& replacement);
+	SDK_PUB static bool GetReplacement(const std::string_view& key, std::string_view& replacement);
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[8];
-	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, std::string> m_mapContentKeyToPathList;
+	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapContentKeyToPathList;
 }; // Size: 0x48
 
 static_assert(offsetof(DirectoryManager, DirectoryManager::m_mapContentKeyToPathList) == 0x8, "DirectoryManager::m_pathReplacements: Incorrect offset");

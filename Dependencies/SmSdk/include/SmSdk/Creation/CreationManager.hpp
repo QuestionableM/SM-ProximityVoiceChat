@@ -27,15 +27,15 @@ class CreationManager
 {
 	REMOVE_COPY_CONSTRUCTORS(CreationManager);
 
+	SDK_PUB SMSDK_API static CreationManager* GetInstance();
+	
 	SDK_PUB virtual ~CreationManager() = default;
 
-	SDK_PUB static CreationManager* GetInstance();
+	SDK_PUB SMSDK_API BodyState* _getBodyState(const std::uint32_t uId);
+	SDK_PUB SMSDK_API JointState* _getJointState(const std::uint32_t uId);
 
-	SDK_PUB BodyState* _getBodyState(const std::uint32_t uId);
-	SDK_PUB JointState* _getJointState(const std::uint32_t uId);
-
-	SDK_PUB static BodyState* GetBodyState(const std::uint32_t uId);
-	SDK_PUB static JointState* GetJointState(const std::uint32_t uId);
+	SDK_PUB SMSDK_API static BodyState* GetBodyState(const std::uint32_t uId);
+	SDK_PUB SMSDK_API static JointState* GetJointState(const std::uint32_t uId);
 
 	/* 0x0008 */ SDK_PUB std::unordered_map<std::uint32_t, BodyState> m_mapBodyStates;
 	/* 0x0048 */ SDK_PUB std::unordered_map<std::uint32_t, std::shared_ptr<ChildShape>> m_mapChildShapes;

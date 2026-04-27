@@ -7,7 +7,7 @@
 
 SMSDK_BEGIN_NAMESPACE
 
-class OptionsMenu : public SM::GuiBase
+class OptionsMenu : public GuiBase
 {
 	/* 0x0018 */ SDK_PUB class MainMenuRootGui* m_pMenuRootGui;
 	/* 0x0020 */ SDK_PUB bool m_bSomeFlag;

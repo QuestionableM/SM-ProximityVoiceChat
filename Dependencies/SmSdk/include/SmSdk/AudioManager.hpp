@@ -13,6 +13,9 @@ SMSDK_BEGIN_NAMESPACE
 
 struct EventData
 {
+	EventData() = default;
+	EventData(const std::uint16_t worldId, const std::string_view& eventName);
+
 	/* 0x0000 */ SDK_PUB std::int16_t m_iWorldId;
 	/* 0x0002 */ SDK_PRI char pad_0x2[0x2];
 	/* 0x0004 */ SDK_PUB std::int32_t m_iSomeVal;
@@ -26,30 +29,12 @@ static_assert(sizeof(EventData) == 0x60, "EventData: Incorrect Size");
 
 class AudioManager : public Task
 {
-	SDK_PUB static AudioManager* GetInstance();
+	SDK_PUB static SMSDK_API AudioManager* GetInstance();
 
-	SDK_PUB inline void _playSound(const std::string& soundName, uint16_t uWorldId = 0xFFFF)
-	{
-		std::lock_guard<std::mutex> lock(m_mutex);
+	SDK_PUB SMSDK_API void _playSound(const std::string& soundName, const std::uint16_t uWorldId = 0xFFFF);
+	SDK_PUB static SMSDK_API void PlaySound(const std::string& soundName, const std::uint16_t uWorldId = 0xFFFF);
 
-		EventData newEvent;
-		newEvent.m_iWorldId = uWorldId;
-		newEvent.m_iSomeVal = 1;
-		newEvent.m_eventName = soundName;
-
-		m_deqEventQueue.push_back(newEvent);
-	}
-
-	SDK_PUB inline static void PlaySound(const std::string& soundName, uint16_t uWorldId = 0xFFFF)
-	{
-		AudioManager* pAudioMgr = AudioManager::GetInstance();
-		if (!pAudioMgr)
-			return;
-
-		pAudioMgr->_playSound(soundName, uWorldId);
-	}
-
-	/* 0x0008 */ SDK_PUB std::shared_ptr<struct AudioEventManager> pAudioEventManager;
+	/* 0x0008 */ SDK_PUB std::shared_ptr<struct AudioEventManager> m_pAudioEventManager;
 	/* 0x0018 */ SDK_PUB std::mutex m_mutex;
 	/* 0x0068 */ SDK_PUB FMOD::Studio::System* m_pFmodStudioSystem;
 	/* 0x0070 */ SDK_PUB FMOD::System* m_pFmodSystem;
@@ -60,7 +45,7 @@ class AudioManager : public Task
 	/* 0x00F8 */ SDK_PUB std::deque<EventData> m_deqEventQueue;
 	/* 0x0120 */ SDK_PRI char pad_0x120[0x78];
 	/* 0x0198 */ SDK_PUB std::map<std::string, std::string> m_mapNameToFmodPath;
-	/* 0x01A8 */ SDK_PUB std::map<size_t, std::string> m_someHashToFmodPath;
+	/* 0x01A8 */ SDK_PUB std::map<std::size_t, std::string> m_someHashToFmodPath;
 	/* 0x01B8 */ SDK_PUB std::map<std::string, std::shared_ptr<struct AudioEvent>> m_nameToEventPtr;
 	/* 0x01C8 */ SDK_PRI char pad_0x1C8[0x100];
 	/* 0x02C8 */ SDK_PUB std::int32_t m_iFmodInitFlags;

@@ -19,7 +19,7 @@ enum PhysicsProxyType : unsigned char
 
 __declspec(align(16)) class PhysicsProxy
 {
-	SDK_PUB virtual char getProxyType() { return 0; }
+	SDK_PUB virtual PhysicsProxyType getProxyType() { return PhysicsProxyType(0); /* IMPLEMENTED BY THE GAME */ }
 
 	/* 0x0008 */ SDK_PRI char pad_0x8[0x8];
 	/* 0x0010 */ SDK_PUB btRigidBody* m_pDynamicsWorldRigidBody;

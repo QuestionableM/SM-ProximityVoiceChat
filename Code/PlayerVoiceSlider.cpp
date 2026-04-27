@@ -5,19 +5,20 @@
 
 PlayerVoiceSlider::PlayerVoiceSlider(
 	MyGUI::Widget* parent,
-	const std::string& player_name,
-	int player_id)
-	: OptionsItemSlider(parent, player_name, 0.0f, 2.0f, 200),
-	m_playerId(player_id)
+	const std::string& playerName,
+	const std::uint32_t playerId
+)
+	: OptionsItemSlider(parent, playerName, 0.0f, 2.0f, 200)
+	, m_playerId(playerId)
 {
-	//Pull the current volume and update the value
+	// Pull the current volume and update the value
 	this->update();
 
 	m_pSlider->eventScrollChangePosition += MyGUI::newDelegate(
 		this, &PlayerVoiceSlider::sliderChangePosition);
 }
 
-void PlayerVoiceSlider::sliderChangePosition(MyGUI::ScrollBar* caller, std::size_t new_value)
+void PlayerVoiceSlider::sliderChangePosition(MyGUI::ScrollBar* caller, const std::size_t newValue)
 {
 	PlayerVoice* v_voice = PlayerVoiceManager::GetVoice(m_playerId);
 	if (!v_voice) return;

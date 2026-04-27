@@ -3,15 +3,22 @@
 #include "SmSdk/Tool/IToolNetworkData.hpp"
 #include "SmSdk/Tool/IToolImpl.hpp"
 
+#include "SmSdk/boost_include.hpp"
 #include "SmSdk/Base/NetObj.hpp"
 
 SMSDK_BEGIN_NAMESPACE
 
 class Tool : public NetObj
 {
+	boost::uuids::uuid getUuid() const;
+	std::uint32_t getOwnerId() const;
+
+	bool getMovementSlowdown() const;
+	void setMovementSlowdown(const bool value);
+
 	/* 0x0028 */ SDK_PRI char pad_0x28[0x8];
-	/* 0x0030 */ SDK_PUB char uuid[16];
-	/* 0x0040 */ SDK_PUB std::int32_t m_iOwnerId;
+	/* 0x0030 */ SDK_PUB boost::uuids::uuid m_uuid;
+	/* 0x0040 */ SDK_PUB std::uint32_t m_uOwnerId;
 	/* 0x0044 */ SDK_PRI char pad_0x44[0x4];
 	/* 0x0048 */ SDK_PUB std::shared_ptr<IToolImpl> m_pImplementation;
 	/* 0x0058 */ SDK_PUB IToolNetworkData* m_pNetworkData;

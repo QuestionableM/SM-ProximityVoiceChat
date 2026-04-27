@@ -16,7 +16,7 @@ struct Harvestable : public NetObj
 	/* 0x0033 */ SDK_PUB bool m_bTransformUpdateFlag;
 	/* 0x0034 */ SDK_PRI char pad_0x34[0x4];
 	/* 0x0038 */ SDK_PUB std::shared_ptr<struct HarvestableData> m_pHarvestableData;
-	/* 0x0048 */ SDK_PUB std::int16_t m_iWorldId;
+	/* 0x0048 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x004A */ SDK_PUB boost::uuids::uuid m_uuid;
 	/* 0x005A */ SDK_PRI char pad_0x5A[0x1E];
 	/* 0x0078 */ SDK_PUB DirectX::XMFLOAT3 m_position;

@@ -16,6 +16,14 @@
 // You can optionally wrap everything into a namespace
 #define SMSDK_NAMESPACE SM
 
+#if defined(SMSDK_BUILD_DLL)
+# define SMSDK_API __declspec(dllexport)
+#elif defined(SMSDK_IMPORT_DLL)
+# define SMSDK_API __declspec(dllimport)
+#else // Static linking is the default
+# define SMSDK_API
+#endif
+
 #include <cstdint>
 #include <cstddef>
 

@@ -7,12 +7,12 @@ class PlayerVoiceSlider : public SM::OptionsItemSlider
 public:
 	PlayerVoiceSlider(
 		MyGUI::Widget* parent,
-		const std::string& player_name,
-		int player_id);
+		const std::string& playerName,
+		const std::uint32_t playerId);
 
-	void sliderChangePosition(MyGUI::ScrollBar* caller, std::size_t new_value);
+	void sliderChangePosition(MyGUI::ScrollBar* caller, const std::size_t newValue);
 	void update() override;
 
 private:
-	int m_playerId;
+	std::uint32_t m_playerId;
 };

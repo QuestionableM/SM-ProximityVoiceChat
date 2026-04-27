@@ -55,72 +55,21 @@ class InputManager
 {
 	REMOVE_COPY_CONSTRUCTORS(InputManager);
 
-	SDK_PUB static InputManager* GetInstance();
+	SDK_PUB SMSDK_API static InputManager* GetInstance();
 
-	SDK_PUB inline bool _isKeyPressed(char cKey) const
-	{
-		return m_eKeyStates[cKey] == EKeyState_Press;
-	}
+	SDK_PUB SMSDK_API bool _isKeyPressed(const char cKey) const;
+	SDK_PUB SMSDK_API bool _isKeyHeld(const char cKey) const;
 
-	SDK_PUB inline bool _isKeyHeld(char cKey) const
-	{
-		return m_eKeyStates[cKey] == EKeyState_Hold;
-	}
+	SDK_PUB SMSDK_API bool _isMouseButtonPressed(const EMouseButton eBtn) const;
+	SDK_PUB SMSDK_API bool _isMouseButtonHeld(const EMouseButton eBtn) const;
 
-	SDK_PUB inline bool _isMouseButtonPressed(EMouseButton eBtn) const
-	{
-		return m_eMouseBtnStates[eBtn] == EKeyState_Press;
-	}
+	SDK_PUB SMSDK_API static bool IsKeyPressed(const char cKey);
+	SDK_PUB SMSDK_API static bool IsKeyHeld(const char cKey);
 
-	SDK_PUB inline bool _isMouseButtonHeld(EMouseButton eBtn) const
-	{
-		return m_eMouseBtnStates[eBtn] == EKeyState_Hold;
-	}
+	SDK_PUB SMSDK_API static bool IsMouseButtonPressed(const EMouseButton eBtn);
+	SDK_PUB SMSDK_API static bool IsMouseButtonHeld(const EMouseButton eBtn);
 
-	SDK_PUB inline static bool IsKeyPressed(char cKey)
-	{
-		InputManager* pInputManager = InputManager::GetInstance();
-		if (!pInputManager)
-			return false;
-
-		return pInputManager->_isKeyPressed(cKey);
-	}
-
-	SDK_PUB inline static bool IsKeyHeld(char cKey)
-	{
-		InputManager* pInputManager = InputManager::GetInstance();
-		if (!pInputManager)
-			return false;
-
-		return pInputManager->_isKeyHeld(cKey);
-	}
-
-	SDK_PUB inline static bool IsMouseButtonPressed(EMouseButton eBtn)
-	{
-		InputManager* pInputManager = InputManager::GetInstance();
-		if (!pInputManager)
-			return false;
-
-		return pInputManager->_isMouseButtonPressed(eBtn);
-	}
-
-	SDK_PUB inline static bool IsMouseButtonHeld(EMouseButton eBtn)
-	{
-		InputManager* pInputManager = InputManager::GetInstance();
-		if (!pInputManager)
-			return false;
-
-		return pInputManager->_isMouseButtonHeld(eBtn);
-	}
-
-	SDK_PUB inline static std::int32_t GetMouseScrollDelta()
-	{
-		InputManager* pInputManager = InputManager::GetInstance();
-		if (!pInputManager)
-			return false;
-
-		return pInputManager->m_deltaMouseData.m_scroll;
-	}
+	SDK_PUB SMSDK_API static std::int32_t GetMouseScrollDelta();
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[0xC];
 	/* 0x000C */ SDK_PUB std::int32_t m_iCharacterCode;

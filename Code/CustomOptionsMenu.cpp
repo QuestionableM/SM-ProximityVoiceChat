@@ -39,7 +39,7 @@ SM::OptionsMenu* CustomOptionsMenu::h_Constructor(
 	self->m_mapSubMenus["Display"] = std::make_shared<SM::DisplayOptionsMenu>();
 	self->m_mapSubMenus["Graphics"] = std::make_shared<SM::GraphicsOptionsMenu>();
 
-	if (SM::GameState::IsCurrentOrNextGameState(SM::GameState_PlayState))
+	if (SM::GameState::IsCurrentOrNextGameState(SM::EGameStateType::PlayState))
 		self->m_mapSubMenus["ProximityVoiceChat"] = std::make_shared<VoiceChatSettingsTab>();
 
 	self->m_pCurrentTab = self->m_mapSubMenus[self->m_bIsServer ? "Gameplay" : "Controls"];
@@ -51,8 +51,8 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 	SM::GuiSystemManager* v_sys_mgr = SM::GuiSystemManager::GetInstance();
 
 	const MyGUI::IntCoord v_panel_coord(
-		v_sys_mgr->m_iScreenLeft, v_sys_mgr->m_iScreenTop,
-		v_sys_mgr->m_iScreenWidth, v_sys_mgr->m_iScreenHeight);
+		v_sys_mgr->getScreenLeft(), v_sys_mgr->getScreenTop(),
+		v_sys_mgr->getScreenWidth(), v_sys_mgr->getScreenHeight());
 
 	self->m_pMainPanel = MyGUI::Gui::getInstancePtr()->createWidget<MyGUI::Widget>(
 		"PanelEmpty", v_panel_coord, MyGUI::Align::Default, "MainMenu", "OptionsMenu");
@@ -75,10 +75,10 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 			self->m_pMainPanel);
 	}
 
-	const bool v_is_play_state = SM::GameState::IsCurrentOrNextGameState(SM::GameState_PlayState);
+	const bool v_isPlayState = SM::GameState::IsCurrentOrNextGameState(SM::EGameStateType::PlayState);
 
-	//Add custom tabs here
-	if (v_is_play_state)
+	// Add custom tabs here
+	if (v_isPlayState)
 	{
 		MyGUI::Widget* v_gfx_widget = self->m_pMainPanel->findWidget("Graphics");
 		MyGUI::Widget* v_display_widget = self->m_pMainPanel->findWidget("Display");
@@ -116,7 +116,7 @@ void CustomOptionsMenu::h_Initialize(OptionsMenu* self)
 	v_tabButtons.push_back(self->m_pMainPanel->findWidget("Graphics")->castType<MyGUI::Button>());
 
 	//Custom tab
-	if (v_is_play_state)
+	if (v_isPlayState)
 		v_tabButtons.push_back(self->m_pMainPanel->findWidget("ProximityVoiceChat")->castType<MyGUI::Button>());
 
 	for (auto& v_cur_tab : self->m_mapSubMenus)

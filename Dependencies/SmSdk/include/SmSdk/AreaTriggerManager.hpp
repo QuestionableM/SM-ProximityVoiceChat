@@ -14,8 +14,8 @@ SMSDK_BEGIN_NAMESPACE
 
 struct AreaTrigger
 {
-	/* 0x0000 */ SDK_PUB std::int32_t m_iId;
-	/* 0x0004 */ SDK_PUB std::int16_t m_iWorldId;
+	/* 0x0000 */ SDK_PUB std::uint32_t m_uId;
+	/* 0x0004 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x0006 */ SDK_PRI char pad_0x6[0xE];
 	/* 0x0014 */ SDK_PUB std::uint32_t m_uFilter;
 	/* 0x0018 */ SDK_PRI char pad_0x18[0xC];
@@ -33,8 +33,8 @@ struct AreaTrigger
 	/* 0x0170 */ SDK_PRI char pad_0x170[0x8];
 }; // Size: 0x178
 
-static_assert(offsetof(AreaTrigger, AreaTrigger::m_iId) == 0x0, "AreaTrigger::m_iId: Incorrect offset");
-static_assert(offsetof(AreaTrigger, AreaTrigger::m_iWorldId) == 0x4, "AreaTrigger::m_iWorldId: Incorrect offset");
+static_assert(offsetof(AreaTrigger, AreaTrigger::m_uId) == 0x0, "AreaTrigger::m_iId: Incorrect offset");
+static_assert(offsetof(AreaTrigger, AreaTrigger::m_uWorldId) == 0x4, "AreaTrigger::m_iWorldId: Incorrect offset");
 static_assert(offsetof(AreaTrigger, AreaTrigger::m_uFilter) == 0x14, "AreaTrigger::m_uFilter: Incorrect offset");
 static_assert(offsetof(AreaTrigger, AreaTrigger::m_bWaterTrigger) == 0x2C, "AreaTrigger::m_bWaterTrigger: Incorrect offset");
 static_assert(offsetof(AreaTrigger, AreaTrigger::m_pBoxShape) == 0x30, "AreaTrigger::m_pBoxShape: Incorrect offset");
@@ -49,17 +49,14 @@ static_assert(sizeof(AreaTrigger) == 0x178, "AreaTrigger: Incorrect Size");
 
 struct AreaTriggerWorld
 {
-	/* 0x0000 */ uint16_t m_iWorldId;
-private:
-	/* 0x0002 */ char pad_0x2[0x6];
-public:
-	/* 0x0008 */ std::map<int, AreaTrigger*> m_mapAreaTriggers;
-	/* 0x0018 */ std::vector<AreaTrigger*> m_vecAreaTriggerQueue;
-private:
-	/* 0x0030 */ char pad_0x30[0x18];
+	/* 0x0000 */ SDK_PUB std::uint16_t m_uWorldId;
+	/* 0x0002 */ SDK_PRI char pad_0x2[0x6];
+	/* 0x0008 */ SDK_PUB std::map<std::uint32_t, AreaTrigger*> m_mapAreaTriggers;
+	/* 0x0018 */ SDK_PUB std::vector<AreaTrigger*> m_vecAreaTriggerQueue;
+	/* 0x0030 */ SDK_PRI char pad_0x30[0x18];
 }; // Size: 0x48
 
-static_assert(offsetof(AreaTriggerWorld, AreaTriggerWorld::m_iWorldId) == 0x0, "AreaTriggerWorld::m_iWorldId: Incorrect offset");
+static_assert(offsetof(AreaTriggerWorld, AreaTriggerWorld::m_uWorldId) == 0x0, "AreaTriggerWorld::m_iWorldId: Incorrect offset");
 static_assert(offsetof(AreaTriggerWorld, AreaTriggerWorld::m_mapAreaTriggers) == 0x8, "AreaTriggerWorld::m_mapAreaTriggers: Incorrect offset");
 static_assert(offsetof(AreaTriggerWorld, AreaTriggerWorld::m_vecAreaTriggerQueue) == 0x18, "AreaTriggerWorld::m_vecAreaTriggerQueue: Incorrect offset");
 
@@ -68,21 +65,18 @@ static_assert(sizeof(AreaTriggerWorld) == 0x48, "AreaTriggerWorld: Incorrect Siz
 
 struct AreaTriggerManager : public Task
 {
-	static AreaTriggerManager* GetInstance();
+	SDK_PUB SMSDK_API static AreaTriggerManager* GetInstance();
 
-	/* 0x0008 */ Concurrency::event m_event;
-	/* 0x0050 */ uint32_t m_iAreaTriggerIdCounter;
-private:
-	/* 0x0054 */ char pad_0x54[0x4];
-public:
-	/* 0x0058 */ std::unordered_map<uint16_t, AreaTriggerWorld> m_mapAreaTriggerWorlds;
-	/* 0x0098 */ std::vector<AreaTrigger*> m_vecAreaTriggers;
-private:
-	/* 0x00B0 */ char pad_0xB0[0x10];
+	/* 0x0008 */ SDK_PUB Concurrency::event m_event;
+	/* 0x0050 */ SDK_PUB std::uint32_t m_uAreaTriggerIdCounter;
+	/* 0x0054 */ SDK_PRI char pad_0x54[0x4];
+	/* 0x0058 */ SDK_PUB std::unordered_map<std::uint16_t, AreaTriggerWorld> m_mapAreaTriggerWorlds;
+	/* 0x0098 */ SDK_PUB std::vector<AreaTrigger*> m_vecAreaTriggers;
+	/* 0x00B0 */ SDK_PRI char pad_0xB0[0x10];
 }; // Size: 0xC0
 
 static_assert(offsetof(AreaTriggerManager, AreaTriggerManager::m_event) == 0x8, "AreaTriggerManager::m_event: Incorrect offset");
-static_assert(offsetof(AreaTriggerManager, AreaTriggerManager::m_iAreaTriggerIdCounter) == 0x50, "AreaTriggerManager::m_iAreaTriggerIdCounter: Incorrect offset");
+static_assert(offsetof(AreaTriggerManager, AreaTriggerManager::m_uAreaTriggerIdCounter) == 0x50, "AreaTriggerManager::m_iAreaTriggerIdCounter: Incorrect offset");
 static_assert(offsetof(AreaTriggerManager, AreaTriggerManager::m_mapAreaTriggerWorlds) == 0x58, "AreaTriggerManager::m_mapAreaTriggerWorlds: Incorrect offset");
 static_assert(offsetof(AreaTriggerManager, AreaTriggerManager::m_vecAreaTriggers) == 0x98, "AreaTriggerManager::m_vecAreaTriggers: Incorrect offset");
 

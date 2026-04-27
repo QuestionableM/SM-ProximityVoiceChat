@@ -42,7 +42,7 @@ enum PhysicsFilterMask
 
 class Physics
 {
-	SDK_PUB static Physics* GetInstance();
+	SDK_PUB SMSDK_API static Physics* GetInstance();
 
 	/* 0x0000 */ SDK_PUB PhysicsBase* m_pPhysicsBase;
 	/* 0x0008 */ SDK_PUB btNullPairCache* m_pNullPairCache;

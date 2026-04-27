@@ -12,14 +12,14 @@
 
 SMSDK_BEGIN_NAMESPACE
 
-enum EGameStateType : uint32_t
+enum class EGameStateType : std::uint32_t
 {
-	GameState_Null = 0,
-	GameState_LoadState = 1,
-	GameState_PlayState = 2,
-	GameState_MenuState = 3,
-	GameState_TileEditorState = 4,
-	GameState_WorldBuilderState = 5
+	Null              = 0,
+	LoadState         = 1,
+	PlayState         = 2,
+	MenuState         = 3,
+	TileEditorState   = 4,
+	WorldBuilderState = 5
 };
 
 struct GameState : public InputTarget
@@ -27,7 +27,7 @@ struct GameState : public InputTarget
 	SDK_PUB virtual ~GameState() = default;
 	SDK_PRI virtual void func8() { /* implemented by the game */ }
 	SDK_PRI virtual void func9() { /* implemented by the game */ }
-	SDK_PUB virtual void update(float delta_time) { SMSDK_UNREF(delta_time); /* implemented by the game */ }
+	SDK_PUB virtual void update(float deltaTime) { SMSDK_UNREF(deltaTime); /* implemented by the game */ }
 	SDK_PRI virtual void func11() { /* implemented by the game */ }
 	SDK_PRI virtual void func12() { /* implemented by the game */ }
 	SDK_PRI virtual void func13() { /* implemented by the game */ }
@@ -47,10 +47,10 @@ struct GameState : public InputTarget
 	SDK_PUB virtual EGameStateType getNextGameStateType() { /* implemented by the game */ }
 	SDK_PRI virtual void func28() { /* implemented by the game */ }
 
-	SDK_PUB static GameState* GetCurrentState();
-	SDK_PUB static bool IsCurrentGameState(EGameStateType gsType);
-	SDK_PUB static bool IsCurrentOrNextGameState(EGameStateType gsType);
-	SDK_PUB static SteamNetworkClient* GetSteamNetworkClient();
+	SDK_PUB SMSDK_API static GameState* GetCurrentState();
+	SDK_PUB SMSDK_API static bool IsCurrentGameState(const EGameStateType gsType);
+	SDK_PUB SMSDK_API static bool IsCurrentOrNextGameState(const EGameStateType gsType);
+	SDK_PUB SMSDK_API static SteamNetworkClient* GetSteamNetworkClient();
 
 	/* 0x0008 */ SDK_PRI char pad_0x8[0x110];
 }; // Size: 0x118

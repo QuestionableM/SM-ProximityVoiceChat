@@ -13,10 +13,13 @@ class NetObj
 	SDK_PUB virtual char getObjectType() { return 0; }
 	SDK_PUB virtual void updateObject() {}
 
+	SDK_PUB SMSDK_API std::uint32_t getId() const;
+	SDK_PUB SMSDK_API std::uint32_t getRevision() const;
+
 	/* 0x0008 */ SDK_PRI char pad_0x8[0x8];
 	/* 0x0010 */ SDK_PUB std::shared_ptr<NetObj> m_pSelf;
-	/* 0x0020 */ SDK_PUB std::int32_t m_iId;
-	/* 0x0024 */ SDK_PUB std::int32_t m_iRevision;
+	/* 0x0020 */ SDK_PUB std::uint32_t m_uId;
+	/* 0x0024 */ SDK_PUB std::uint32_t m_uRevision;
 }; // Size: 0x28
 
 static_assert(sizeof(NetObj) == 0x28, "NetObj: Incorrect Size");

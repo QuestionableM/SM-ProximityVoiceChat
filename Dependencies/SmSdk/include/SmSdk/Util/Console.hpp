@@ -40,27 +40,26 @@ enum ConsoleLogType : uint32_t
 
 class Console
 {
-public:
-	virtual ~Console();
-	virtual void log(const std::string& msg, WORD wColor, ConsoleLogType eType);
-	virtual bool logNoRepeat(const std::string& msg, WORD wColor, ConsoleLogType eType);
+	SDK_PUB static SMSDK_API Console* GetInstance();
+	
+	SDK_PUB virtual ~Console();
+	SDK_PUB virtual void log(const std::string& msg, const WORD wColor, const ConsoleLogType eType);
+	SDK_PUB virtual bool logNoRepeat(const std::string& msg, const WORD wColor, const ConsoleLogType eType);
 
-	static Console* GetInstance();
-private:
-	template <typename CurArg>
+	SDK_PRI template <typename CurArg>
 	inline void variadicInternal(std::stringstream& ss, const CurArg& curArg)
 	{
 		ss << curArg;
 	}
 
-	template <typename CurArg, typename... Args>
+	SDK_PRI template <typename CurArg, typename... Args>
 	inline void variadicInternal(std::stringstream& ss, const CurArg& curArg, const Args&... argList)
 	{
 		this->variadicInternal(ss, curArg);
 		this->variadicInternal(ss, argList...);
 	}
-public:
-	template <typename... Args>
+
+	SDK_PUB template <typename... Args>
 	inline void logVariadic(WORD wColor, ConsoleLogType eType, const Args&... args)
 	{
 		std::stringstream ss;
@@ -69,7 +68,7 @@ public:
 		this->log(ss.str(), wColor, eType);
 	}
 
-	template <typename... Args>
+	SDK_PUB template <typename... Args>
 	inline void logVariadicNoRepeat(WORD wColor, ConsoleLogType eType, const Args&... args)
 	{
 		std::stringstream ss;
@@ -78,34 +77,20 @@ public:
 		this->logNoRepeat(ss.rdbuf()->str(), wColor, eType);
 	}
 
-	//inline static std::function<void(const char*, const char*, unsigned int)> sm_assertHandler = nullptr;
-public:
-	//inline static std::mutex sm_logMutex = std::mutex();
-	//inline static std::mutex sm_logNoRepeatMutex = std::mutex();
-	//inline static std::unordered_set<uint64_t> sm_messageCache = {};
-private:
-	/* 0x0008 */ std::function<void(const char*, unsigned int)> m_unknownFunction;
-public:
-	/* 0x0048 */ uint32_t m_uConsoleOutMask;
-	/* 0x004C */ uint32_t m_uFileOutputMask;
-	/* 0x0050 */ uint32_t m_uCallbackOutputMask;
-private:
-	/* 0x0054 */ char pad_0x54[0x4];
-public:
-	/* 0x0058 */ HANDLE m_hConsole = NULL;
-	/* 0x0060 */ std::ofstream m_outStream;
-private:
-	/* 0x0168 */ char pad_0x168[0x10];
-public:
-	/* 0x0178 */ bool m_bCodePageSet = false;
-	/* 0x0179 */ bool m_bConsoleAllocated = false;
-private:
-	/* 0x017A */ char pad_0x17A[0x2];
-public:
-	/* 0x017C */ uint32_t m_uWarningCounter = 0;
-	/* 0x0180 */ uint32_t m_uErrorCounter = 0;
-private:
-	/* 0x0184 */ char pad_0x184[0x4];
+	/* 0x0008 */ SDK_PRI std::function<void(const char*, unsigned int)> m_unknownFunction;
+	/* 0x0048 */ SDK_PUB std::uint32_t m_uConsoleOutMask;
+	/* 0x004C */ SDK_PUB std::uint32_t m_uFileOutputMask;
+	/* 0x0050 */ SDK_PUB std::uint32_t m_uCallbackOutputMask;
+	/* 0x0054 */ SDK_PRI char pad_0x54[0x4];
+	/* 0x0058 */ SDK_PUB HANDLE m_hConsole;
+	/* 0x0060 */ SDK_PUB std::ofstream m_outStream;
+	/* 0x0168 */ SDK_PRI char pad_0x168[0x10];
+	/* 0x0178 */ SDK_PUB bool m_bCodePageSet;
+	/* 0x0179 */ SDK_PUB bool m_bConsoleAllocated;
+	/* 0x017A */ SDK_PRI char pad_0x17A[0x2];
+	/* 0x017C */ SDK_PUB std::uint32_t m_uWarningCounter;
+	/* 0x0180 */ SDK_PUB std::uint32_t m_uErrorCounter;
+	/* 0x0184 */ SDK_PRI char pad_0x184[0x4];
 };
 }
 

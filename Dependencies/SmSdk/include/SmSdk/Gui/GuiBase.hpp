@@ -16,15 +16,13 @@ class GuiBase
 	SDK_PUB virtual void open() { /* implemented by the game */ }
 	SDK_PUB virtual void close() { /* implemented by the game */ }
 	SDK_PUB virtual bool isActive()
-#if defined(SMSDK_ENABLE_MYGUI)
 	{
+	#if defined(SMSDK_ENABLE_MYGUI)
 		return m_pMainPanel && m_pMainPanel->getVisible();
-	}
-#else
-	{
+	#else
 		return false;
+	#endif
 	}
-#endif
 
 	SDK_PUB virtual void setFocus(const std::string& widget) { SMSDK_UNREF(widget); /* implemented by the game */ }
 

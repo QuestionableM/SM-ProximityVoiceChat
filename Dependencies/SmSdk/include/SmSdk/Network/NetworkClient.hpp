@@ -12,10 +12,10 @@ class NetworkClient
 {
 	SDK_PUB HSteamNetConnection getConnectionFromSteamId(const std::uint64_t steamId) const
 	{
-		if (m_pNetworkSend == nullptr)
-			return 0;
+		if (m_pNetworkSend)
+			return m_pNetworkSend->getConnectionFromSteamId(steamId);
 
-		return m_pNetworkSend->getConnectionFromSteamId(steamId);
+		return 0;
 	}
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[0x8];

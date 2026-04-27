@@ -13,44 +13,30 @@ SMSDK_BEGIN_NAMESPACE
 
 class GuiSystemManager
 {
-	SDK_PUB static GuiSystemManager* GetInstance();
+	SDK_PUB SMSDK_API static GuiSystemManager* GetInstance();
 
-	SDK_PUB static bool IsMouseVisible()
-	{
-		GuiSystemManager* pGuiSystemManager = GuiSystemManager::GetInstance();
-		if (!pGuiSystemManager)
-			return false;
+	SDK_PUB SMSDK_API static bool IsMouseVisible();
 
-		return pGuiSystemManager->m_bMouseVisible;
-	}
+	SDK_PRI SMSDK_API static int ProcessScroll(
+		const int unknownVal,
+		const int scrollDistance,
+		const int topPos,
+		const int scrollVal,
+		const float itemSize);
+
+	SDK_PUB SMSDK_API std::int32_t getScreenWidth() const;
+	SDK_PUB SMSDK_API std::int32_t getScreenHeight() const;
+	SDK_PUB SMSDK_API std::int32_t getScreenLeft() const;
+	SDK_PUB SMSDK_API std::int32_t getScreenTop() const;
 
 	SDK_PUB float getOptionItemSize() const
 	{
-		return float(m_iScreenHeight) * (1.0f / 720.0f);
+		return float(getScreenHeight()) * (1.0f / 720.0f);
 	}
 
 	SDK_PUB float getOptionItemSize2() const
 	{
-		return float(m_iScreenHeight) * (1.0f / 1080.0f);
-	}
-
-	SDK_PUB static int ProcessScroll(
-	    int unknownVal,
-	    int scrollDistance,
-	    int topPos,
-	    int scrollVal,
-	    float itemSize)
-	{
-		if (unknownVal <= 0)
-			return 0;
-
-		const int vScrollClamped = (scrollVal <= 0)
-		    ? -scrollDistance
-		    : scrollDistance;
-
-		const int vVal = topPos - int(vScrollClamped * -itemSize);
-
-		return std::min(std::max(-unknownVal, vVal), 0);
+		return float(getScreenHeight()) * (1.0f / 1080.0f);
 	}
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[0x18];

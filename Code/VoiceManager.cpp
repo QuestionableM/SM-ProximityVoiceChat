@@ -206,7 +206,7 @@ void VoiceManager::UpdateVoiceRecording()
 		sizeof(m_packetBuffer) - v_voice_buffer_offset,
 		&v_bytes);
 
-	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_iId;
+	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_uId;
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;

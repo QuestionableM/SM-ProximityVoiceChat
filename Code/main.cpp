@@ -8,7 +8,7 @@
 #include "CustomOptionsMenu.hpp"
 #include "VoiceManager.hpp"
 
-#include "SmSdk/TimestampCheck.hpp"
+#include "SmSdk/SmSdk.hpp"
 #include <steam/steam_api.h>
 #include <fmod/fmod.hpp>
 #include <lz4/lz4.h>
@@ -37,6 +37,7 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 
 	PlayerVoiceManager::Update();
 	VoiceManager::UpdateVoiceRecording();
+
 	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);
 }
 

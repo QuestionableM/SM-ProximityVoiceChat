@@ -9,11 +9,10 @@
 #include "Utils/Console.hpp"
 
 VoiceChatSettingsTab::VoiceChatSettingsTab()
-	: OptionsSubMenuBase(),
-	m_registeredVoices(),
-	m_pEmptyListText(nullptr)
-{
-}
+	: OptionsSubMenuBase()
+	, m_registeredVoices()
+	, m_pEmptyListText(nullptr)
+{}
 
 void VoiceChatSettingsTab::initialize(MyGUI::Widget* parent)
 {
@@ -107,7 +106,7 @@ void VoiceChatSettingsTab::onUpdate()
 
 		MyGUI::Widget* v_new_widget = v_stack_box.createNewOption();
 		auto v_new_slider = std::make_shared<PlayerVoiceSlider>(
-			v_new_widget, v_voice_owner->m_name, v_voice_owner->m_iId);
+			v_new_widget, v_voice_owner->m_name, v_voice_owner->m_uId);
 
 		m_vecOptionItems.push_back(std::move(v_new_slider));
 		v_voice_count++;

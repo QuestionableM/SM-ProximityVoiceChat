@@ -38,15 +38,15 @@ public:
 class PlayerVoiceManager
 {
 public:
-	static PlayerVoice* GetVoice(int player_id);
-	static bool PlayerHasVoice(int player_id);
+	static PlayerVoice* GetVoice(const std::uint32_t playerId);
+	static bool PlayerHasVoice(const std::uint32_t playerId);
 	static void Update();
 
 private:
-	static void UpdatePlayerSound(SM::Player* player, float master_volume);
+	static void UpdatePlayerSound(SM::Player* player, const float masterVolume);
 	static void UpdatePlayerSounds();
 	static void RemoveDeadVoices();
 
 public:
-	static std::unordered_map<int, std::shared_ptr<PlayerVoice>> sm_playerVoices;
+	static std::unordered_map<std::uint32_t, std::shared_ptr<PlayerVoice>> sm_playerVoices;
 };

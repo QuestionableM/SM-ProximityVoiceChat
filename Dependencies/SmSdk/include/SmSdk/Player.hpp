@@ -56,9 +56,9 @@ class Player
 	SDK_PUB bool characterExists() const;
 
 	/* 0x0000 */ SDK_PUB std::shared_ptr<Player> m_pSelf;
-	/* 0x0010 */ SDK_PUB std::int32_t m_iId;
-	/* 0x0014 */ SDK_PUB std::int32_t m_iCharacterId;
-	/* 0x0018 */ SDK_PUB std::int16_t m_worldId;
+	/* 0x0010 */ SDK_PUB std::uint32_t m_uId;
+	/* 0x0014 */ SDK_PUB std::uint32_t m_uCharacterId;
+	/* 0x0018 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x001A */ SDK_PRI char pad_0x1A[0x2];
 	/* 0x001C */ SDK_PUB DirectX::XMFLOAT3 m_characterPosition;
 	/* 0x0028 */ SDK_PUB DirectX::XMFLOAT3 m_characterVelocity;
