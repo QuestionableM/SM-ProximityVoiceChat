@@ -15,7 +15,7 @@ class PlayerVoice
 public:
 	static FMOD_RESULT F_CALL pcm_callback(FMOD_SOUND* sound, void* data, unsigned int datalen);
 	
-	PlayerVoice(std::uint64_t steam_id, int player_id);
+	PlayerVoice(const std::uint64_t steamId, const std::uint32_t playerId);
 	~PlayerVoice();
 	
 	void push_voice(char* buffer, std::size_t buffer_size);
@@ -28,7 +28,7 @@ public:
 	FMOD::Channel* m_pChannel;
 
 	std::uint64_t m_steamId;
-	int m_playerId;
+	std::uint32_t m_playerId;
 	float m_fVolume;
 
 	std::mutex m_voiceMutex;

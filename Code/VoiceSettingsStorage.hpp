@@ -12,9 +12,9 @@ public:
 	static void LoadConfig();
 	static void SaveConfig();
 
-	static void Update(float dt);
-	static float GetPlayerVolume(std::uint64_t steam_id);
-	static void StorePlayerVolume(std::uint64_t steam_id, float new_volume);
+	static void Update(const float dt);
+	static float GetPlayerVolume(const std::uint64_t steamId);
+	static void StorePlayerVolume(const std::uint64_t steamId, const float fNewVolume);
 
 private:
 	static VoiceMap sm_steamIdToVolume;

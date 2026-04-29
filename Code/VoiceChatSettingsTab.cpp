@@ -1,6 +1,5 @@
 #include "VoiceChatSettingsTab.hpp"
 
-#include <SmSdk/Gui/OptionsItemSlider.hpp>
 #include <SmSdk/PlayerManager.hpp>
 
 #include "VoiceSettingsStorage.hpp"

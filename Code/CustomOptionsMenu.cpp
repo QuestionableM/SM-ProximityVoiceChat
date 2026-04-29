@@ -18,7 +18,6 @@
 CustomOptionsMenu::fConstructor CustomOptionsMenu::o_Constructor = nullptr;
 CustomOptionsMenu::fInitialize CustomOptionsMenu::o_Initialize = nullptr;
 
-
 SM::OptionsMenu* CustomOptionsMenu::h_Constructor(
 	OptionsMenu* self,
 	SM::MainMenuRootGui* root_gui,
@@ -32,15 +31,15 @@ SM::OptionsMenu* CustomOptionsMenu::h_Constructor(
 	self->m_bIsServer = is_server;
 
 	if (self->m_bIsServer)
-		self->m_mapSubMenus["Gameplay"] = std::make_shared<SM::GameplayOptionsMenu>();
+		self->addSubMenu("Gameplay", SM::GameplayOptionsMenu::New());
 
-	self->m_mapSubMenus["Controls"] = std::make_shared<SM::ControlOptionsMenu>();
-	self->m_mapSubMenus["Audio"] = std::make_shared<SM::AudioOptionsMenu>();
-	self->m_mapSubMenus["Display"] = std::make_shared<SM::DisplayOptionsMenu>();
-	self->m_mapSubMenus["Graphics"] = std::make_shared<SM::GraphicsOptionsMenu>();
+	self->addSubMenu("Controls", SM::ControlOptionsMenu::New());
+	self->addSubMenu("Audio", SM::AudioOptionsMenu::New());
+	self->addSubMenu("Display", SM::DisplayOptionsMenu::New());
+	self->addSubMenu("Graphics", SM::GraphicsOptionsMenu::New());
 
 	if (SM::GameState::IsCurrentOrNextGameState(SM::EGameStateType::PlayState))
-		self->m_mapSubMenus["ProximityVoiceChat"] = std::make_shared<VoiceChatSettingsTab>();
+		self->addSubMenu("ProximityVoiceChat", new VoiceChatSettingsTab());
 
 	self->m_pCurrentTab = self->m_mapSubMenus[self->m_bIsServer ? "Gameplay" : "Controls"];
 	return self;

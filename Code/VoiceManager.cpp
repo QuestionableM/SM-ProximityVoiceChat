@@ -158,15 +158,18 @@ void VoiceManager::StopVoiceRecording()
 	}
 }
 
-static bool get_recording_pointers(SM::SteamNetworkClient** client, SM::Player** player)
+static bool GetRecordingPointers(SM::SteamNetworkClient** ppClient, SM::Player** ppPlayer)
 {
-	*client = SM::GameState::GetSteamNetworkClient();
-	if (!(*client)) return false;
+	(*ppClient) = SM::GameState::GetSteamNetworkClient();
+	if (!(*ppClient)) return false;
 
-	SM::MyPlayer* v_local_pl = SM::MyPlayer::GetInstance();
-	if (!v_local_pl || !v_local_pl->m_player) return false;
+	SM::MyPlayer* v_pMyPlayer = SM::MyPlayer::GetInstance();
+	if (!v_pMyPlayer) return false;
 
-	*player = v_local_pl->m_player.get();
+	SM::Player* v_pSelfPlayer = v_pMyPlayer->getPlayer();
+	if (!v_pSelfPlayer) return false;
+
+	(*ppPlayer) = v_pSelfPlayer;
 	return true;
 }
 
@@ -177,7 +180,7 @@ void VoiceManager::UpdateVoiceRecording()
 	SM::SteamNetworkClient* v_network;
 	SM::Player* v_player;
 
-	if (!get_recording_pointers(&v_network, &v_player)
+	if (!GetRecordingPointers(&v_network, &v_player)
 		|| !v_player->characterExists()
 		|| SM::GuiSystemManager::IsMouseVisible())
 	{

@@ -56,7 +56,7 @@ void VoiceSettingsStorage::SaveConfig()
 	}
 }
 
-void VoiceSettingsStorage::Update(float dt)
+void VoiceSettingsStorage::Update(const float dt)
 {
 	VoiceSettingsStorage::LoadConfig();
 
@@ -69,22 +69,22 @@ void VoiceSettingsStorage::Update(float dt)
 	}
 }
 
-float VoiceSettingsStorage::GetPlayerVolume(std::uint64_t steam_id)
+float VoiceSettingsStorage::GetPlayerVolume(const std::uint64_t steamId)
 {
-	auto v_iter = sm_steamIdToVolume.find(steam_id);
+	auto v_iter = sm_steamIdToVolume.find(steamId);
 	if (v_iter != sm_steamIdToVolume.end())
 		return v_iter->second;
 
 	return 1.0f;
 }
 
-void VoiceSettingsStorage::StorePlayerVolume(std::uint64_t steam_id, float new_volume)
+void VoiceSettingsStorage::StorePlayerVolume(const std::uint64_t steamId, const float fNewVolume)
 {
-	auto v_iter = sm_steamIdToVolume.find(steam_id);
+	auto v_iter = sm_steamIdToVolume.find(steamId);
 	if (v_iter != sm_steamIdToVolume.end())
-		v_iter->second = new_volume;
+		v_iter->second = fNewVolume;
 	else
-		sm_steamIdToVolume.emplace(steam_id, new_volume);
+		sm_steamIdToVolume.emplace(steamId, fNewVolume);
 
 	sm_fConfigSaveTimer = 5.0f;
 }

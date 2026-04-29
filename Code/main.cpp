@@ -79,8 +79,18 @@ static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFram
 #	define PVC_PERFRAME_UPDATE 0x6D3D10
 #endif
 
-static void process_attach(HMODULE hMod)
+static bool ProcessAttach(HMODULE hMod)
 {
+	if (!SmSdk::IsLoaded())
+	{
+		MessageBoxA(
+			NULL,
+			"SmSdk.dll is required for Proximity Voice Chat to work. Refer to the README page of Proximity Voice Chat and download SmSdk.dll\n\nPress OK to continue loading without the mod.",
+			"SmSdk Not Found",
+			MB_ICONWARNING | MB_OK);
+		return false;
+	}
+
 	if (!SmSdk::CheckTimestamp(_SM_TIMESTAMP_074_778))
 	{
 		MessageBoxA(
@@ -88,7 +98,7 @@ static void process_attach(HMODULE hMod)
 			"Your game version is not supported by Proximity Voice Chat. The current version of the mod has been built for Scrap Mechanic 0.7.4.778\n\nPress OK to continue loading without the mod.",
 			"Unsupported Version",
 			MB_ICONWARNING);
-		return;
+		return false;
 	}
 
 	DllGlobals::SelfModule = hMod;
@@ -98,22 +108,23 @@ static void process_attach(HMODULE hMod)
 	if (MH_Initialize() != MH_OK)
 	{
 		DebugErrorL("Couldn't initialize minHook");
-		return;
+		return false;
 	}
 
 	ms_mhInitialized = true;
 
 	const std::uintptr_t v_mod_base = std::uintptr_t(GetModuleHandle(NULL));
-	if (EASY_CLASS_HOOK(PVC_CLIENT_PACKET_HANDLER, VoiceManager, clientPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(PVC_SERVER_PACKET_HANDLER, VoiceManager, serverPacketHandler) != MH_OK) return;
-	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR, CustomOptionsMenu, Constructor) != MH_OK) return;
-	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_INITIALIZE, CustomOptionsMenu, Initialize) != MH_OK) return;
-	if (EASY_HOOK(PVC_PERFRAME_UPDATE, perframeUpdate) != MH_OK) return;
+	if (EASY_CLASS_HOOK(PVC_CLIENT_PACKET_HANDLER, VoiceManager, clientPacketHandler) != MH_OK) return false;
+	if (EASY_CLASS_HOOK(PVC_SERVER_PACKET_HANDLER, VoiceManager, serverPacketHandler) != MH_OK) return false;
+	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR, CustomOptionsMenu, Constructor) != MH_OK) return false;
+	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_INITIALIZE, CustomOptionsMenu, Initialize) != MH_OK) return false;
+	if (EASY_HOOK(PVC_PERFRAME_UPDATE, perframeUpdate) != MH_OK) return false;
 
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;
+	return true;
 }
 
-static void process_detach(HMODULE hmod)
+static void ProcessDetach(HMODULE hmod)
 {
 	if (ms_mhInitialized)
 	{
@@ -134,10 +145,10 @@ BOOL APIENTRY DllMain(
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		process_attach(hModule);
+		if (!ProcessAttach(hModule)) return FALSE;
 		break;
 	case DLL_PROCESS_DETACH:
-		process_detach(hModule);
+		ProcessDetach(hModule);
 		break;
 	}
 
