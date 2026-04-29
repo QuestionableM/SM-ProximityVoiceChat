@@ -60,7 +60,7 @@ static_assert(sizeof(Container2) == 0xF0, "Container2: Incorrect Size");
 
 struct ContainerManager
 {
-	SDK_PUB static ContainerManager* GetInstance();
+	SDK_PUB SMSDK_API static ContainerManager* GetInstance();
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[0x28];
 	/* 0x0028 */ SDK_PUB bool m_bOngoingTransaction;

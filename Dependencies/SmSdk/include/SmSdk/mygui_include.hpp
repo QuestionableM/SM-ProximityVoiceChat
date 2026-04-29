@@ -3,7 +3,7 @@
 #include "SmSdk/unreferenced_params.hpp"
 #include "SmSdk/config.hpp"
 
-#if defined(SMSDK_ENABLE_MYGUI)
+#if defined(SMSDK_ENABLE_MYGUI) || defined(SMSDK_BUILD_DLL)
 #include "MyGUI.h"
 #define DEFAULT_IMPL(...)
 #define DEFAULT_IMPL_UNREF(...)

@@ -17,13 +17,6 @@ class GuiSystemManager
 
 	SDK_PUB SMSDK_API static bool IsMouseVisible();
 
-	SDK_PRI SMSDK_API static int ProcessScroll(
-		const int unknownVal,
-		const int scrollDistance,
-		const int topPos,
-		const int scrollVal,
-		const float itemSize);
-
 	SDK_PUB SMSDK_API std::int32_t getScreenWidth() const;
 	SDK_PUB SMSDK_API std::int32_t getScreenHeight() const;
 	SDK_PUB SMSDK_API std::int32_t getScreenLeft() const;
@@ -37,6 +30,26 @@ class GuiSystemManager
 	SDK_PUB float getOptionItemSize2() const
 	{
 		return float(getScreenHeight()) * (1.0f / 1080.0f);
+	}
+
+	// Helper function
+	SDK_PUB static int ProcessScroll(
+		const int unknownVal,
+		const int scrollDistance,
+		const int topPos,
+		const int scrollVal,
+		const float itemSize)
+	{
+		if (unknownVal <= 0)
+			return 0;
+
+		const int vScrollClamped = (scrollVal <= 0)
+			? -scrollDistance
+			: scrollDistance;
+
+		const int vVal = topPos - int(vScrollClamped * -itemSize);
+
+		return std::min(std::max(-unknownVal, vVal), 0);
 	}
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[0x18];

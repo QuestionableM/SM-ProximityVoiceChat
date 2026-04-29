@@ -2,7 +2,7 @@
 
 #include "SmSdk/config.hpp"
 
-#if defined(SMSDK_ENABLE_PHYSICS)
+#if defined(SMSDK_ENABLE_PHYSICS) || defined(SMSDK_BUILD_DLL)
 #include <BulletCollision/BroadphaseCollision/btOverlappingPairCache.h>
 #include <BulletDynamics/ConstraintSolver/btHingeConstraint.h>
 #include <BulletCollision/CollisionShapes/btCompoundShape.h>

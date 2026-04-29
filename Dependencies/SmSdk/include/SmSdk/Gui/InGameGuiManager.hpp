@@ -11,13 +11,12 @@ SMSDK_BEGIN_NAMESPACE
 class InGameGuiManager : public InGameGuiManagerInterface
 {
 	REMOVE_COPY_CONSTRUCTORS(InGameGuiManager);
-
-	SDK_PUB SMSDK_API static InGameGuiManager* GetInstance()
-	;
 	SDK_PUB virtual ~InGameGuiManager() = default;
 
-	SDK_PUB SMSDK_API void _displayAlertText(const std::string_view& text, const float duration = 4.0f);
-	SDK_PUB SMSDK_API void _setInteractionText(const std::vector<std::string>& vec);
+	SDK_PUB SMSDK_API static InGameGuiManager* GetInstance();
+
+	SDK_PUB SMSDK_API void displayAlertText(const std::string_view& text, const float duration = 4.0f);
+	SDK_PUB SMSDK_API void setInteractionText(const std::vector<std::string>& vec);
 
 	SDK_PUB SMSDK_API static void DisplayAlertText(const std::string_view& text, const float duration = 4.0f);
 	SDK_PUB SMSDK_API static void SetInteractionText(const std::vector<std::string>& vec);

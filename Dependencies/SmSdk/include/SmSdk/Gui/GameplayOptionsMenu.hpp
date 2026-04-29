@@ -7,14 +7,8 @@ SMSDK_BEGIN_NAMESPACE
 
 class GameplayOptionsMenu : public OptionsSubMenuBase
 {
-	SDK_PUB GameplayOptionsMenu()
-	{
-		OptionsSubMenuBase::GameConstructor(this);
-#if _SM_VERSION_NUM >= 070771
-		std::memset(this->m_someData, 0, sizeof(this->m_someData));
-#endif
-		Memory::OverwriteVftable(this, SM_VTBL_GAMEPLAY_OPTIONS_MENU_OFFSET);
-	}
+	SDK_PUB SMSDK_API static GameplayOptionsMenu* New();
+	SDK_PRI SMSDK_API GameplayOptionsMenu();
 
 	SDK_PUB virtual ~GameplayOptionsMenu() = default;
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }

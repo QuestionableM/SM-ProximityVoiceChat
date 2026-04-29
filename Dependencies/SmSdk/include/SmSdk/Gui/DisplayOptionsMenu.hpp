@@ -9,11 +9,8 @@ SMSDK_BEGIN_NAMESPACE
 
 class DisplayOptionsMenu : public OptionsSubMenuBase
 {
-	SDK_PUB DisplayOptionsMenu()
-	{
-		using fSelfConstructor = void (*)(DisplayOptionsMenu*);
-		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_DISPLAY_OPTIONS_MENU_OFFSET)(this);
-	}
+	SDK_PUB SMSDK_API static DisplayOptionsMenu* New();
+	SDK_PRI SMSDK_API DisplayOptionsMenu();
 
 	SDK_PUB virtual ~DisplayOptionsMenu() = default;
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }

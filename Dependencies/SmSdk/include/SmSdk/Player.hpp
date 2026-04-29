@@ -52,8 +52,13 @@ class Character;
 
 class Player
 {
-	SDK_PUB Character* getCharacter() const;
-	SDK_PUB bool characterExists() const;
+	SDK_PUB SMSDK_API std::uint64_t getSteamId() const;
+	SDK_PUB SMSDK_API std::uint32_t getId() const;
+	SDK_PUB SMSDK_API std::uint32_t getCharacterId() const;
+	SDK_PUB SMSDK_API std::uint16_t getWorldId() const;
+
+	SDK_PUB SMSDK_API Character* getCharacter() const;
+	SDK_PUB SMSDK_API bool characterExists() const;
 
 	/* 0x0000 */ SDK_PUB std::shared_ptr<Player> m_pSelf;
 	/* 0x0010 */ SDK_PUB std::uint32_t m_uId;
@@ -65,11 +70,11 @@ class Player
 	/* 0x0034 */ SDK_PUB float m_fCharacterYaw;
 	/* 0x0038 */ SDK_PUB float m_fCharacterPitch;
 	/* 0x003C */ SDK_PRI char pad_0x3C[0x4];
-	/* 0x0040 */ SDK_PUB std::int64_t m_steamId;
+	/* 0x0040 */ SDK_PUB std::uint64_t m_uSteamId;
 	/* 0x0048 */ SDK_PUB std::string m_name;
 	/* 0x0068 */ SDK_PRI char pad_0x68[0x4];
 	/* 0x006C */ SDK_PUB PlayerGarments m_garments;
-	/* 0x0124 */ SDK_PUB std::int32_t m_iGarmentChangeCounter;
+	/* 0x0124 */ SDK_PUB std::uint32_t m_uGarmentChangeCounter;
 	/* 0x0128 */ SDK_PRI char pad_0x128[0x10];
 	/* 0x0138 */ SDK_PUB std::int32_t m_scriptRef;
 	/* 0x013C */ SDK_PUB PlayerScriptData m_scriptData;

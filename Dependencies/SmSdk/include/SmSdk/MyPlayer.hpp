@@ -61,6 +61,7 @@ class MyPlayer : public InputTarget, public Viewer
 	SDK_PUB SMSDK_API static MyPlayer* GetInstance();
 
 	SDK_PUB SMSDK_API Character* getCharacter() const;
+	SDK_PUB SMSDK_API Player* getPlayer() const;
 
 	/* 0x0070 */ SDK_PUB std::shared_ptr<Player> m_player;
 	/* 0x0080 */ SDK_PUB std::int8_t m_controlCharacterSum;

@@ -95,21 +95,18 @@ static_assert(sizeof(CharacterController) == 0x1A0, "CharacterController: Incorr
 #if _SM_VERSION_NUM >= 070771
 struct CharacterControllerData
 {
-	/* 0x0000 */ float m_fWalkSpeed;
-	/* 0x0004 */ float m_fAimSpeed;
-	/* 0x0008 */ float m_fCrouchSpeed;
-	/* 0x000C */ float m_fSprintSpeed;
-	/* 0x0010 */ float m_fJumpStrength;
-	/* 0x0014 */ float m_fRadius;
-	/* 0x0018 */ float m_fHeight;
-	/* 0x001C */ float m_fHeightCrouch;
-	/* 0x0020 */ float m_fMass;
-private:
-	/* 0x0024 */ char pad_0x24[0xC];
-public:
-	/* 0x0030 */ bool m_bCanSwim;
-private:
-	/* 0x0031 */ char pad_0x31[0x3];
+	/* 0x0000 */ SDK_PUB float m_fWalkSpeed;
+	/* 0x0004 */ SDK_PUB float m_fAimSpeed;
+	/* 0x0008 */ SDK_PUB float m_fCrouchSpeed;
+	/* 0x000C */ SDK_PUB float m_fSprintSpeed;
+	/* 0x0010 */ SDK_PUB float m_fJumpStrength;
+	/* 0x0014 */ SDK_PUB float m_fRadius;
+	/* 0x0018 */ SDK_PUB float m_fHeight;
+	/* 0x001C */ SDK_PUB float m_fHeightCrouch;
+	/* 0x0020 */ SDK_PUB float m_fMass;
+	/* 0x0024 */ SDK_PRI char pad_0x24[0xC];
+	/* 0x0030 */ SDK_PUB bool m_bCanSwim;
+	/* 0x0031 */ SDK_PRI char pad_0x31[0x3];
 }; // Size: 0x34
 
 static_assert(sizeof(CharacterControllerData) == 0x34, "CharacterControllerData: Incorrect Size");
@@ -120,16 +117,32 @@ enum ECharacterMovementState : std::int8_t
 	ECharacterMovementState_Crouching = 2,
 	ECharacterMovementState_Sitting = 3
 };
+#endif
 
 class Character : public NetObj
 {
+	SDK_PUB SMSDK_API std::uint16_t getWorldId() const;
+	SDK_PUB SMSDK_API std::uint64_t getOwnerSteamId() const;
+	SDK_PUB SMSDK_API std::uint32_t getUnitId() const;
+	SDK_PUB SMSDK_API boost::uuids::uuid getUuid() const;
+	SDK_PUB SMSDK_API boost::uuids::uuid getSelectedToolUuid() const;
+	SDK_PUB SMSDK_API DirectX::XMFLOAT4 getColor() const;
+	SDK_PUB SMSDK_API std::string_view getNameTag() const;
+
+	SDK_PUB SMSDK_API DirectX::XMFLOAT3 getPosition() const;
+	SDK_PUB SMSDK_API DirectX::XMFLOAT3 getVelocity() const;
+
+	SDK_PUB SMSDK_API float getPitch() const;
+	SDK_PUB SMSDK_API float getYaw() const;
+
+#if _SM_VERSION_NUM >= 070771
 	/* 0x0028 */ SDK_PRI char pad_0x28[0x8];
-	/* 0x0030 */ SDK_PUB std::int16_t m_iWorldId;
+	/* 0x0030 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x0032 */ SDK_PRI char pad_0x32[0x6];
-	/* 0x0038 */ SDK_PUB std::int64_t m_iOwnerSteamId;
+	/* 0x0038 */ SDK_PUB std::uint64_t m_uOwnerSteamId;
 	/* 0x0040 */ SDK_PUB bool m_bIsPlayer;
 	/* 0x0041 */ SDK_PRI char pad_0x41[0x3];
-	/* 0x0044 */ SDK_PUB std::int32_t m_iUnitId;
+	/* 0x0044 */ SDK_PUB std::uint32_t m_uUnitId;
 	/* 0x0048 */ SDK_PUB boost::uuids::uuid m_uuid;
 	/* 0x0058 */ SDK_PUB bool m_bDowned;
 	/* 0x0059 */ SDK_PUB bool m_bSwimming;
@@ -195,72 +208,14 @@ class Character : public NetObj
 	/* 0x0DD4 */ SDK_PUB float m_fNameTagFadeDistance;
 	/* 0x0DD8 */ SDK_PUB float m_fNameTagRenderDistance;
 	/* 0x0DDC */ SDK_PUB std::int32_t m_iNameTagUpdateCounter;
-}; // Size: 0xDE0
-
-static_assert(offsetof(Character, Character::m_iWorldId) == 0x30, "Character::m_iWorldId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iOwnerSteamId) == 0x38, "Character::m_iOwnerSteamId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bIsPlayer) == 0x40, "Character::m_bIsPlayer: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iUnitId) == 0x44, "Character::m_iUnitId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_uuid) == 0x48, "Character::m_uuid: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bDowned) == 0x58, "Character::m_bDowned: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bSwimming) == 0x59, "Character::m_bSwimming: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bDiving) == 0x5A, "Character::m_bDiving: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bClimbing) == 0x5C, "Character::m_bClimbing: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bTumbling) == 0x5D, "Character::m_bTumbling: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fMovementSpeedFraction) == 0x60, "Character::m_fMovementSpeedFraction: Incorrect offset");
-static_assert(offsetof(Character, Character::m_vecAnimations) == 0x68, "Character::m_vecAnimations: Incorrect offset");
-static_assert(offsetof(Character, Character::m_spawnPosition) == 0x80, "Character::m_spawnPosition: Incorrect offset");
-static_assert(offsetof(Character, Character::m_position) == 0xA8, "Character::m_position: Incorrect offset");
-static_assert(offsetof(Character, Character::m_velocityDirection) == 0xB4, "Character::m_velocityDirection: Incorrect offset");
-static_assert(offsetof(Character, Character::m_velocity) == 0xC0, "Character::m_velocity: Incorrect offset");
-static_assert(offsetof(Character, Character::m_acceleration) == 0xCC, "Character::m_acceleration: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fWalkYaw) == 0x108, "Character::m_fWalkYaw: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fYaw) == 0x10C, "Character::m_fYaw: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fPitch) == 0x110, "Character::m_fPitch: Incorrect offset");
-static_assert(offsetof(Character, Character::m_upDirection) == 0x8A4, "Character::m_upDirection: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iNextLockingInteractableId) == 0x8B8, "Character::m_iNextLockingInteractableId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iLockingInteractableId) == 0x8BC, "Character::m_iLockingInteractableId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bIsOnGround) == 0x8D8, "Character::m_bIsOnGround: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fAirTime) == 0x8DC, "Character::m_fAirTime: Incorrect offset");
-static_assert(offsetof(Character, Character::m_groundNormal) == 0x8E0, "Character::m_groundNormal: Incorrect offset");
-static_assert(offsetof(Character, Character::m_selectedToolUuid) == 0x8F8, "Character::m_selectedToolUuid: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iSelectedToolId) == 0x908, "Character::m_selectedToolId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_prevSelectedToolUuid) == 0x90C, "Character::m_prevSelectedToolUuid: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iPrevSelectedToolId) == 0x91C, "Character::m_iPrevSelectedToolId: Incorrect offset");
-static_assert(offsetof(Character, Character::m_charMovementState) == 0x922, "Character::m_charMovementState: Incorrect offset");
-static_assert(offsetof(Character, Character::m_pController) == 0xB48, "Character::m_pController: Incorrect offset");
-static_assert(offsetof(Character, Character::m_pPhysicsProxy) == 0xB58, "Character::m_pPhysicsProxy: Incorrect offset");
-static_assert(offsetof(Character, Character::m_pRagdollPhysicsProxy) == 0xB68, "Character::m_pRagdollPhysicsProxy: Incorrect offset");
-static_assert(offsetof(Character, Character::m_controllerData) == 0xC24, "Character::m_controllerData: Incorrect offset");
-static_assert(offsetof(Character, Character::m_scriptData) == 0xC58, "Character::m_scriptData: Incorrect offset");
-static_assert(offsetof(Character, Character::m_bCanSwim) == 0xC60, "Character::m_bCanSwim: Incorrect offset");
-static_assert(offsetof(Character, Character::m_scriptPath) == 0xC70, "Character::m_scriptPath: Incorrect offset");
-static_assert(offsetof(Character, Character::m_scriptClass) == 0xC90, "Character::m_scriptClass: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iScriptRef) == 0xCB0, "Character::m_iScriptRef: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iPublicDataScriptRef) == 0xCB4, "Character::m_iPublicDataScriptRef: Incorrect offset");
-static_assert(offsetof(Character, Character::m_color) == 0xD40, "Character::m_color: Incorrect offset");
-static_assert(offsetof(Character, Character::m_tumblingExtent) == 0xD50, "Character::m_tumblingExtent: Incorrect offset");
-static_assert(offsetof(Character, Character::m_tumblingWorldPosition) == 0xD5C, "Character::m_tumblingWorldPosition: Incorrect offset");
-static_assert(offsetof(Character, Character::m_tumblingWorldRotation) == 0xD68, "Character::m_tumblingWorldRotation: Incorrect offset");
-static_assert(offsetof(Character, Character::m_tumblingLinearVelocity) == 0xD78, "Character::m_tumblingLinearVelocity: Incorrect offset");
-static_assert(offsetof(Character, Character::m_nameTag) == 0xDA0, "Character::m_nameTag: Incorrect offset");
-static_assert(offsetof(Character, Character::m_nameTagRequiresLineOfSight) == 0xDC0, "Character::m_nameTagRequiresLineOfSight: Incorrect offset");
-static_assert(offsetof(Character, Character::m_nameTagColor) == 0xDC4, "Character::m_nameTagColor: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fNameTagFadeDistance) == 0xDD4, "Character::m_nameTagFadeDistance: Incorrect offset");
-static_assert(offsetof(Character, Character::m_fNameTagRenderDistance) == 0xDD8, "Character::m_nameTagRenderDistance: Incorrect offset");
-static_assert(offsetof(Character, Character::m_iNameTagUpdateCounter) == 0xDDC, "Character::m_iNameTagUpdateCounter: Incorrect offset");
-
-static_assert(sizeof(Character) == 0xDE0, "Character: Incorrect Size");
 #else
-class Character : public NetObj
-{
 	/* 0x0028 */ SDK_PRI char pad_0x28[0x8];
-	/* 0x0030 */ SDK_PUB std::int16_t m_iWorldId;
+	/* 0x0030 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x0032 */ SDK_PRI char pad_0x32[0x6];
-	/* 0x0038 */ SDK_PUB std::int64_t m_iOwnerSteamId;
+	/* 0x0038 */ SDK_PUB std::uint64_t m_uOwnerSteamId;
 	/* 0x0040 */ SDK_PUB bool m_bIsPlayer;
 	/* 0x0041 */ SDK_PRI char pad_0x41[0x3];
-	/* 0x0044 */ SDK_PUB std::int32_t m_iUnitId;
+	/* 0x0044 */ SDK_PUB std::uint32_t m_uUnitId;
 	/* 0x0048 */ SDK_PUB boost::uuids::uuid m_uuid;
 	/* 0x0058 */ SDK_PUB bool m_bIsDowned;
 	/* 0x0059 */ SDK_PUB bool m_bIsSwimming;
@@ -337,8 +292,65 @@ class Character : public NetObj
 	/* 0x03A4 */ SDK_PUB float m_fNameTagFadeDistance;
 	/* 0x03A8 */ SDK_PUB float m_fNameTagRenderDistance;
 	/* 0x03AC */ SDK_PUB std::int32_t m_iNameTagUpdateCounter;
-}; // Size: 0x3B0
+#endif
+}; // Size: 0xDE0
 
+#if _SM_VERSION_NUM >= 070771
+static_assert(offsetof(Character, Character::m_uWorldId) == 0x30, "Character::m_iWorldId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_uOwnerSteamId) == 0x38, "Character::m_iOwnerSteamId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bIsPlayer) == 0x40, "Character::m_bIsPlayer: Incorrect offset");
+static_assert(offsetof(Character, Character::m_uUnitId) == 0x44, "Character::m_iUnitId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_uuid) == 0x48, "Character::m_uuid: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bDowned) == 0x58, "Character::m_bDowned: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bSwimming) == 0x59, "Character::m_bSwimming: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bDiving) == 0x5A, "Character::m_bDiving: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bClimbing) == 0x5C, "Character::m_bClimbing: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bTumbling) == 0x5D, "Character::m_bTumbling: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fMovementSpeedFraction) == 0x60, "Character::m_fMovementSpeedFraction: Incorrect offset");
+static_assert(offsetof(Character, Character::m_vecAnimations) == 0x68, "Character::m_vecAnimations: Incorrect offset");
+static_assert(offsetof(Character, Character::m_spawnPosition) == 0x80, "Character::m_spawnPosition: Incorrect offset");
+static_assert(offsetof(Character, Character::m_position) == 0xA8, "Character::m_position: Incorrect offset");
+static_assert(offsetof(Character, Character::m_velocityDirection) == 0xB4, "Character::m_velocityDirection: Incorrect offset");
+static_assert(offsetof(Character, Character::m_velocity) == 0xC0, "Character::m_velocity: Incorrect offset");
+static_assert(offsetof(Character, Character::m_acceleration) == 0xCC, "Character::m_acceleration: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fWalkYaw) == 0x108, "Character::m_fWalkYaw: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fYaw) == 0x10C, "Character::m_fYaw: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fPitch) == 0x110, "Character::m_fPitch: Incorrect offset");
+static_assert(offsetof(Character, Character::m_upDirection) == 0x8A4, "Character::m_upDirection: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iNextLockingInteractableId) == 0x8B8, "Character::m_iNextLockingInteractableId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iLockingInteractableId) == 0x8BC, "Character::m_iLockingInteractableId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bIsOnGround) == 0x8D8, "Character::m_bIsOnGround: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fAirTime) == 0x8DC, "Character::m_fAirTime: Incorrect offset");
+static_assert(offsetof(Character, Character::m_groundNormal) == 0x8E0, "Character::m_groundNormal: Incorrect offset");
+static_assert(offsetof(Character, Character::m_selectedToolUuid) == 0x8F8, "Character::m_selectedToolUuid: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iSelectedToolId) == 0x908, "Character::m_selectedToolId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_prevSelectedToolUuid) == 0x90C, "Character::m_prevSelectedToolUuid: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iPrevSelectedToolId) == 0x91C, "Character::m_iPrevSelectedToolId: Incorrect offset");
+static_assert(offsetof(Character, Character::m_charMovementState) == 0x922, "Character::m_charMovementState: Incorrect offset");
+static_assert(offsetof(Character, Character::m_pController) == 0xB48, "Character::m_pController: Incorrect offset");
+static_assert(offsetof(Character, Character::m_pPhysicsProxy) == 0xB58, "Character::m_pPhysicsProxy: Incorrect offset");
+static_assert(offsetof(Character, Character::m_pRagdollPhysicsProxy) == 0xB68, "Character::m_pRagdollPhysicsProxy: Incorrect offset");
+static_assert(offsetof(Character, Character::m_controllerData) == 0xC24, "Character::m_controllerData: Incorrect offset");
+static_assert(offsetof(Character, Character::m_scriptData) == 0xC58, "Character::m_scriptData: Incorrect offset");
+static_assert(offsetof(Character, Character::m_bCanSwim) == 0xC60, "Character::m_bCanSwim: Incorrect offset");
+static_assert(offsetof(Character, Character::m_scriptPath) == 0xC70, "Character::m_scriptPath: Incorrect offset");
+static_assert(offsetof(Character, Character::m_scriptClass) == 0xC90, "Character::m_scriptClass: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iScriptRef) == 0xCB0, "Character::m_iScriptRef: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iPublicDataScriptRef) == 0xCB4, "Character::m_iPublicDataScriptRef: Incorrect offset");
+static_assert(offsetof(Character, Character::m_color) == 0xD40, "Character::m_color: Incorrect offset");
+static_assert(offsetof(Character, Character::m_tumblingExtent) == 0xD50, "Character::m_tumblingExtent: Incorrect offset");
+static_assert(offsetof(Character, Character::m_tumblingWorldPosition) == 0xD5C, "Character::m_tumblingWorldPosition: Incorrect offset");
+static_assert(offsetof(Character, Character::m_tumblingWorldRotation) == 0xD68, "Character::m_tumblingWorldRotation: Incorrect offset");
+static_assert(offsetof(Character, Character::m_tumblingLinearVelocity) == 0xD78, "Character::m_tumblingLinearVelocity: Incorrect offset");
+static_assert(offsetof(Character, Character::m_nameTag) == 0xDA0, "Character::m_nameTag: Incorrect offset");
+static_assert(offsetof(Character, Character::m_nameTagRequiresLineOfSight) == 0xDC0, "Character::m_nameTagRequiresLineOfSight: Incorrect offset");
+static_assert(offsetof(Character, Character::m_nameTagColor) == 0xDC4, "Character::m_nameTagColor: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fNameTagFadeDistance) == 0xDD4, "Character::m_nameTagFadeDistance: Incorrect offset");
+static_assert(offsetof(Character, Character::m_fNameTagRenderDistance) == 0xDD8, "Character::m_nameTagRenderDistance: Incorrect offset");
+static_assert(offsetof(Character, Character::m_iNameTagUpdateCounter) == 0xDDC, "Character::m_iNameTagUpdateCounter: Incorrect offset");
+
+static_assert(sizeof(Character) == 0xDE0, "Character: Incorrect Size");
+#else
 static_assert(sizeof(Character) == 0x3B0, "Character: Incorrect Size");
 #endif
 

@@ -14,43 +14,36 @@ SMSDK_BEGIN_NAMESPACE
 
 class OptionsSubMenuBase
 {
-	SDK_PUB static void GameConstructor(OptionsSubMenuBase* self)
-	{
-		using fSubMenuBaseConstructor = void (*)(OptionsSubMenuBase*);
-		Memory::Read<fSubMenuBaseConstructor>(SM_CONSTRUCTOR_OPTIONS_SUB_MENU_BASE_OFFSET)(self);
-	}
+#if defined(SMSDK_ENABLE_MYGUI) || defined(SMSDK_BUILD_DLL) || defined(SMSDK_IMPORT_DLL)
+	SDK_PRO SMSDK_API OptionsSubMenuBase();
 
-#if defined(SMSDK_ENABLE_MYGUI)
-	SDK_PUB OptionsSubMenuBase();
-#endif
-	SDK_PUB virtual ~OptionsSubMenuBase() = default;
-
-#if defined(SMSDK_ENABLE_MYGUI)
-	SDK_PUB void onScrollChangePos(MyGUI::ScrollBar* pCaller, size_t iPos);
-	SDK_PUB void onScroll(MyGUI::Widget* pCaller, int iScrollVal);
-	SDK_PUB void updateScrollArea();
-	SDK_PUB void updateScrollAreaAndScrollBar();
+	SDK_PUB SMSDK_API void onScrollChangePos(MyGUI::ScrollBar* pCaller, size_t iPos);
+	SDK_PUB SMSDK_API void onScroll(MyGUI::Widget* pCaller, int iScrollVal);
+	SDK_PUB SMSDK_API void updateScrollArea();
+	SDK_PUB SMSDK_API void updateScrollAreaAndScrollBar();
 	//Does not update the scroll bar
-	SDK_PUB void clearSilent();
-	SDK_PUB void clear();
+	SDK_PUB SMSDK_API void clearSilent();
+	SDK_PUB SMSDK_API void clear();
 #endif
 
-	SDK_PUB virtual void initialize(MyGUI::Widget* pParent) DEFAULT_IMPL_UNREF(pParent);
+	SDK_PUB SMSDK_API virtual ~OptionsSubMenuBase() = default;
 
-	SDK_PUB virtual void cleanOptionItems() DEFAULT_IMPL();
-	SDK_PUB virtual void openMenu() DEFAULT_IMPL();
-	SDK_PUB virtual void closeMenu() DEFAULT_IMPL();
+	SDK_PUB SMSDK_API virtual void initialize(MyGUI::Widget* pParent) DEFAULT_IMPL_UNREF(pParent);
 
-	SDK_PUB virtual void onUpdate() {}
+	SDK_PUB SMSDK_API virtual void cleanOptionItems() DEFAULT_IMPL();
+	SDK_PUB SMSDK_API virtual void openMenu() DEFAULT_IMPL();
+	SDK_PUB SMSDK_API virtual void closeMenu() DEFAULT_IMPL();
 
-	SDK_PRI virtual bool someFunc2() { return 0; }
-	SDK_PRI virtual bool someFunc3() { return 0; }
-	SDK_PUB virtual void restoreDefaults() = 0;
+	SDK_PUB SMSDK_API virtual void onUpdate() {}
+
+	SDK_PRI SMSDK_API virtual bool someFunc2() { return 0; }
+	SDK_PRI SMSDK_API virtual bool someFunc3() { return 0; }
+	SDK_PUB SMSDK_API virtual void restoreDefaults() = 0;
 
 #if _SM_VERSION_NUM >= 070771
-	SDK_PRI virtual void someFunc5() {}
+	SDK_PRI SMSDK_API virtual void someFunc5() {}
 #endif
-	SDK_PRI virtual void someFunc4() {}
+	SDK_PRI SMSDK_API virtual void someFunc4() {}
 
 	/* 0x0008 */ SDK_PUB MyGUI::Widget* m_pSubMenuWidget;
 	/* 0x0010 */ SDK_PUB MyGUI::Widget* m_pContainerHostPanel;

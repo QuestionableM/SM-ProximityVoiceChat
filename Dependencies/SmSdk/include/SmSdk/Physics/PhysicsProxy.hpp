@@ -25,7 +25,7 @@ __declspec(align(16)) class PhysicsProxy
 	/* 0x0010 */ SDK_PUB btRigidBody* m_pDynamicsWorldRigidBody;
 	/* 0x0018 */ SDK_PUB btRigidBody* m_pTickRaycastCollisionObject;
 	/* 0x0020 */ SDK_PUB btCollisionObject* m_pInterpolatedRaycastCollisionObject;
-	/* 0x0028 */ SDK_PUB std::int16_t m_iWorldId;
+	/* 0x0028 */ SDK_PUB std::uint16_t m_uWorldId;
 	/* 0x002A */ SDK_PRI char pad_0x2A[0x6];
 }; // Size: 0x30
 

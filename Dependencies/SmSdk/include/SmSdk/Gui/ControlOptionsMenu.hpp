@@ -9,14 +9,12 @@ SMSDK_BEGIN_NAMESPACE
 
 class ControlOptionsMenu : public OptionsSubMenuBase
 {
-	SDK_PUB ControlOptionsMenu()
-	{
-		using fSelfConstructor = void (*)(ControlOptionsMenu*);
-		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_CONTROL_OPTIONS_MENU_OFFSET)(this);
-	}
+	SDK_PUB SMSDK_API static ControlOptionsMenu* New();
+	SDK_PRI SMSDK_API ControlOptionsMenu();
 
 	SDK_PUB virtual ~ControlOptionsMenu() = default;
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }
+
 	/* 0x0168 */ SDK_PRI char pad_0x168[0x20];
 }; // Size: 0x188
 

@@ -26,13 +26,12 @@ struct JointState
 class CreationManager
 {
 	REMOVE_COPY_CONSTRUCTORS(CreationManager);
-
-	SDK_PUB SMSDK_API static CreationManager* GetInstance();
-	
 	SDK_PUB virtual ~CreationManager() = default;
 
-	SDK_PUB SMSDK_API BodyState* _getBodyState(const std::uint32_t uId);
-	SDK_PUB SMSDK_API JointState* _getJointState(const std::uint32_t uId);
+	SDK_PUB SMSDK_API static CreationManager* GetInstance();
+
+	SDK_PUB SMSDK_API BodyState* getBodyState(const std::uint32_t uId);
+	SDK_PUB SMSDK_API JointState* getJointState(const std::uint32_t uId);
 
 	SDK_PUB SMSDK_API static BodyState* GetBodyState(const std::uint32_t uId);
 	SDK_PUB SMSDK_API static JointState* GetJointState(const std::uint32_t uId);

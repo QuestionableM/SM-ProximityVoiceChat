@@ -27,7 +27,7 @@ static_assert(sizeof(Portal) == 0x50, "Portal: Incorrect Size");
 
 struct PortalManager
 {
-	SDK_PUB static PortalManager* GetInstance();
+	SDK_PUB SMSDK_API static PortalManager* GetInstance();
 
 	/* 0x0000 */ SDK_PUB std::unordered_map<int, std::shared_ptr<Portal>> m_mapPortals;
 	/* 0x0040 */ SDK_PRI char pad_0x40[0x58];

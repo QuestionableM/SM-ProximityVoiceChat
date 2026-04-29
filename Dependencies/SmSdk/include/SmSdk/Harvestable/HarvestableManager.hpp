@@ -11,28 +11,12 @@ SMSDK_BEGIN_NAMESPACE
 class HarvestableManager
 {
 	REMOVE_COPY_CONSTRUCTORS(HarvestableManager);
-
 	SDK_PUB virtual ~HarvestableManager() = default;
 
-	SDK_PUB static HarvestableManager* GetInstance();
+	SDK_PUB SMSDK_API static HarvestableManager* GetInstance();
 
-	SDK_PUB inline Harvestable* _getHarvestable(const std::uint32_t uHvsIdx)
-	{
-		auto iter = m_mapHarvestables.find(uHvsIdx);
-		if (iter == m_mapHarvestables.end())
-			return nullptr;
-
-		return iter->second.get();
-	}
-
-	SDK_PUB inline static Harvestable* GetHarvestable(const std::uint32_t uHvsIdx)
-	{
-		HarvestableManager* pHarvestableManager = HarvestableManager::GetInstance();
-		if (!pHarvestableManager)
-			return nullptr;
-
-		return pHarvestableManager->_getHarvestable(uHvsIdx);
-	}
+	SDK_PUB SMSDK_API Harvestable* getHarvestable(const std::uint32_t uHvsIdx);
+	SDK_PUB SMSDK_API Harvestable* GetHarvestable(const std::uint32_t uHvsIdx);
 
 	/* 0x0008 */ SDK_PRI char pad_0x8[0x8];
 	/* 0x0010 */ SDK_PUB std::unordered_map<std::uint32_t, std::shared_ptr<Harvestable>> m_mapHarvestables;

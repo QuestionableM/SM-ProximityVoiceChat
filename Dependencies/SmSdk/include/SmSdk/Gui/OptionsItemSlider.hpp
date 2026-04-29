@@ -12,22 +12,22 @@ SMSDK_BEGIN_NAMESPACE
 
 class OptionsItemSlider : public OptionsItemBase
 {
-	SDK_PUB virtual ~OptionsItemSlider() = default;
+#if defined(SMSDK_ENABLE_MYGUI) || defined(SMSDK_BUILD_DLL) || defined(SMSDK_IMPORT_DLL)
+	SDK_PUB SMSDK_API OptionsItemSlider(
+		MyGUI::Widget* pWidget,
+		const std::string_view& caption,
+		const float fMinValue,
+		const float fMaxValue,
+		const std::size_t iScrollRange);
+	
+	SDK_PUB SMSDK_API void initializeSlider(MyGUI::Widget* pParent, const std::string_view& caption);
+	SDK_PUB SMSDK_API void updateValueText();
 
-#if defined(SMSDK_ENABLE_MYGUI)
-	SDK_PUB OptionsItemSlider(
-	    MyGUI::Widget* pWidget,
-	    const std::string& caption,
-	    float fMinValue,
-	    float fMaxValue,
-	    size_t iScrollRange);
-
-	SDK_PUB void initializeSlider(MyGUI::Widget* pParent, const std::string& caption);
-	SDK_PUB void updateValueText();
-	SDK_PUB float getFraction() const;
+	SDK_PUB SMSDK_API float getFraction() const;
 #endif
 
-	SDK_PUB void update() override {}
+	SDK_PUB SMSDK_API virtual ~OptionsItemSlider() = default;
+	SDK_PUB SMSDK_API void update() override {}
 	
 	SDK_PUB MyGUI::ScrollBar* m_pSlider;
 	SDK_PUB MyGUI::TextBox* m_pValueTextBox;

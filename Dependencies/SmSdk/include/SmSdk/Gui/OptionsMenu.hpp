@@ -5,10 +5,14 @@
 #include "SmSdk/Gui/RadioButtonSet.hpp"
 #include "SmSdk/Gui/GuiBase.hpp"
 
+#include "SmSdk/Util/Hashing.hpp"
+
 SMSDK_BEGIN_NAMESPACE
 
 class OptionsMenu : public GuiBase
 {
+	SDK_PUB SMSDK_API void addSubMenu(const std::string_view& name, OptionsSubMenuBase* pSubMenu);
+
 	/* 0x0018 */ SDK_PUB class MainMenuRootGui* m_pMenuRootGui;
 	/* 0x0020 */ SDK_PUB bool m_bSomeFlag;
 	/* 0x0021 */ SDK_PUB bool m_bIsServer;
@@ -16,7 +20,7 @@ class OptionsMenu : public GuiBase
 	/* 0x0028 */ SDK_PUB std::shared_ptr<CompoundButton> m_pCompoundButton;
 	/* 0x0038 */ SDK_PUB std::shared_ptr<RadioButtonSet> m_pRadioButtonSet;
 	/* 0x0048 */ SDK_PUB std::shared_ptr<OptionsSubMenuBase> m_pCurrentTab;
-	/* 0x0058 */ SDK_PUB std::map<std::string, std::shared_ptr<OptionsSubMenuBase>> m_mapSubMenus;
+	/* 0x0058 */ SDK_PUB std::map<std::string, std::shared_ptr<OptionsSubMenuBase>, std::less<>> m_mapSubMenus;
 }; // Size: 0x68
 
 static_assert(offsetof(OptionsMenu, OptionsMenu::m_pMenuRootGui) == 0x18, "OptionsMenu::m_pMenuRootGui: Incorrect offset");

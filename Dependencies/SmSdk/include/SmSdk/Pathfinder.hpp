@@ -26,7 +26,7 @@ static_assert(sizeof(PathNode) == 0x60, "PathNode: Incorrect Size");
 
 struct Pathfinder
 {
-	SDK_PUB static Pathfinder* GetInstance();
+	SDK_PUB SMSDK_API static Pathfinder* GetInstance();
 
 	/* 0x0000 */ SDK_PUB std::unordered_map<int, std::shared_ptr<PathNode>> m_mapPathNodes;
 	/* 0x0040 */ SDK_PUB std::vector<std::shared_ptr<PathNode>> m_vecPathNodes;

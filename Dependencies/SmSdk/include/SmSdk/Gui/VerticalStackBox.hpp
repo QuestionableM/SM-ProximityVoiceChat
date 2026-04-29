@@ -7,19 +7,19 @@ SMSDK_BEGIN_NAMESPACE
 
 class VerticalStackBox
 {
-#if defined(SMSDK_ENABLE_MYGUI)
-	SDK_PUB VerticalStackBox(MyGUI::IntSize item_sz);
+#if defined(SMSDK_ENABLE_MYGUI) || defined(SMSDK_BUILD_DLL) || defined(SMSDK_IMPORT_DLL)
+	SDK_PUB SMSDK_API VerticalStackBox(MyGUI::IntSize itemSz);
 
-	SDK_PUB void onParentChangeCoord(MyGUI::Widget* pCaller);
-	SDK_PUB void onPanelScroll(MyGUI::Widget* pCaller, int iScrollVal);
-	SDK_PUB void onScrollbarChangePosition(MyGUI::ScrollBar* pCaller, size_t uPos);
-	SDK_PUB void initialize(MyGUI::Widget* pParent, MyGUI::ScrollBar* pScrollBar);
+	SDK_PUB SMSDK_API void onParentChangeCoord(MyGUI::Widget* pCaller);
+	SDK_PUB SMSDK_API void onPanelScroll(MyGUI::Widget* pCaller, int iScrollVal);
+	SDK_PUB SMSDK_API void onScrollbarChangePosition(MyGUI::ScrollBar* pCaller, size_t uPos);
+	SDK_PUB SMSDK_API void initialize(MyGUI::Widget* pParent, MyGUI::ScrollBar* pScrollBar);
 
-	SDK_PUB void onItemChangeCoord(MyGUI::Widget* pCaller);
-	SDK_PUB void onItemScroll(MyGUI::Widget* pCaller, int iScrollVal);
-	SDK_PUB void updateScrollBar();
-	SDK_PUB MyGUI::Widget* createNewOption();
-	SDK_PUB void clearItems();
+	SDK_PUB SMSDK_API void onItemChangeCoord(MyGUI::Widget* pCaller);
+	SDK_PUB SMSDK_API void onItemScroll(MyGUI::Widget* pCaller, int iScrollVal);
+	SDK_PUB SMSDK_API void updateScrollBar();
+	SDK_PUB SMSDK_API MyGUI::Widget* createNewOption();
+	SDK_PUB SMSDK_API void clearItems();
 #endif
 
 	/* 0x0000 */ SDK_PUB MyGUI::IntSize m_itemSize;

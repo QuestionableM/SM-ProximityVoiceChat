@@ -12,13 +12,13 @@ class DirectoryManager
 {
 	SINGLETON_CLASS(DirectoryManager);
 
-	SDK_PUB static DirectoryManager* GetInstance();
+	SDK_PUB SMSDK_API static DirectoryManager* GetInstance();
 
-	SDK_PUB bool getReplacement(const std::string_view& key, std::string_view& replacement);
-	SDK_PUB bool replacePathR(std::string& path);
+	SDK_PUB SMSDK_API bool getReplacement(const std::string_view& key, std::string_view& replacement);
+	SDK_PUB SMSDK_API bool replacePathR(std::string& path);
 
-	SDK_PUB static bool ReplacePathR(std::string& path);
-	SDK_PUB static bool GetReplacement(const std::string_view& key, std::string_view& replacement);
+	SDK_PUB SMSDK_API static bool GetReplacement(const std::string_view& key, std::string_view& replacement);
+	SDK_PUB SMSDK_API static bool ReplacePathR(std::string& path);
 
 	/* 0x0000 */ SDK_PRI char pad_0x0[8];
 	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapContentKeyToPathList;

@@ -57,11 +57,11 @@ class InputManager
 
 	SDK_PUB SMSDK_API static InputManager* GetInstance();
 
-	SDK_PUB SMSDK_API bool _isKeyPressed(const char cKey) const;
-	SDK_PUB SMSDK_API bool _isKeyHeld(const char cKey) const;
+	SDK_PUB SMSDK_API bool isKeyPressed(const char cKey) const;
+	SDK_PUB SMSDK_API bool isKeyHeld(const char cKey) const;
 
-	SDK_PUB SMSDK_API bool _isMouseButtonPressed(const EMouseButton eBtn) const;
-	SDK_PUB SMSDK_API bool _isMouseButtonHeld(const EMouseButton eBtn) const;
+	SDK_PUB SMSDK_API bool isMouseButtonPressed(const EMouseButton eBtn) const;
+	SDK_PUB SMSDK_API bool isMouseButtonHeld(const EMouseButton eBtn) const;
 
 	SDK_PUB SMSDK_API static bool IsKeyPressed(const char cKey);
 	SDK_PUB SMSDK_API static bool IsKeyHeld(const char cKey);

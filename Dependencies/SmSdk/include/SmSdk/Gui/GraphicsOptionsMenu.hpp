@@ -15,11 +15,8 @@ struct OptionsItemDropDown;
 class GraphicsOptionsMenu : public OptionsSubMenuBase
 {
 public:
-	GraphicsOptionsMenu()
-	{
-		using fSelfConstructor = void (*)(GraphicsOptionsMenu*);
-		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_GRAPHICS_OPTIONS_MENU_OFFSET)(this);
-	}
+	SDK_PUB SMSDK_API static GraphicsOptionsMenu* New();
+	SDK_PRI SMSDK_API GraphicsOptionsMenu();
 
 	virtual ~GraphicsOptionsMenu() = default;
 	void restoreDefaults() override { /* implemented by the game */ }

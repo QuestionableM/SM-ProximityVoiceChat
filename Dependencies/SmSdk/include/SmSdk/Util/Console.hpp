@@ -40,7 +40,7 @@ enum ConsoleLogType : uint32_t
 
 class Console
 {
-	SDK_PUB static SMSDK_API Console* GetInstance();
+	SDK_PUB SMSDK_API static Console* GetInstance();
 	
 	SDK_PUB virtual ~Console();
 	SDK_PUB virtual void log(const std::string& msg, const WORD wColor, const ConsoleLogType eType);
