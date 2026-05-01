@@ -99,23 +99,10 @@ void PlayerVoiceManager::Update()
 	PlayerVoiceManager::RemoveDeadVoices();
 }
 
-static bool IsPlayerLocal(SM::Player* pPlayer)
-{
-	SM::MyPlayer* v_pMyPlayer = SM::MyPlayer::GetInstance();
-	if (!v_pMyPlayer)
-		return false;
-
-	SM::Player* v_pPlayer = v_pMyPlayer->getPlayer();
-	if (!v_pPlayer)
-		return false;
-
-	return v_pPlayer->getSteamId() == pPlayer->getSteamId();
-}
-
 void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float masterVolume)
 {
-	//Players without the characters should not be processed
-	if (!player->characterExists() || IsPlayerLocal(player))
+	// Players without the characters should not be processed
+	if (!player->characterExists() || SM::MyPlayer::IsPlayerLocal(player))
 		return;
 
 	SM::AudioManager* v_pAudioMgr = SM::AudioManager::GetInstance();
@@ -175,7 +162,7 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 	PlayerVoice* v_pVoice = PlayerVoiceManager::GetVoice(v_playerId);
 	if (!v_pVoice) return;
 
-	SM::Character* v_pChar = player->getCharacter();
+	auto v_pChar = player->getCharacter();
 	if (!v_pChar) return;
 
 	const float v_actualYaw = v_pChar->getYaw() + DirectX::XM_PIDIV2;
@@ -211,8 +198,8 @@ void PlayerVoiceManager::RemoveDeadVoices()
 {
 	for (auto v_iter = sm_playerVoices.begin(); v_iter != sm_playerVoices.end();)
 	{
-		SM::Player* v_cur_player = SM::PlayerManager::GetPlayer(v_iter->first);
-		if (v_cur_player != nullptr && v_cur_player->characterExists())
+		auto v_pCurPlayer = SM::PlayerManager::GetPlayer(v_iter->first);
+		if (v_pCurPlayer != nullptr && v_pCurPlayer->characterExists())
 		{
 			v_iter++;
 			continue;

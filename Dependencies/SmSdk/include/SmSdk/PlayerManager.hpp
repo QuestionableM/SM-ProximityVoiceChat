@@ -3,6 +3,7 @@
 #include "SmSdk/Player.hpp"
 
 #include <unordered_map>
+#include <vector>
 #include <memory>
 
 SMSDK_BEGIN_NAMESPACE
@@ -11,11 +12,13 @@ class PlayerManager
 {
 	SDK_PUB SMSDK_API static PlayerManager* GetInstance();
 
-	SDK_PUB SMSDK_API Player* getPlayer(const std::uint32_t playerId);
-	SDK_PUB SMSDK_API Player* getPlayerFromSteamId(const std::uint64_t steamId);
+	SDK_PUB SMSDK_API std::shared_ptr<Player> getPlayer(const std::uint32_t playerId);
+	SDK_PUB SMSDK_API std::shared_ptr<Player> getPlayerFromSteamId(const std::uint64_t steamId);
+	SDK_PUB SMSDK_API std::vector<std::shared_ptr<Player>> getAllPlayers();
 
-	SDK_PUB SMSDK_API static Player* GetPlayer(const std::uint32_t playerId);
-	SDK_PUB SMSDK_API static Player* GetPlayerFromSteamId(const std::uint64_t steamId);
+	SDK_PUB SMSDK_API static std::shared_ptr<Player> GetPlayer(const std::uint32_t playerId);
+	SDK_PUB SMSDK_API static std::shared_ptr<Player> GetPlayerFromSteamId(const std::uint64_t steamId);
+	SDK_PUB SMSDK_API static std::vector<std::shared_ptr<Player>> GetAllPlayers();
 
 	/* 0x0000 */ SDK_PUB std::int32_t m_iTick;
 	/* 0x0004 */ SDK_PRI char pad_0x4[0x4];

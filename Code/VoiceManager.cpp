@@ -19,119 +19,124 @@
 
 #include "../resource.h"
 
-
-
-VoiceManager::fClientPacketHandler VoiceManager::o_clientPacketHandler = nullptr;
-VoiceManager::fServerPacketHandler VoiceManager::o_serverPacketHandler = nullptr;
 bool VoiceManager::sm_isVoiceRecording = false;
 
-
-
 static char g_decompressedVoiceData[VC_BUFFER_SIZE];
-void VoiceManager::PlayVoicePacket(char* decompressed_packet)
+void VoiceManager::PlayVoicePacket(const void* decompressedPacket)
 {
-	BufferReader v_reader(decompressed_packet);
-	const std::uint32_t v_player_id = v_reader.Read<std::uint32_t>();
-	const std::uint32_t v_buffer_sz = v_reader.Read<std::uint32_t>();
-	const char* v_sound_data = decompressed_packet + v_reader.Offset();
+	BufferReader v_reader(reinterpret_cast<const std::uint8_t*>(decompressedPacket));
+	const std::uint32_t v_playerId = v_reader.Read<std::uint32_t>();
+	const std::uint32_t v_bufferSz = v_reader.Read<std::uint32_t>();
+	const std::uint8_t* v_pSoundData = reinterpret_cast<const std::uint8_t*>(decompressedPacket) + v_reader.Offset();
 
-	PlayerVoice* v_cur_voice = PlayerVoiceManager::GetVoice(v_player_id);
-	if (!v_cur_voice) return;
+	PlayerVoice* v_pCurVoice = PlayerVoiceManager::GetVoice(v_playerId);
+	if (!v_pCurVoice) return;
 
-	ISteamUser* v_steam_user = SteamUser();
+	ISteamUser* v_pSteamUser = SteamUser();
 
-	const std::uint32_t v_opt_sample_rate = v_steam_user->GetVoiceOptimalSampleRate();
-	v_cur_voice->m_pChannel->setFrequency(float(v_opt_sample_rate));
+	const std::uint32_t v_optSampleRate = v_pSteamUser->GetVoiceOptimalSampleRate();
+	v_pCurVoice->m_pChannel->setFrequency(float(v_optSampleRate));
 
-	std::uint32_t v_decomp_voice_sz;
-	const EVoiceResult v_result = v_steam_user->DecompressVoice(
-		v_sound_data,
-		v_buffer_sz,
+	std::uint32_t v_decompVoiceSz;
+	const EVoiceResult v_result = v_pSteamUser->DecompressVoice(
+		v_pSoundData,
+		v_bufferSz,
 		g_decompressedVoiceData,
 		sizeof(g_decompressedVoiceData),
-		&v_decomp_voice_sz,
-		v_opt_sample_rate);
+		&v_decompVoiceSz,
+		v_optSampleRate);
 
 	if (v_result != k_EVoiceResultOK)
 	{
-		DebugErrorL("Failed to decompress the voice data from player ", v_player_id);
+		DebugErrorL("Failed to decompress the voice data from player ", v_playerId);
 		return;
 	}
 
-	v_cur_voice->push_voice(g_decompressedVoiceData, v_decomp_voice_sz);
+	v_pCurVoice->push_voice(g_decompressedVoiceData, v_decompVoiceSz);
 }
 
-void VoiceManager::h_clientPacketHandler(
-	void* client,
-	int a2,
-	void* packet_data,
-	int packet_size,
-	char bInitialization)
+bool VoiceManager::ClientPacketHandler(
+	SM::SteamNetworkClient* pNetworkClient,
+	const std::uint64_t steamId,
+	const void* packetData,
+	const std::uint32_t packetDataSz)
 {
-	const std::uint8_t v_packet_id = *reinterpret_cast<char*>(packet_data);
-	if (v_packet_id == C_ID_VOICE_PACKET)
+	if (packetDataSz <= 0)
+		return false;
+
+	const std::uint8_t v_packetId = reinterpret_cast<const std::uint8_t*>(packetData)[0];
+	if (v_packetId == C_ID_VOICE_PACKET)
 	{
-		VoiceManager::PlayVoicePacket(reinterpret_cast<char*>(packet_data) + 1);
-		return;
+		VoiceManager::PlayVoicePacket(reinterpret_cast<const std::uint8_t*>(packetData) + 1);
+		return true;
 	}
 
-	o_clientPacketHandler(client, a2, packet_data, packet_size, bInitialization);
+	return false;
 }
 
 static char g_compressedServerPacket[VC_BUFFER_SIZE];
-void VoiceManager::h_serverPacketHandler(
-	SM::NetworkServer* server,
-	STEAM_ID_TYPE steam_id,
-	void* packet_data,
-	int packet_size)
+bool VoiceManager::ServerPacketHandler(
+	SM::SteamNetworkServer* pNetworkServer,
+	const std::uint64_t steamId,
+	const void* packetData,
+	const std::uint32_t packetDataSz)
 {
-	const std::uint64_t steam_id_num = DEREF_STEAM_ID(steam_id);
+	if (packetDataSz <= 0)
+		return false;
 
-	const std::uint8_t v_packet_id = *reinterpret_cast<char*>(packet_data);
-	if (v_packet_id == C_ID_VOICE_PACKET)
+	const std::uint8_t v_packetId = reinterpret_cast<const std::uint8_t*>(packetData)[0];
+	if (v_packetId == C_ID_VOICE_PACKET)
 	{
-		const std::uint64_t v_local_steam_id = SteamUser()->GetSteamID().ConvertToUint64();
+		const std::uint64_t v_localSteamId = SteamUser()->GetSteamID().ConvertToUint64();
 
 		// Do not play the host audio to host
-		if (steam_id_num != v_local_steam_id)
-			VoiceManager::PlayVoicePacket(reinterpret_cast<char*>(packet_data) + 1);
+		if (steamId != v_localSteamId)
+			VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1);
 
 		g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
-		int v_compressed_data = LZ4_compress_default(
-			reinterpret_cast<const char*>(packet_data) + 1,
+		const int v_compressedData = LZ4_compress_default(
+			reinterpret_cast<const char*>(packetData) + 1,
 			g_compressedServerPacket + 1,
-			packet_size - 1,
+			packetDataSz - 1,
 			sizeof(g_compressedServerPacket) - 1);
 
-		if (v_compressed_data <= 0)
+		if (v_compressedData <= 0)
 		{
 			DebugErrorL("Could not compress packet!");
-			return;
+			return true;
 		}
 
-		for (const auto& v_cur_iter : server->m_pNetworkSend->m_mapSteamIdToConnection)
+		ISteamNetworkingSockets* v_pSockets = SteamNetworkingSockets();
+		const auto v_pNetworkSend = pNetworkServer->getNetworkSend();
+
+		for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
 		{
-			if (v_cur_iter.first == steam_id_num || v_cur_iter.first == v_local_steam_id)
+			// Avoid sending the voice packets back to the player
+			if (v_curConnection == steamId)
 				continue;
 
-			EResult v_result = SteamNetworkingSockets()->SendMessageToConnection(
-				v_cur_iter.second,
+			// Avoid sending the voice packets to the server since we are at server already
+			if (v_curConnection == v_localSteamId)
+				continue;
+
+			EResult v_result = v_pSockets->SendMessageToConnection(
+				v_curConnection,
 				g_compressedServerPacket,
-				std::uint32_t(v_compressed_data) + 1,
+				std::uint32_t(v_compressedData) + 1,
 				k_EP2PSendUnreliableNoDelay,
 				nullptr);
 
 			if (v_result != k_EResultOK)
 			{
-				DebugErrorL("Couldn't send the packet to ", v_cur_iter.first);
-				return;
+				DebugErrorL("Couldn't send the packet to ", v_curConnection);
+				return true;
 			}
 		}
 
-		return;
+		return true;
 	}
 
-	o_serverPacketHandler(server, steam_id, packet_data, packet_size);
+	return false;
 }
 
 
@@ -163,13 +168,10 @@ static bool GetRecordingPointers(SM::SteamNetworkClient** ppClient, SM::Player**
 	(*ppClient) = SM::GameState::GetSteamNetworkClient();
 	if (!(*ppClient)) return false;
 
-	SM::MyPlayer* v_pMyPlayer = SM::MyPlayer::GetInstance();
-	if (!v_pMyPlayer) return false;
-
-	SM::Player* v_pSelfPlayer = v_pMyPlayer->getPlayer();
+	auto v_pSelfPlayer = SM::MyPlayer::GetPlayer();
 	if (!v_pSelfPlayer) return false;
 
-	(*ppPlayer) = v_pSelfPlayer;
+	(*ppPlayer) = v_pSelfPlayer.get();
 	return true;
 }
 
@@ -196,35 +198,35 @@ void VoiceManager::UpdateVoiceRecording()
 	if (!sm_isVoiceRecording)
 		return;
 
-	ISteamUser* v_steam_user = SteamUser();
+	ISteamUser* v_pSteamUser = SteamUser();
 	std::uint32_t v_bytes;
 
-	if (v_steam_user->GetAvailableVoice(&v_bytes) != k_EVoiceResultOK)
+	if (v_pSteamUser->GetAvailableVoice(&v_bytes) != k_EVoiceResultOK)
 		return;
 
-	constexpr std::size_t v_voice_buffer_offset = sizeof(std::uint32_t) * 2; //player id + buffer size
-	v_steam_user->GetVoice(
+	constexpr std::size_t v_voiceBufferOffset = sizeof(std::uint32_t) * 2; //player id + buffer size
+	v_pSteamUser->GetVoice(
 		true,
-		m_packetBuffer + v_voice_buffer_offset,
-		sizeof(m_packetBuffer) - v_voice_buffer_offset,
+		m_packetBuffer + v_voiceBufferOffset,
+		sizeof(m_packetBuffer) - v_voiceBufferOffset,
 		&v_bytes);
 
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_uId;
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;
-	int v_compressed_size = LZ4_compress_default(
+	int v_compressedSize = LZ4_compress_default(
 		m_packetBuffer,
 		m_compressedPacket + 1,
-		int(v_voice_buffer_offset) + int(v_bytes), //PacketBuffer size: header + buffer
+		int(v_voiceBufferOffset) + int(v_bytes), //PacketBuffer size: header + buffer
 		sizeof(m_compressedPacket) - 1);
 
-	if (v_compressed_size > 0)
+	if (v_compressedSize > 0)
 	{
 		const EResult v_result = SteamNetworkingSockets()->SendMessageToConnection(
 			v_network->m_hostConnection,
 			m_compressedPacket,
-			v_compressed_size + 1,
+			v_compressedSize + 1,
 			k_EP2PSendUnreliableNoDelay,
 			nullptr);
 
@@ -239,11 +241,11 @@ void VoiceManager::UpdateVoiceRecording()
 
 void VoiceManager::CreateSpeakerImage()
 {
-	MyGUI::RenderManager* v_rend_mgr = MyGUI::RenderManager::getInstancePtr();
-	if (v_rend_mgr->getTexture("SpeakerIcon"))
+	MyGUI::RenderManager* v_pRendMgr = MyGUI::RenderManager::getInstancePtr();
+	if (v_pRendMgr->getTexture("SpeakerIcon"))
 		return;
 
-	MyGUI::ITexture* v_new_tex = v_rend_mgr->createTexture("SpeakerIcon");
+	MyGUI::ITexture* v_pNewTex = v_pRendMgr->createTexture("SpeakerIcon");
 	FIBITMAP* v_fibitmap;
 
 	TexLoader::TexLoadResult v_res = TexLoader::LoadTextureFromResource(&v_fibitmap, MAKEINTRESOURCE(IDB_PNG1), L"PNG", FIF_PNG);
@@ -254,15 +256,14 @@ void VoiceManager::CreateSpeakerImage()
 		return;
 	}
 
-	const int v_img_width = int(FreeImage_GetWidth(v_fibitmap));
-	const int v_img_height = int(FreeImage_GetHeight(v_fibitmap));
-	BYTE* v_img_bits = FreeImage_GetBits(v_fibitmap);
+	const int v_imgWidth = int(FreeImage_GetWidth(v_fibitmap));
+	const int v_imgHeight = int(FreeImage_GetHeight(v_fibitmap));
+	v_pNewTex->createManual(v_imgWidth, v_imgHeight, MyGUI::TextureUsage::Write | MyGUI::TextureUsage::Static, MyGUI::PixelFormat::R8G8B8A8);
 
-	v_new_tex->createManual(v_img_width, v_img_height,
-		MyGUI::TextureUsage::Write | MyGUI::TextureUsage::Static, MyGUI::PixelFormat::R8G8B8A8);
-	void* v_img_mem = v_new_tex->lock(MyGUI::TextureUsage::Write);
-	std::memcpy(v_img_mem, v_img_bits, v_img_width * v_img_height * 4);
-	v_new_tex->unlock();
+	const BYTE* v_imgBits = FreeImage_GetBits(v_fibitmap);
+	void* v_pImgMem = v_pNewTex->lock(MyGUI::TextureUsage::Write);
+	std::memcpy(v_pImgMem, v_imgBits, v_imgWidth * v_imgHeight * 4);
+	v_pNewTex->unlock();
 
 	FreeImage_Unload(v_fibitmap);
 }
@@ -279,13 +280,13 @@ MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* main_panel)
 	}
 
 	VoiceManager::CreateSpeakerImage();
-	MyGUI::ImageBox* v_new_img_box = main_panel->createWidgetReal<MyGUI::ImageBox>(
+	MyGUI::ImageBox* v_pNewImgBox = main_panel->createWidgetReal<MyGUI::ImageBox>(
 		"ImageBox", MyGUI::FloatCoord(0.0f, 0.0f, 0.0f, 0.0f), MyGUI::Align::Default, "SpeakerIcon")->castType<MyGUI::ImageBox>();
 
-	v_new_img_box->setVisible(false);
-	v_new_img_box->setImageTexture("SpeakerIcon");
+	v_pNewImgBox->setVisible(false);
+	v_pNewImgBox->setImageTexture("SpeakerIcon");
 
-	return v_new_img_box;
+	return v_pNewImgBox;
 }
 
 void VoiceManager::UpdateSpeakerUiIcon()

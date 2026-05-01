@@ -57,7 +57,7 @@ class Player
 	SDK_PUB SMSDK_API std::uint32_t getCharacterId() const;
 	SDK_PUB SMSDK_API std::uint16_t getWorldId() const;
 
-	SDK_PUB SMSDK_API Character* getCharacter() const;
+	SDK_PUB SMSDK_API std::shared_ptr<Character> getCharacter() const;
 	SDK_PUB SMSDK_API bool characterExists() const;
 
 	/* 0x0000 */ SDK_PUB std::shared_ptr<Player> m_pSelf;

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "SmSdk/Network/NetworkServer.hpp"
+#include "SmSdk/Network/SteamNetworkServer.hpp"
+#include "SmSdk/Network/SteamNetworkClient.hpp"
 #include <SmSdk/offsets.hpp>
 
 #include <MyGUI.h>
@@ -12,52 +13,29 @@
 #define C_ID_VOICE_PACKET 123
 
 /* VOICE PACKET STRUCTURE
-
-	//id (1 byte)
-	//player id (4 bytes) - the player that made the sound
-	//buffer size (4 bytes) - the size of the compressed sound buffer
-	//buffer data (buffer size) - the compressed sound buffer
+	// id (1 byte)
+	// player id (4 bytes) - the player that made the sound
+	// buffer size (4 bytes) - the size of the compressed sound buffer
+	// buffer data (buffer size) - the compressed sound buffer
 */
-
-#if _SM_VERSION_NUM >= 070771
-#	define STEAM_ID_TYPE std::uint64_t
-#	define DEREF_STEAM_ID(steam_id) steam_id
-#else
-#	define STEAM_ID_TYPE std::uint64_t*
-#	define DEREF_STEAM_ID(steam_id) *steam_id
-#endif
 
 class VoiceManager
 {
 public:
-	using fClientPacketHandler = void (*)(void*, int, void*, int, char);
-	using fServerPacketHandler = void (*)(
-		SM::NetworkServer*,
-		STEAM_ID_TYPE,
-		void*,
-		int
-	);
+	// Plays the uncompressed packet 123
+	static void PlayVoicePacket(const void* decompressedPacket);
 
-	///PACKET PROCESSING FUNCTIONS
+	static bool ClientPacketHandler(
+		SM::SteamNetworkClient* pNetworkClient,
+		const std::uint64_t steamId,
+		const void* packetData,
+		const std::uint32_t packetDataSz);
 
-	static fClientPacketHandler o_clientPacketHandler;
-	static fServerPacketHandler o_serverPacketHandler;
-
-	//Plays the uncompressed packet 123
-	static void PlayVoicePacket(char* decompressed_packet);
-
-	static void h_clientPacketHandler(
-		void* client,
-		int a2,
-		void* packet_data,
-		int packet_size,
-		char bInitialization);
-
-	static void h_serverPacketHandler(
-		SM::NetworkServer* server,
-		STEAM_ID_TYPE steam_id,
-		void* packet_data,
-		int packet_size);
+	static bool ServerPacketHandler(
+		SM::SteamNetworkServer* pNetworkServer,
+		const std::uint64_t steamId,
+		const void* packetData,
+		const std::uint32_t packetDataSz);
 
 	///VOICE RECORDING FUNCTIONS
 

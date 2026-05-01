@@ -20,10 +20,10 @@ class CharacterManager
 
 	SDK_PUB SMSDK_API static CharacterManager* GetInstance();
 
-	SDK_PUB SMSDK_API Character* getCharacter(const std::uint32_t uCharId);
+	SDK_PUB SMSDK_API std::shared_ptr<Character> getCharacter(const std::uint32_t uCharId);
 	SDK_PUB SMSDK_API std::span<std::shared_ptr<Character>> getAllCharacters();
 
-	SDK_PUB SMSDK_API static Character* GetCharacter(const std::uint32_t uCharId);
+	SDK_PUB SMSDK_API static std::shared_ptr<Character> GetCharacter(const std::uint32_t uCharId);
 	SDK_PUB SMSDK_API static std::span<std::shared_ptr<Character>> GetAllCharacters();
 
 	/* 0x0008 */ SDK_PUB std::unordered_map<std::uint32_t, std::shared_ptr<Character>> m_mapCharacterState;

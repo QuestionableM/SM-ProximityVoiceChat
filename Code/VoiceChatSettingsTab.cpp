@@ -94,21 +94,21 @@ void VoiceChatSettingsTab::onUpdate()
 
 	this->clearSilent();
 
-	std::size_t v_voice_count = 0;
+	std::size_t v_voiceCount = 0;
 	for (const auto& v_cur_voice : PlayerVoiceManager::sm_playerVoices)
 	{
-		SM::Player* v_voice_owner = SM::PlayerManager::GetPlayer(v_cur_voice.first);
-		if (!v_voice_owner) continue;
+		auto v_pVoiceOwner = SM::PlayerManager::GetPlayer(v_cur_voice.first);
+		if (!v_pVoiceOwner) continue;
 
-		SM::VerticalStackBox& v_stack_box = ((v_voice_count % 2) == 0)
+		SM::VerticalStackBox& v_stackBox = ((v_voiceCount % 2) == 0)
 			? m_leftStackBox : m_rightStackBox;
 
-		MyGUI::Widget* v_new_widget = v_stack_box.createNewOption();
-		auto v_new_slider = std::make_shared<PlayerVoiceSlider>(
-			v_new_widget, v_voice_owner->m_name, v_voice_owner->m_uId);
+		MyGUI::Widget* v_pNewWidget = v_stackBox.createNewOption();
+		auto v_pNewSlider = std::make_shared<PlayerVoiceSlider>(
+			v_pNewWidget, v_pVoiceOwner->m_name, v_pVoiceOwner->m_uId);
 
-		m_vecOptionItems.push_back(std::move(v_new_slider));
-		v_voice_count++;
+		m_vecOptionItems.push_back(std::move(v_pNewSlider));
+		v_voiceCount++;
 	}
 
 	this->updateScrollAreaAndScrollBar();

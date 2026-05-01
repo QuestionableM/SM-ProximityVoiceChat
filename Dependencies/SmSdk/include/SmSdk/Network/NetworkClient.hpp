@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SmSdk/Network/NetworkSendInterface.hpp"
 #include "SmSdk/steamapi_include.hpp"
 
 #include <unordered_map>
@@ -10,16 +11,8 @@ SMSDK_BEGIN_NAMESPACE
 
 class NetworkClient
 {
-	SDK_PUB HSteamNetConnection getConnectionFromSteamId(const std::uint64_t steamId) const
-	{
-		if (m_pNetworkSend)
-			return m_pNetworkSend->getConnectionFromSteamId(steamId);
-
-		return 0;
-	}
-
 	/* 0x0000 */ SDK_PRI char pad_0x0[0x8];
-	/* 0x0008 */ SDK_PUB std::shared_ptr<SteamNetworkSend> m_pNetworkSend;
+	/* 0x0008 */ SDK_PUB std::shared_ptr<NetworkSendInterface> m_pNetworkSend;
 	/* 0x0018 */ SDK_PUB std::int32_t m_iConnectionState;
 	/* 0x001C */ SDK_PRI char pad_0x1C[0x2C];
 	/* 0x0048 */ SDK_PRI std::string m_someString1;

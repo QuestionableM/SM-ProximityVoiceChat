@@ -8,7 +8,9 @@
 #include "CustomOptionsMenu.hpp"
 #include "VoiceManager.hpp"
 
-#include "SmSdk/SmSdk.hpp"
+#include <SmSdk/SmSdk.hpp>
+#include <SmSdk/Callbacks.hpp>
+
 #include <steam/steam_api.h>
 #include <fmod/fmod.hpp>
 #include <lz4/lz4.h>
@@ -30,53 +32,24 @@ static bool ms_mhHooksAttached = false;
 #define EASY_CLASS_HOOK(address, class_name, func_name) \
 	MH_CreateHook((LPVOID)(v_mod_base + address), (LPVOID)class_name::h_##func_name, (LPVOID*)&class_name::o_##func_name)
 
-static void (*o_perframeUpdate)(void*, float, void*, void*, void*) = nullptr;
-static void h_perframeUpdate(void* a1, float dt, void* a3, void* a4, void* pFrameSettings)
-{
-	VoiceSettingsStorage::Update(dt);
-
-	PlayerVoiceManager::Update();
-	VoiceManager::UpdateVoiceRecording();
-
-	o_perframeUpdate(a1, dt, a3, a4, pFrameSettings);
-}
-
 #if _SM_VERSION_NUM == 0x074778
-#	define PVC_CLIENT_PACKET_HANDLER 0x406A60
-#	define PVC_SERVER_PACKET_HANDLER 0x8CE7C0
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCBC0
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD7F0
-#	define PVC_PERFRAME_UPDATE 0x6D2B00
 #elif _SM_VERSION_NUM == 0x073776
-#	define PVC_CLIENT_PACKET_HANDLER 0x406A60
-#	define PVC_SERVER_PACKET_HANDLER 0x8CE7E0
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCBC0
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD7F0
-#	define PVC_PERFRAME_UPDATE 0x6D2B20
 #elif _SM_VERSION_NUM == 072775
-#	define PVC_CLIENT_PACKET_HANDLER 0x406AE0
-#	define PVC_SERVER_PACKET_HANDLER 0x8CE790
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCC40
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD870
-#	define PVC_PERFRAME_UPDATE 0x6D2B20
 #elif _SM_VERSION_NUM == 071772
-#	define PVC_CLIENT_PACKET_HANDLER 0x406AC0
-#	define PVC_SERVER_PACKET_HANDLER 0x8CE770
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCC20
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD850
-#	define PVC_PERFRAME_UPDATE 0x6D2B00
 #elif _SM_VERSION_NUM == 070771
-#	define PVC_CLIENT_PACKET_HANDLER 0x406AC0
-#	define PVC_SERVER_PACKET_HANDLER 0x8CE980
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3BCC20
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3BD850
-#	define PVC_PERFRAME_UPDATE 0x6D2D60
 #else
-#	define PVC_CLIENT_PACKET_HANDLER 0x416D60
-#	define PVC_SERVER_PACKET_HANDLER 0x8C6380
 #	define PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR 0x3CA740
 #	define PVC_CUSTOM_OPTIONS_MENU_INITIALIZE 0x3CB570
-#	define PVC_PERFRAME_UPDATE 0x6D3D10
 #endif
 
 static bool ProcessAttach(HMODULE hMod)
@@ -114,11 +87,20 @@ static bool ProcessAttach(HMODULE hMod)
 	ms_mhInitialized = true;
 
 	const std::uintptr_t v_mod_base = std::uintptr_t(GetModuleHandle(NULL));
-	if (EASY_CLASS_HOOK(PVC_CLIENT_PACKET_HANDLER, VoiceManager, clientPacketHandler) != MH_OK) return false;
-	if (EASY_CLASS_HOOK(PVC_SERVER_PACKET_HANDLER, VoiceManager, serverPacketHandler) != MH_OK) return false;
 	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_CONSTRUCTOR, CustomOptionsMenu, Constructor) != MH_OK) return false;
 	if (EASY_CLASS_HOOK(PVC_CUSTOM_OPTIONS_MENU_INITIALIZE, CustomOptionsMenu, Initialize) != MH_OK) return false;
-	if (EASY_HOOK(PVC_PERFRAME_UPDATE, perframeUpdate) != MH_OK) return false;
+
+	// Perframe update stuff
+	SM::Callbacks::RegisterOnRenderCallback(
+		[](const float deltaTime) {
+			VoiceSettingsStorage::Update(deltaTime);
+			PlayerVoiceManager::Update();
+			VoiceManager::UpdateVoiceRecording();
+		}
+	);
+
+	SM::Callbacks::RegisterOnServerPacketCallback(VoiceManager::ServerPacketHandler);
+	SM::Callbacks::RegisterOnClientPacketCallback(VoiceManager::ClientPacketHandler);
 
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;
 	return true;

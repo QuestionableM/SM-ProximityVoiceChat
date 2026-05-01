@@ -7,7 +7,7 @@
 class BufferReader
 {
 public:
-	BufferReader(const char* buff)
+	BufferReader(const std::uint8_t* buff)
 		: buffer(buff), offset(0) {}
 
 	inline void skip(std::size_t bytes)
@@ -57,6 +57,6 @@ public:
 	std::size_t	Offset() const { return this->offset; }
 
 private:
-	const char* buffer;
+	const std::uint8_t* buffer;
 	std::size_t offset;
 };
