@@ -11,10 +11,23 @@ SMSDK_BEGIN_NAMESPACE
 
 class OptionsMenu : public GuiBase
 {
-	SDK_PUB SMSDK_API void addSubMenu(const std::string_view& name, OptionsSubMenuBase* pSubMenu);
+	SDK_PRI SMSDK_API OptionsMenu(GuiBase* rootGui, const bool isServer);
 
-	/* 0x0018 */ SDK_PUB class MainMenuRootGui* m_pMenuRootGui;
-	/* 0x0020 */ SDK_PUB bool m_bSomeFlag;
+	SDK_PUB SMSDK_API static void Constructor(OptionsMenu* self, GuiBase* rootGui, const bool isServer);
+	SDK_PUB SMSDK_API static void Initialize(OptionsMenu* self);
+	SDK_PUB	SMSDK_API static void AddSubMenu(
+		const std::string_view& tabGuiName,
+		const std::string_view& tabCaption,
+		bool (*onCanCreate)(OptionsMenu*),
+		OptionsSubMenuBase* (*onCreate)()
+	);
+
+	SDK_PUB SMSDK_API void onBackPanelMouseClickCallback(MyGUI::Widget* _sender);
+	SDK_PUB SMSDK_API void onTabSwitchCallback(MyGUI::Widget* _sender);
+	SDK_PUB SMSDK_API void onRestoreDefaultsButtonClick(MyGUI::Widget* _sender);
+
+	/* 0x0018 */ SDK_PUB GuiBase* m_pMenuRootGui;
+	/* 0x0020 */ SDK_PUB bool m_bIsOpen;
 	/* 0x0021 */ SDK_PUB bool m_bIsServer;
 	/* 0x0022 */ SDK_PRI char pad_0x22[0x6];
 	/* 0x0028 */ SDK_PUB std::shared_ptr<CompoundButton> m_pCompoundButton;
@@ -24,7 +37,7 @@ class OptionsMenu : public GuiBase
 }; // Size: 0x68
 
 static_assert(offsetof(OptionsMenu, OptionsMenu::m_pMenuRootGui) == 0x18, "OptionsMenu::m_pMenuRootGui: Incorrect offset");
-static_assert(offsetof(OptionsMenu, OptionsMenu::m_bSomeFlag) == 0x20, "OptionsMenu::m_bSomeFlag: Incorrect offset");
+static_assert(offsetof(OptionsMenu, OptionsMenu::m_bIsOpen) == 0x20, "OptionsMenu::m_bSomeFlag: Incorrect offset");
 static_assert(offsetof(OptionsMenu, OptionsMenu::m_bIsServer) == 0x21, "OptionsMenu::m_bIsServer: Incorrect offset");
 static_assert(offsetof(OptionsMenu, OptionsMenu::m_pCompoundButton) == 0x28, "OptionsMenu::m_pCompoundButton: Incorrect offset");
 static_assert(offsetof(OptionsMenu, OptionsMenu::m_pRadioButtonSet) == 0x38, "OptionsMenu::m_pRadioButtonSet: Incorrect offset");

@@ -130,11 +130,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDIr)Dependencies\FreeImage\DLL\$(PlatformShortName);$(SolutionDir)Dependencies\FMOD\lib\$(PlatformShortName);$(SolutionDir)Dependencies\MyGUIEngine\lib;$(SolutionDir)Build\libs-$(Configuration);$(SolutionDir)Dependencies\steam\lib;$(SolutionDir)Dependencies\lz4\Lib;$(SolutionDir)Dependencies\SmSdk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libMinHook.lib;MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib;FreeImage.lib;SmSdk.lib</AdditionalDependencies>
+      <AdditionalDependencies>MyGUIEngine.lib;jsoncpp.lib;steam_api64.lib;fmod_vc.lib;fmodstudio_vc.lib;lz4_64.lib;FreeImage.lib;SmSdk.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Code\CustomOptionsMenu.cpp" />
     <ClCompile Include="Code\DllGlobals.cpp" />
     <ClCompile Include="Code\PlayerVoiceManager.cpp" />
     <ClCompile Include="Code\PlayerVoiceSlider.cpp" />
@@ -146,7 +145,6 @@
     <ClCompile Include="Code\Utils\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Code\CustomOptionsMenu.hpp" />
     <ClInclude Include="Code\DllGlobals.hpp" />
     <ClInclude Include="Code\PlayerVoiceManager.hpp" />
     <ClInclude Include="Code\PlayerVoiceSlider.hpp" />

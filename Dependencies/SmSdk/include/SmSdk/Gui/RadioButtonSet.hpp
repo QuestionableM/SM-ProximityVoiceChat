@@ -12,16 +12,25 @@ SMSDK_BEGIN_NAMESPACE
 
 class RadioButtonSet
 {
-	SDK_PUB RadioButtonSet(const std::vector<MyGUI::Button*>& buttons)
-	{
-		using fSelfConstructor = void (*)(RadioButtonSet*, const std::function<void(MyGUI::Widget*)>&, const std::vector<MyGUI::Button*>&);
+	SDK_PUB SMSDK_API RadioButtonSet(const std::vector<MyGUI::Button*>& vecButtons, const std::function<void(MyGUI::Widget*)>& clickCallback);
 
-		Memory::Read<fSelfConstructor>(SM_CONSTRUCTOR_RADIO_BUTTON_SET_OFFSET)(
-		    this, [](MyGUI::Widget*) -> void {}, buttons);
-	}
+	SDK_PUB SMSDK_API static std::shared_ptr<RadioButtonSet> New(const std::vector<MyGUI::Button*>& vecButtons, const std::function<void(MyGUI::Widget*)>& clickCallback);
+	SDK_PUB SMSDK_API static std::shared_ptr<RadioButtonSet> New(const std::vector<MyGUI::Button*>& vecButtons);
 
-	/* 0x0000 */ SDK_PRI char pad_0x0[0x60];
+	SDK_PUB SMSDK_API static void ChangeButtonState(MyGUI::Button* pButton, const bool newState);
+	SDK_PUB SMSDK_API void updateSelection();
+
+	SDK_PUB SMSDK_API void onItemMouseClick(MyGUI::Widget* _sender);
+
+	/* 0x0000 */ SDK_PUB MyGUI::Button* m_pSelectedButton;
+	/* 0x0008 */ SDK_PUB std::vector<MyGUI::Button*> m_vecButtons;
+	/* 0x0020 */ SDK_PUB std::function<void(MyGUI::Widget*)> m_pClickCallback;
+
 }; // Size: 0x60
+
+static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_pSelectedButton) == 0x0, "RadioButtonSet::m_pSelectedButton: Incorrect offset");
+static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_vecButtons) == 0x8, "RadioButtonSet::m_vecButtons: Incorrect offset");
+static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_pClickCallback) == 0x20, "RadioButtonSet::m_pCallback: Incorrect offset");
 
 static_assert(sizeof(RadioButtonSet) == 0x60, "RadioButtonSet: Incorrect Size");
 
