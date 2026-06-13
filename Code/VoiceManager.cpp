@@ -1,10 +1,11 @@
 #include "VoiceManager.hpp"
 
-#include "SmSdk/Gui/GuiSystemManager.hpp"
-#include "SmSdk/Gui/InGameGuiManager.hpp"
-#include "SmSdk/InputManager.hpp"
-#include "SmSdk/GameState.hpp"
-#include "SmSdk/MyPlayer.hpp"
+#include <SmSdk/Gui/GuiSystemManager.hpp>
+#include <SmSdk/Gui/InGameGuiManager.hpp>
+#include <SmSdk/InputManager.hpp>
+#include <SmSdk/GameState.hpp>
+#include <SmSdk/MyPlayer.hpp>
+#include <SmSdk/lz4.hpp>
 
 #include "Utils/TextureLoader.hpp"
 #include "Utils/BufferWriter.hpp"
@@ -15,7 +16,6 @@
 #include "PlayerVoiceManager.hpp"
 
 #include <steam/steam_api.h>
-#include <lz4/lz4.h>
 
 #include "../resource.h"
 
@@ -94,7 +94,7 @@ bool VoiceManager::ServerPacketHandler(
 			VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1);
 
 		g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
-		const int v_compressedData = LZ4_compress_default(
+		const int v_compressedData = SM::Lz4::Compress(
 			reinterpret_cast<const char*>(packetData) + 1,
 			g_compressedServerPacket + 1,
 			packetDataSz - 1,
@@ -107,29 +107,30 @@ bool VoiceManager::ServerPacketHandler(
 		}
 
 		ISteamNetworkingSockets* v_pSockets = SteamNetworkingSockets();
-		const auto v_pNetworkSend = pNetworkServer->getNetworkSend();
-
-		for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
+		if (const auto v_pNetworkSend = pNetworkServer->getNetworkSend())
 		{
-			// Avoid sending the voice packets back to the player
-			if (v_curConnection == steamId)
-				continue;
-
-			// Avoid sending the voice packets to the server since we are at server already
-			if (v_curConnection == v_localSteamId)
-				continue;
-
-			EResult v_result = v_pSockets->SendMessageToConnection(
-				v_curConnection,
-				g_compressedServerPacket,
-				std::uint32_t(v_compressedData) + 1,
-				k_EP2PSendUnreliableNoDelay,
-				nullptr);
-
-			if (v_result != k_EResultOK)
+			for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
 			{
-				DebugErrorL("Couldn't send the packet to ", v_curConnection);
-				return true;
+				// Avoid sending the voice packets back to the player
+				if (v_curConnection == steamId)
+					continue;
+
+				// Avoid sending the voice packets to the server since we are at server already
+				if (v_curConnection == v_localSteamId)
+					continue;
+
+				EResult v_result = v_pSockets->SendMessageToConnection(
+					v_curConnection,
+					g_compressedServerPacket,
+					std::uint32_t(v_compressedData) + 1,
+					k_EP2PSendUnreliableNoDelay,
+					nullptr);
+
+				if (v_result != k_EResultOK)
+				{
+					DebugErrorL("Couldn't send the packet to ", v_curConnection);
+					return true;
+				}
 			}
 		}
 
@@ -201,8 +202,14 @@ void VoiceManager::UpdateVoiceRecording()
 	ISteamUser* v_pSteamUser = SteamUser();
 	std::uint32_t v_bytes;
 
-	if (v_pSteamUser->GetAvailableVoice(&v_bytes) != k_EVoiceResultOK)
+	EVoiceResult v_result = v_pSteamUser->GetAvailableVoice(&v_bytes);
+	if (v_result != k_EVoiceResultOK)
+	{
+		DebugOutL("Voice is not recorded!");
 		return;
+	}
+
+	DebugOutL("Voice is recording. Bytes available: ", v_bytes);
 
 	constexpr std::size_t v_voiceBufferOffset = sizeof(std::uint32_t) * 2; //player id + buffer size
 	v_pSteamUser->GetVoice(
@@ -215,10 +222,10 @@ void VoiceManager::UpdateVoiceRecording()
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;
-	int v_compressedSize = LZ4_compress_default(
+	int v_compressedSize = SM::Lz4::Compress(
 		m_packetBuffer,
 		m_compressedPacket + 1,
-		int(v_voiceBufferOffset) + int(v_bytes), //PacketBuffer size: header + buffer
+		int(v_voiceBufferOffset) + int(v_bytes), // PacketBuffer size: header + buffer
 		sizeof(m_compressedPacket) - 1);
 
 	if (v_compressedSize > 0)

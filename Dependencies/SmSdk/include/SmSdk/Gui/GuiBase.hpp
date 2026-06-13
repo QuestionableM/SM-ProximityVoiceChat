@@ -9,22 +9,15 @@ SMSDK_BEGIN_NAMESPACE
 
 class GuiBase
 {
+	SDK_PUB SMSDK_API GuiBase();
+	
 	SDK_PUB virtual ~GuiBase() = default;
-
-	SDK_PUB virtual void initialize() { /* implemented by the game */ }
-	SDK_PUB virtual void destroyWidgets() { /* implemented by the game */ }
-	SDK_PUB virtual void open() { /* implemented by the game */ }
-	SDK_PUB virtual void close() { /* implemented by the game */ }
-	SDK_PUB virtual bool isActive()
-	{
-	#if defined(SMSDK_ENABLE_MYGUI)
-		return m_pMainPanel && m_pMainPanel->getVisible();
-	#else
-		return false;
-	#endif
-	}
-
-	SDK_PUB virtual void setFocus(const std::string& widget) { SMSDK_UNREF(widget); /* implemented by the game */ }
+	SDK_PUB virtual void initialize();
+	SDK_PUB virtual void destroyWidgets();
+	SDK_PUB virtual void open();
+	SDK_PUB virtual void close();
+	SDK_PUB virtual bool isActive();
+	SDK_PUB virtual void setFocus(const std::string& widget);
 
 	/* 0x0008 */ SDK_PUB MyGUI::Widget* m_pMainPanel;
 	/* 0x0010 */ SDK_PUB GuiInterface* m_pGuiInterface;

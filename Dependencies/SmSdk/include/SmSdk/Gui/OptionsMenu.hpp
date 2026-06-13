@@ -13,7 +13,7 @@ class OptionsMenu : public GuiBase
 {
 	SDK_PRI SMSDK_API OptionsMenu(GuiBase* rootGui, const bool isServer);
 
-	SDK_PUB SMSDK_API static void Constructor(OptionsMenu* self, GuiBase* rootGui, const bool isServer);
+	SDK_PUB SMSDK_API static OptionsMenu* Constructor(OptionsMenu* self, GuiBase* rootGui, const bool isServer);
 	SDK_PUB SMSDK_API static void Initialize(OptionsMenu* self);
 	SDK_PUB	SMSDK_API static void AddSubMenu(
 		const std::string_view& tabGuiName,
