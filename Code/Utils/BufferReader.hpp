@@ -7,13 +7,10 @@
 class BufferReader
 {
 public:
-	BufferReader(const std::uint8_t* buff)
-		: buffer(buff), offset(0) {}
-
-	inline void skip(std::size_t bytes)
-	{
-		this->offset += bytes;
-	}
+	inline BufferReader(const std::uint8_t* buff) noexcept
+		: buffer(buff)
+		, offset(0)
+	{}
 
 	template<typename T>
 	inline void ReadRef(T* object)
@@ -23,7 +20,7 @@ public:
 	}
 
 	template<typename T>
-	inline static void reverse_object(T* obj)
+	inline static void ReverseObject(T* obj)
 	{
 		char* v_obj_start = reinterpret_cast<char*>(obj);
 		char* v_obj_end = v_obj_start + sizeof(T);
@@ -35,7 +32,7 @@ public:
 	inline void ReadRefBE(T* object)
 	{
 		this->ReadRef(object);
-		this->reverse_object<T>(object);
+		this->ReverseObject<T>(object);
 	}
 
 	template<typename T, bool t_big_endian = false>
@@ -51,10 +48,18 @@ public:
 	{
 		T obj;
 		this->ReadRef<T>(&obj);
-		this->reverse_object<T>(&obj);
+		this->ReverseObject<T>(&obj);
 	}
 
-	std::size_t	Offset() const { return this->offset; }
+	inline void Skip(const std::size_t bytes) noexcept
+	{
+		this->offset += bytes;
+	}
+
+	inline std::size_t Offset() const noexcept
+	{
+		return this->offset;
+	}
 
 private:
 	const std::uint8_t* buffer;

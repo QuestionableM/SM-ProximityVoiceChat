@@ -23,7 +23,9 @@ class VoiceManager
 {
 public:
 	// Plays the uncompressed packet 123
-	static void PlayVoicePacket(const void* decompressedPacket);
+	static void PlayVoicePacket(
+		const void* decompressedPacket,
+		const std::size_t decompressedPacketSz);
 
 	static bool ClientPacketHandler(
 		SM::SteamNetworkClient* pNetworkClient,

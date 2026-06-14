@@ -22,24 +22,34 @@
 bool VoiceManager::sm_isVoiceRecording = false;
 
 static char g_decompressedVoiceData[VC_BUFFER_SIZE];
-void VoiceManager::PlayVoicePacket(const void* decompressedPacket)
+void VoiceManager::PlayVoicePacket(
+	const void* decompressedPacket,
+	const std::size_t decompressedPacketSz)
 {
+	// Discard invalid packets, make sure we are not overrunning the buffer
+	if (decompressedPacketSz < (sizeof(std::uint32_t) + sizeof(std::uint32_t)))
+		return;
+
 	BufferReader v_reader(reinterpret_cast<const std::uint8_t*>(decompressedPacket));
 	const std::uint32_t v_playerId = v_reader.Read<std::uint32_t>();
 	const std::uint32_t v_bufferSz = v_reader.Read<std::uint32_t>();
-	const std::uint8_t* v_pSoundData = reinterpret_cast<const std::uint8_t*>(decompressedPacket) + v_reader.Offset();
+
+	// Make sure the actual voice data is correct
+	if (v_bufferSz != (decompressedPacketSz - v_reader.Offset()))
+		return;
 
 	PlayerVoice* v_pCurVoice = PlayerVoiceManager::GetVoice(v_playerId);
 	if (!v_pCurVoice) return;
 
 	ISteamUser* v_pSteamUser = SteamUser();
+	if (!v_pSteamUser) return;
 
 	const std::uint32_t v_optSampleRate = v_pSteamUser->GetVoiceOptimalSampleRate();
 	v_pCurVoice->m_pChannel->setFrequency(float(v_optSampleRate));
 
 	std::uint32_t v_decompVoiceSz;
 	const EVoiceResult v_result = v_pSteamUser->DecompressVoice(
-		v_pSoundData,
+		reinterpret_cast<const std::uint8_t*>(decompressedPacket) + v_reader.Offset(),
 		v_bufferSz,
 		g_decompressedVoiceData,
 		sizeof(g_decompressedVoiceData),
@@ -67,7 +77,7 @@ bool VoiceManager::ClientPacketHandler(
 	const std::uint8_t v_packetId = reinterpret_cast<const std::uint8_t*>(packetData)[0];
 	if (v_packetId == C_ID_VOICE_PACKET)
 	{
-		VoiceManager::PlayVoicePacket(reinterpret_cast<const std::uint8_t*>(packetData) + 1);
+		VoiceManager::PlayVoicePacket(reinterpret_cast<const std::uint8_t*>(packetData) + 1, packetDataSz - 1);
 		return true;
 	}
 
@@ -91,7 +101,7 @@ bool VoiceManager::ServerPacketHandler(
 
 		// Do not play the host audio to host
 		if (steamId != v_localSteamId)
-			VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1);
+			VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1, packetDataSz - 1);
 
 		g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
 		const int v_compressedData = SM::Lz4::Compress(
