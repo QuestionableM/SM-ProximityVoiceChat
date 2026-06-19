@@ -85,6 +85,57 @@ bool VoiceManager::ClientPacketHandler(
 }
 
 static char g_compressedServerPacket[VC_BUFFER_SIZE];
+void VoiceManager::HandleVoicePacket(
+	SM::SteamNetworkServer* pNetworkServer,
+	const std::uint64_t steamId,
+	const void* packetData,
+	const std::uint32_t packetDataSz)
+{
+	const std::uint64_t v_localSteamId = SteamUser()->GetSteamID().ConvertToUint64();
+	if (steamId != v_localSteamId) // Do not play the host audio to host
+		VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1, packetDataSz - 1);
+
+	g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
+	const int v_compressedData = SM::Lz4::Compress(
+		reinterpret_cast<const char*>(packetData),
+		g_compressedServerPacket + 1,
+		packetDataSz,
+		sizeof(g_compressedServerPacket) - 1);
+
+	if (v_compressedData <= 0)
+	{
+		DebugErrorL("Could not compress packet!");
+		return;
+	}
+
+	ISteamNetworkingSockets* v_pSockets = SteamNetworkingSockets();
+	if (!v_pSockets) return;
+
+	const auto v_pNetworkSend = pNetworkServer->getNetworkSend();
+	if (!v_pNetworkSend) return;
+
+	for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
+	{
+		// Avoid sending the voice packets back to the player
+		if (v_curConnection == steamId)
+			continue;
+
+		// Avoid sending the voice packets to the server since we are at server already
+		if (v_curConnection == v_localSteamId)
+			continue;
+
+		if (v_pSockets->SendMessageToConnection(
+			v_curConnection,
+			g_compressedServerPacket,
+			static_cast<std::uint32_t>(v_compressedData) + 1,
+			k_EP2PSendUnreliableNoDelay,
+			nullptr) != k_EResultOK)
+		{
+			DebugErrorL("Couldn't send the packet to: ", v_curConnection);
+		}
+	}
+}
+
 bool VoiceManager::ServerPacketHandler(
 	SM::SteamNetworkServer* pNetworkServer,
 	const std::uint64_t steamId,
@@ -97,53 +148,7 @@ bool VoiceManager::ServerPacketHandler(
 	const std::uint8_t v_packetId = reinterpret_cast<const std::uint8_t*>(packetData)[0];
 	if (v_packetId == C_ID_VOICE_PACKET)
 	{
-		const std::uint64_t v_localSteamId = SteamUser()->GetSteamID().ConvertToUint64();
-
-		// Do not play the host audio to host
-		if (steamId != v_localSteamId)
-			VoiceManager::PlayVoicePacket(reinterpret_cast<const char*>(packetData) + 1, packetDataSz - 1);
-
-		g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
-		const int v_compressedData = SM::Lz4::Compress(
-			reinterpret_cast<const char*>(packetData) + 1,
-			g_compressedServerPacket + 1,
-			packetDataSz - 1,
-			sizeof(g_compressedServerPacket) - 1);
-
-		if (v_compressedData <= 0)
-		{
-			DebugErrorL("Could not compress packet!");
-			return true;
-		}
-
-		ISteamNetworkingSockets* v_pSockets = SteamNetworkingSockets();
-		if (const auto v_pNetworkSend = pNetworkServer->getNetworkSend())
-		{
-			for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
-			{
-				// Avoid sending the voice packets back to the player
-				if (v_curConnection == steamId)
-					continue;
-
-				// Avoid sending the voice packets to the server since we are at server already
-				if (v_curConnection == v_localSteamId)
-					continue;
-
-				EResult v_result = v_pSockets->SendMessageToConnection(
-					v_curConnection,
-					g_compressedServerPacket,
-					std::uint32_t(v_compressedData) + 1,
-					k_EP2PSendUnreliableNoDelay,
-					nullptr);
-
-				if (v_result != k_EResultOK)
-				{
-					DebugErrorL("Couldn't send the packet to ", v_curConnection);
-					return true;
-				}
-			}
-		}
-
+		VoiceManager::HandleVoicePacket(pNetworkServer, steamId, packetData, packetDataSz);
 		return true;
 	}
 

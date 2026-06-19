@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#define VC_BUFFER_SIZE 0x7FFFF
+#define VC_BUFFER_SIZE 0x20000
 #define C_ID_VOICE_PACKET 123
 
 /* VOICE PACKET STRUCTURE
@@ -29,6 +29,12 @@ public:
 
 	static bool ClientPacketHandler(
 		SM::SteamNetworkClient* pNetworkClient,
+		const std::uint64_t steamId,
+		const void* packetData,
+		const std::uint32_t packetDataSz);
+
+	static void HandleVoicePacket(
+		SM::SteamNetworkServer* pNetworkServer,
 		const std::uint64_t steamId,
 		const void* packetData,
 		const std::uint32_t packetDataSz);
