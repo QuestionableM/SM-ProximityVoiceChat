@@ -220,11 +220,9 @@ void VoiceManager::UpdateVoiceRecording()
 	EVoiceResult v_result = v_pSteamUser->GetAvailableVoice(&v_bytes);
 	if (v_result != k_EVoiceResultOK)
 	{
-		DebugOutL("Voice is not recorded!");
+		SM::InGameGuiManager::DisplayAlertText("Your microphone does not emit any data. Please check system settings.");
 		return;
 	}
-
-	DebugOutL("Voice is recording. Bytes available: ", v_bytes);
 
 	constexpr std::size_t v_voiceBufferOffset = sizeof(std::uint32_t) * 2; //player id + buffer size
 	v_pSteamUser->GetVoice(
@@ -290,20 +288,18 @@ void VoiceManager::CreateSpeakerImage()
 	FreeImage_Unload(v_fibitmap);
 }
 
-MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* main_panel)
+MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* parent, const bool canCreate)
 {
-	MyGUI::Widget* v_widget = main_panel->findWidget("SpeakerIcon");
+	MyGUI::Widget* v_widget = parent->findWidget("SpeakerIcon");
 	if (v_widget)
-	{
-		if (v_widget->isType<MyGUI::ImageBox>())
-			return v_widget->castType<MyGUI::ImageBox>();
+		return v_widget->castType<MyGUI::ImageBox>(false);
 
+	if (!canCreate)
 		return nullptr;
-	}
 
 	VoiceManager::CreateSpeakerImage();
-	MyGUI::ImageBox* v_pNewImgBox = main_panel->createWidgetReal<MyGUI::ImageBox>(
-		"ImageBox", MyGUI::FloatCoord(0.0f, 0.0f, 0.0f, 0.0f), MyGUI::Align::Default, "SpeakerIcon")->castType<MyGUI::ImageBox>();
+	MyGUI::ImageBox* v_pNewImgBox = parent->createWidgetReal<MyGUI::ImageBox>(
+		"ImageBox", MyGUI::FloatCoord(0.0f, 0.0f, 0.0f, 0.0f), MyGUI::Align::Default, "SpeakerIcon");
 
 	v_pNewImgBox->setVisible(false);
 	v_pNewImgBox->setImageTexture("SpeakerIcon");
@@ -313,23 +309,25 @@ MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* main_panel)
 
 void VoiceManager::UpdateSpeakerUiIcon()
 {
-	SM::InGameGuiManager* v_gui_mgr = SM::InGameGuiManager::GetInstance();
-	if (!v_gui_mgr || !v_gui_mgr->m_pHudGui) return;
+	auto v_pHudGui = SM::InGameGuiManager::GetHudGui();
+	if (!v_pHudGui) return;
 
-	MyGUI::ImageBox* v_speaker_icon = VoiceManager::GetSpeakerImageBox(v_gui_mgr->m_pHudGui->m_pMainPanel);
-	if (!v_speaker_icon) return;
+	MyGUI::Widget* v_pHudMainPanel = v_pHudGui->getMainPanel();
+	if (!v_pHudMainPanel) return;
 
-	MyGUI::Widget* v_main_panel = v_gui_mgr->m_pHudGui->m_pMainPanel;
-	const float v_aspect_ratio = float(v_main_panel->getWidth()) / float(v_main_panel->getHeight());
-	const int v_icon_sz = int(50.0f * v_aspect_ratio);
-	const int v_icon_spacing = int(20.0f * v_aspect_ratio);
+	MyGUI::ImageBox* v_pSpeakerIcon = VoiceManager::GetSpeakerImageBox(v_pHudMainPanel);
+	if (!v_pSpeakerIcon) return;
 
-	v_speaker_icon->setSize(v_icon_sz, v_icon_sz);
+	const float v_aspectRatio = float(v_pHudMainPanel->getWidth()) / float(v_pHudMainPanel->getHeight());
+	const int v_iconSz = int(50.0f * v_aspectRatio);
+	const int v_iconSpacing = int(20.0f * v_aspectRatio);
 
-	v_speaker_icon->setPosition(MyGUI::IntPoint(
-		v_main_panel->getWidth() - v_speaker_icon->getWidth() - v_icon_spacing,
-		(v_main_panel->getHeight() - v_speaker_icon->getHeight()) / 2
+	v_pSpeakerIcon->setSize(v_iconSz, v_iconSz);
+
+	v_pSpeakerIcon->setPosition(MyGUI::IntPoint(
+		v_pHudMainPanel->getWidth() - v_pSpeakerIcon->getWidth() - v_iconSpacing,
+		(v_pHudMainPanel->getHeight() - v_pSpeakerIcon->getHeight()) / 2
 	));
 
-	v_speaker_icon->setVisible(VoiceManager::sm_isVoiceRecording);
+	v_pSpeakerIcon->setVisible(VoiceManager::sm_isVoiceRecording);
 }

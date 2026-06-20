@@ -40,6 +40,8 @@ class GuiInterface
 	SDK_PRI virtual void func12() {}
 	SDK_PUB virtual void processDeferredCallbacks() {}
 
+	SDK_PUB SMSDK_API std::shared_ptr<GuiBase> getGuiBase();
+
 	/* 0x0008 */ SDK_PUB std::shared_ptr<GuiBase> m_pGuiBase;
 	/* 0x0018 */ SDK_PRI bool m_bSomeBool;
 	/* 0x0019 */ SDK_PRI char pad_0x19[0x7];

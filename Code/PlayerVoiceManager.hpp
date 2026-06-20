@@ -23,6 +23,8 @@ public:
 	void setVolume(float new_volume);
 	float getVolume();
 
+	bool isPlaying();
+
 public:
 	FMOD::Sound* m_pSound;
 	FMOD::Channel* m_pChannel;
@@ -30,6 +32,7 @@ public:
 	std::uint64_t m_steamId;
 	std::uint32_t m_playerId;
 	float m_fVolume;
+	std::atomic_bool m_isPlaying;
 
 	std::mutex m_voiceMutex;
 	std::vector<std::uint8_t> m_voiceData;
@@ -39,12 +42,15 @@ class PlayerVoiceManager
 {
 public:
 	static PlayerVoice* GetVoice(const std::uint32_t playerId);
+	static bool IsVoicePlaying(const std::uint32_t playerId);
+
 	static bool PlayerHasVoice(const std::uint32_t playerId);
 	static void Update();
 
 private:
 	static void UpdatePlayerSound(SM::Player* player, const float masterVolume);
 	static void UpdatePlayerSounds();
+	static void UpdatePlayerNameTag(SM::Player* player);
 	static void RemoveDeadVoices();
 
 public:

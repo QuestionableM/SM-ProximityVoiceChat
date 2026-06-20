@@ -21,6 +21,12 @@ class InGameGuiManager : public InGameGuiManagerInterface
 	SDK_PUB SMSDK_API static void DisplayAlertText(const std::string_view& text, const float duration = 4.0f);
 	SDK_PUB SMSDK_API static void SetInteractionText(const std::vector<std::string>& vec);
 
+	SDK_PUB SMSDK_API std::shared_ptr<HudGui2> getHudGui();
+	SDK_PUB SMSDK_API std::shared_ptr<InventoryGui> getInventoryGui();
+
+	SDK_PUB SMSDK_API static std::shared_ptr<HudGui2> GetHudGui();
+	SDK_PUB SMSDK_API static std::shared_ptr<InventoryGui> GetInventoryGui();
+
 	/* 0x0008 */ SDK_PRI char pad_0x8[0x18];
 	/* 0x0020 */ SDK_PUB std::shared_ptr<HudGui2> m_pHudGui;
 	/* 0x0030 */ SDK_PUB std::shared_ptr<InventoryGui> m_pInventory;

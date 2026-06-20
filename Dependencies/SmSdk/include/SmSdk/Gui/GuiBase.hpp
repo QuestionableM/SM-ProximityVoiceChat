@@ -19,6 +19,8 @@ class GuiBase
 	SDK_PUB virtual bool isActive();
 	SDK_PUB virtual void setFocus(const std::string& widget);
 
+	SDK_PUB SMSDK_API MyGUI::Widget* getMainPanel();
+
 	/* 0x0008 */ SDK_PUB MyGUI::Widget* m_pMainPanel;
 	/* 0x0010 */ SDK_PUB GuiInterface* m_pGuiInterface;
 }; // Size: 0x18

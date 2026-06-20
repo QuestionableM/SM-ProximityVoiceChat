@@ -1,13 +1,18 @@
 #include "PlayerVoiceManager.hpp"
 
 #include <SmSdk/Physics/CharacterPhysicsProxy.hpp>
-#include <SmSdk/CharacterManager.hpp>
+#include <SmSdk/Character/CharacterManager.hpp>
 #include <SmSdk/PlayerManager.hpp>
 #include <SmSdk/AudioManager.hpp>
 #include <SmSdk/GameSettings.hpp>
 #include <SmSdk/MyPlayer.hpp>
 
+#include <SmSdk/Gui/GuiInterface.hpp>
+#include <SmSdk/Gui/GuiBase.hpp>
+
 #include "VoiceSettingsStorage.hpp"
+#include "VoiceManager.hpp"
+
 #include "Utils/MathUtils.hpp"
 #include "Utils/Console.hpp"
 
@@ -15,23 +20,31 @@ std::unordered_map<std::uint32_t, std::shared_ptr<PlayerVoice>> PlayerVoiceManag
 
 FMOD_RESULT F_CALL PlayerVoice::pcm_callback(FMOD_SOUND* sound, void* data, unsigned int datalen)
 {
-	PlayerVoice* v_voice = nullptr;
-	FMOD_Sound_GetUserData(sound, reinterpret_cast<void**>(&v_voice));
+	PlayerVoice* v_voice;
 
-	std::lock_guard<std::mutex> v_lock_g(v_voice->m_voiceMutex);
-
-	const std::size_t v_datalen_sz = std::size_t(datalen);
-	const std::size_t v_rem_data = std::min(v_voice->m_voiceData.size(), v_datalen_sz);
-
-	std::memcpy(data, v_voice->m_voiceData.data(), v_rem_data);
-	if (v_datalen_sz != v_rem_data)
-		std::memset(reinterpret_cast<char*>(data) + v_rem_data, 0, v_datalen_sz - v_rem_data);
-
-	if (v_rem_data > 0)
+	if (FMOD_Sound_GetUserData(sound, reinterpret_cast<void**>(&v_voice)) == FMOD_OK)
 	{
-		v_voice->m_voiceData.erase(
-			v_voice->m_voiceData.begin(),
-			v_voice->m_voiceData.begin() + v_rem_data);
+		std::lock_guard<std::mutex> v_lock(v_voice->m_voiceMutex);
+
+		const std::size_t v_datalenSz = static_cast<std::size_t>(datalen);
+		const std::size_t v_remData = std::min(v_voice->m_voiceData.size(), v_datalenSz);
+
+		std::memcpy(data, v_voice->m_voiceData.data(), v_remData);
+		if (v_datalenSz != v_remData)
+			std::memset(reinterpret_cast<char*>(data) + v_remData, 0, v_datalenSz - v_remData);
+
+		if (v_remData > 0)
+		{
+			v_voice->m_voiceData.erase(
+				v_voice->m_voiceData.begin(),
+				v_voice->m_voiceData.begin() + v_remData);
+		}
+
+		v_voice->m_isPlaying = v_remData;
+	}
+	else
+	{
+		v_voice->m_isPlaying = false;
 	}
 	
 	return FMOD_OK;
@@ -44,7 +57,9 @@ PlayerVoice::PlayerVoice(
 	: m_pSound(nullptr)
 	, m_pChannel(nullptr)
 	, m_steamId(steamId)
+	, m_playerId(playerId)
 	, m_fVolume(VoiceSettingsStorage::GetPlayerVolume(m_steamId))
+	, m_isPlaying(false)
 	, m_voiceMutex()
 	, m_voiceData()
 {}
@@ -77,6 +92,12 @@ float PlayerVoice::getVolume()
 	return MathUtil::lerp(1.0f, 5.0f, m_fVolume - 1.0f);
 }
 
+bool PlayerVoice::isPlaying()
+{
+	std::lock_guard<std::mutex> v_lock(m_voiceMutex);
+	return m_isPlaying;
+}
+
 ////////////////////PLAYER VOICE MANAGER/////////////////////
 
 PlayerVoice* PlayerVoiceManager::GetVoice(const std::uint32_t playerId)
@@ -86,6 +107,14 @@ PlayerVoice* PlayerVoiceManager::GetVoice(const std::uint32_t playerId)
 		return v_iter->second.get();
 
 	return nullptr;
+}
+
+bool PlayerVoiceManager::IsVoicePlaying(const std::uint32_t playerId)
+{
+	PlayerVoice* v_pCurVoice = PlayerVoiceManager::GetVoice(playerId);
+	if (!v_pCurVoice) return false;
+
+	return v_pCurVoice->isPlaying();
 }
 
 bool PlayerVoiceManager::PlayerHasVoice(const std::uint32_t playerId)
@@ -169,11 +198,12 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 	FMOD_VECTOR v_data{ std::cos(v_actualYaw), std::sin(v_actualYaw), 0.0f };
 	v_pVoice->m_pChannel->set3DConeOrientation(&v_data);
 
+	constexpr float v_charVelocityMultiplier = 0.25f;
 	const DirectX::XMFLOAT3 v_charPosition = v_pChar->getPosition();
 	const DirectX::XMFLOAT3 v_charVelocity = v_pChar->getVelocity();
 
 	const FMOD_VECTOR v_objPos{ v_charPosition.x, v_charPosition.z, v_charPosition.y };
-	const FMOD_VECTOR v_objVel{ v_charVelocity.x, v_charVelocity.z, v_charVelocity.y };
+	const FMOD_VECTOR v_objVel{ v_charVelocity.x * v_charVelocityMultiplier, v_charVelocity.z * v_charVelocityMultiplier, v_charVelocity.y * v_charVelocityMultiplier };
 	v_pVoice->m_pChannel->set3DAttributes(&v_objPos, &v_objVel);
 
 	v_pVoice->m_pChannel->setVolume(v_pVoice->getVolume() * masterVolume);
@@ -181,17 +211,62 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 
 void PlayerVoiceManager::UpdatePlayerSounds()
 {
-	SM::PlayerManager* v_pl_mgr = SM::PlayerManager::GetInstance();
-	if (!v_pl_mgr) return;
+	const float v_masterVolume = SM::GameSettings::GetMasterVolume();
 
-	const float v_master_volume = SM::GameSettings::GetMasterVolume();
-
-	for (const auto& v_cur_iter : v_pl_mgr->m_mapIdToPlayers)
+	for (const auto& v_pCurPlayer : SM::PlayerManager::GetAllPlayers())
 	{
-		if (!v_cur_iter.second) continue;
-
-		PlayerVoiceManager::UpdatePlayerSound(v_cur_iter.second.get(), v_master_volume);
+		PlayerVoiceManager::UpdatePlayerSound(v_pCurPlayer.get(), v_masterVolume);
+		PlayerVoiceManager::UpdatePlayerNameTag(v_pCurPlayer.get());
 	}
+}
+
+void PlayerVoiceManager::UpdatePlayerNameTag(SM::Player* player)
+{
+	auto v_pCurChar = player->getCharacter();
+	if (!v_pCurChar) return;
+
+	auto v_pNameTagGui = v_pCurChar->getNameTagGui();
+	if (!v_pNameTagGui) return;
+
+	auto v_pGuiBase = v_pNameTagGui->getGuiBase();
+	if (!v_pGuiBase) return;
+
+	auto v_pMainPanel = v_pGuiBase->getMainPanel();
+	if (!v_pMainPanel) return;
+
+	//if (PlayerVoiceManager::IsVoicePlaying(v_pCurPlayer->getId()))?
+	if (v_pMainPanel->isVisible())
+	{
+		MyGUI::ImageBox* v_pSpeakerIcon = VoiceManager::GetSpeakerImageBox(v_pMainPanel);
+
+		// Adjust to fit the text
+		MyGUI::EditBox* v_pWidget = v_pMainPanel->findWidget("Text")->castType<MyGUI::EditBox>(false);
+		if (v_pWidget && v_pWidget->getTextLength() > 0)
+		{
+			const MyGUI::IntSize v_textSize = v_pWidget->getTextSize();
+
+			const int v_textSizeHeightAdjusted = static_cast<int>(float(v_textSize.height) * 1.25f);
+			const MyGUI::IntSize v_mainPanelSz(v_textSize.width + v_textSizeHeightAdjusted, v_textSizeHeightAdjusted);
+
+			v_pMainPanel->setSize(v_mainPanelSz);
+			v_pSpeakerIcon->setSize(v_mainPanelSz.height, v_mainPanelSz.height);
+
+			v_pWidget->setTextAlign(MyGUI::Align::VCenter | MyGUI::Align::Right);
+			v_pWidget->setSize(v_pWidget->getWidth(), v_pMainPanel->getHeight());
+
+			MyGUI::IntPoint v_intPoint = v_pSpeakerIcon->getPosition();
+			v_intPoint.left = v_pMainPanel->getWidth() - v_pSpeakerIcon->getWidth();
+			v_intPoint.top = 0;
+			v_pSpeakerIcon->setPosition(v_intPoint);
+
+			v_pSpeakerIcon->setVisible(VoiceManager::sm_isVoiceRecording);
+			return;
+		}
+	}
+
+	MyGUI::ImageBox* v_pSpeakerIcon = VoiceManager::GetSpeakerImageBox(v_pMainPanel, false);
+	if (v_pSpeakerIcon)
+		v_pSpeakerIcon->setVisible(false);
 }
 
 void PlayerVoiceManager::RemoveDeadVoices()

@@ -131,6 +131,8 @@ class Character : public NetObj
 
 	SDK_PUB SMSDK_API DirectX::XMFLOAT3 getPosition() const;
 	SDK_PUB SMSDK_API DirectX::XMFLOAT3 getVelocity() const;
+	SDK_PUB SMSDK_API std::shared_ptr<class CharacterGraphics> getGraphics() const;
+	SDK_PUB SMSDK_API std::shared_ptr<class GuiInterface> getNameTagGui() const;
 
 	SDK_PUB SMSDK_API float getPitch() const;
 	SDK_PUB SMSDK_API float getYaw() const;

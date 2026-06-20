@@ -54,7 +54,7 @@ public:
 	////UI FUNCTIONS
 
 	static void CreateSpeakerImage();
-	static MyGUI::ImageBox* GetSpeakerImageBox(MyGUI::Widget* main_panel);
+	static MyGUI::ImageBox* GetSpeakerImageBox(MyGUI::Widget* parent, const bool canCreate = true);
 	static void UpdateSpeakerUiIcon();
 
 private:
