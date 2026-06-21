@@ -97,9 +97,9 @@ void VoiceManager::HandleVoicePacket(
 
 	g_compressedServerPacket[0] = C_ID_VOICE_PACKET;
 	const int v_compressedData = SM::Lz4::Compress(
-		reinterpret_cast<const char*>(packetData),
+		reinterpret_cast<const char*>(packetData) + 1,
 		g_compressedServerPacket + 1,
-		packetDataSz,
+		packetDataSz - 1,
 		sizeof(g_compressedServerPacket) - 1);
 
 	if (v_compressedData <= 0)
@@ -114,24 +114,24 @@ void VoiceManager::HandleVoicePacket(
 	const auto v_pNetworkSend = pNetworkServer->getNetworkSend();
 	if (!v_pNetworkSend) return;
 
-	for (const HSteamNetConnection v_curConnection : v_pNetworkSend->getAllConnections())
+	for (const auto& v_curConnection : v_pNetworkSend->getAllConnections())
 	{
 		// Avoid sending the voice packets back to the player
-		if (v_curConnection == steamId)
+		if (v_curConnection.first == steamId)
 			continue;
 
 		// Avoid sending the voice packets to the server since we are at server already
-		if (v_curConnection == v_localSteamId)
+		if (v_curConnection.first == v_localSteamId)
 			continue;
 
 		if (v_pSockets->SendMessageToConnection(
-			v_curConnection,
+			v_curConnection.second,
 			g_compressedServerPacket,
 			static_cast<std::uint32_t>(v_compressedData) + 1,
 			k_EP2PSendUnreliableNoDelay,
 			nullptr) != k_EResultOK)
 		{
-			DebugErrorL("Couldn't send the packet to: ", v_curConnection);
+			DebugErrorL("Couldn't send the packet to: ", v_curConnection.first);
 		}
 	}
 }
@@ -158,12 +158,15 @@ bool VoiceManager::ServerPacketHandler(
 
 //////////////////////VOICE RECORDING FUNCTIONS//////////////////////
 
+#define PVC_VOICE_TIMEOUT_DEFAULT 3.0f
+static float sm_fNoVoiceTimeout = 0.0f;
 
 void VoiceManager::StartVoiceRecording()
 {
 	if (!sm_isVoiceRecording)
 	{
 		sm_isVoiceRecording = true;
+		sm_fNoVoiceTimeout = PVC_VOICE_TIMEOUT_DEFAULT;
 		VoiceManager::UpdateSpeakerUiIcon();
 		SteamUser()->StartVoiceRecording();
 	}
@@ -193,7 +196,7 @@ static bool GetRecordingPointers(SM::SteamNetworkClient** ppClient, SM::Player**
 
 static char m_packetBuffer[VC_BUFFER_SIZE];
 static char m_compressedPacket[VC_BUFFER_SIZE];
-void VoiceManager::UpdateVoiceRecording()
+void VoiceManager::UpdateVoiceRecording(const float deltaTime)
 {
 	SM::SteamNetworkClient* v_network;
 	SM::Player* v_player;
@@ -215,27 +218,40 @@ void VoiceManager::UpdateVoiceRecording()
 		return;
 
 	ISteamUser* v_pSteamUser = SteamUser();
-	std::uint32_t v_bytes;
+	if (!v_pSteamUser) return;
 
+	if (sm_fNoVoiceTimeout > 0.0f)
+		sm_fNoVoiceTimeout -= deltaTime;
+
+	std::uint32_t v_bytes;
 	EVoiceResult v_result = v_pSteamUser->GetAvailableVoice(&v_bytes);
 	if (v_result != k_EVoiceResultOK)
 	{
-		SM::InGameGuiManager::DisplayAlertText("Your microphone does not emit any data. Please check system settings.");
+		if (sm_fNoVoiceTimeout <= 0.0f)
+			SM::InGameGuiManager::DisplayAlertText("Your microphone does not emit any data. Please check system settings.", 1.0f);
+
 		return;
 	}
 
+	// Reset the voice timer
+	sm_fNoVoiceTimeout = PVC_VOICE_TIMEOUT_DEFAULT;
+
 	constexpr std::size_t v_voiceBufferOffset = sizeof(std::uint32_t) * 2; //player id + buffer size
-	v_pSteamUser->GetVoice(
+	if (v_pSteamUser->GetVoice(
 		true,
 		m_packetBuffer + v_voiceBufferOffset,
 		sizeof(m_packetBuffer) - v_voiceBufferOffset,
-		&v_bytes);
+		&v_bytes) != k_EVoiceResultOK)
+	{
+		DebugErrorL("Corrupted voice packet");
+		return;
+	}
 
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_uId;
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;
-	int v_compressedSize = SM::Lz4::Compress(
+	const int v_compressedSize = SM::Lz4::Compress(
 		m_packetBuffer,
 		m_compressedPacket + 1,
 		int(v_voiceBufferOffset) + int(v_bytes), // PacketBuffer size: header + buffer

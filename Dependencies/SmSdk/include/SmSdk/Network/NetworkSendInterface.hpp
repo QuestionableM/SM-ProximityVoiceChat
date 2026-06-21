@@ -26,7 +26,7 @@ static_assert(sizeof(NetworkSendInterface) == 0x28, "NetworkSendInterface: Incor
 
 struct SteamNetworkSend : public NetworkSendInterface
 {
-	SDK_PUB SMSDK_API std::vector<HSteamNetConnection> getAllConnections() const;
+	SDK_PUB SMSDK_API std::vector<std::pair<std::uint64_t, HSteamNetConnection>> getAllConnections() const;
 	SDK_PUB SMSDK_API HSteamNetConnection getConnectionFromSteamId(const std::uint64_t uSteamId) const;
 
 	/* 0x0028 */ SDK_PUB std::unordered_map<std::uint64_t, HSteamNetConnection> m_mapSteamIdToConnection;

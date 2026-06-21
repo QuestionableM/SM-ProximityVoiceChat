@@ -198,14 +198,28 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 	FMOD_VECTOR v_data{ std::cos(v_actualYaw), std::sin(v_actualYaw), 0.0f };
 	v_pVoice->m_pChannel->set3DConeOrientation(&v_data);
 
-	constexpr float v_charVelocityMultiplier = 0.25f;
+	// Doppler effect calculation
+	auto v_pSelfChar = SM::MyPlayer::GetCharacter();
+	if (v_pSelfChar)
+	{
+		DirectX::XMFLOAT3 v_voiceVelocity = v_pChar->getVelocity();
+		DirectX::XMFLOAT3 v_selfVelocity = v_pSelfChar->getVelocity();
+
+		DirectX::FXMVECTOR v_voiceVelocityVec = DirectX::XMLoadFloat3(&v_voiceVelocity);
+		DirectX::FXMVECTOR v_selfVelocityVec = DirectX::XMLoadFloat3(&v_selfVelocity);
+		const float v_relativeVelocity = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(v_selfVelocityVec, v_voiceVelocityVec)));
+		const float v_dopplerLevel = std::clamp(v_relativeVelocity, 0.0f, 50.0f) / 50.0f;
+
+		v_pVoice->m_pChannel->set3DDopplerLevel(v_dopplerLevel);
+	}
+
+	const float v_charVelocityMultiplier = 0.5f;
 	const DirectX::XMFLOAT3 v_charPosition = v_pChar->getPosition();
 	const DirectX::XMFLOAT3 v_charVelocity = v_pChar->getVelocity();
 
 	const FMOD_VECTOR v_objPos{ v_charPosition.x, v_charPosition.z, v_charPosition.y };
 	const FMOD_VECTOR v_objVel{ v_charVelocity.x * v_charVelocityMultiplier, v_charVelocity.z * v_charVelocityMultiplier, v_charVelocity.y * v_charVelocityMultiplier };
 	v_pVoice->m_pChannel->set3DAttributes(&v_objPos, &v_objVel);
-
 	v_pVoice->m_pChannel->setVolume(v_pVoice->getVolume() * masterVolume);
 }
 
@@ -234,8 +248,8 @@ void PlayerVoiceManager::UpdatePlayerNameTag(SM::Player* player)
 	auto v_pMainPanel = v_pGuiBase->getMainPanel();
 	if (!v_pMainPanel) return;
 
-	//if (PlayerVoiceManager::IsVoicePlaying(v_pCurPlayer->getId()))?
-	if (v_pMainPanel->isVisible())
+	if (v_pMainPanel->isVisible()
+		&& PlayerVoiceManager::IsVoicePlaying(player->getId()))
 	{
 		MyGUI::ImageBox* v_pSpeakerIcon = VoiceManager::GetSpeakerImageBox(v_pMainPanel);
 
@@ -247,19 +261,15 @@ void PlayerVoiceManager::UpdatePlayerNameTag(SM::Player* player)
 
 			const int v_textSizeHeightAdjusted = static_cast<int>(float(v_textSize.height) * 1.25f);
 			const MyGUI::IntSize v_mainPanelSz(v_textSize.width + v_textSizeHeightAdjusted, v_textSizeHeightAdjusted);
-
 			v_pMainPanel->setSize(v_mainPanelSz);
-			v_pSpeakerIcon->setSize(v_mainPanelSz.height, v_mainPanelSz.height);
 
 			v_pWidget->setTextAlign(MyGUI::Align::VCenter | MyGUI::Align::Right);
 			v_pWidget->setSize(v_pWidget->getWidth(), v_pMainPanel->getHeight());
 
-			MyGUI::IntPoint v_intPoint = v_pSpeakerIcon->getPosition();
-			v_intPoint.left = v_pMainPanel->getWidth() - v_pSpeakerIcon->getWidth();
-			v_intPoint.top = 0;
-			v_pSpeakerIcon->setPosition(v_intPoint);
+			v_pSpeakerIcon->setPosition(v_pMainPanel->getWidth() - v_pSpeakerIcon->getWidth(), 0);
+			v_pSpeakerIcon->setSize(v_mainPanelSz.height, v_mainPanelSz.height);
+			v_pSpeakerIcon->setVisible(true);
 
-			v_pSpeakerIcon->setVisible(VoiceManager::sm_isVoiceRecording);
 			return;
 		}
 	}

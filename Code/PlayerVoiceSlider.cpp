@@ -8,7 +8,7 @@ PlayerVoiceSlider::PlayerVoiceSlider(
 	const std::string& playerName,
 	const std::uint32_t playerId
 )
-	: OptionsItemSlider(parent, playerName, 0.0f, 2.0f, 200)
+	: OptionsItemSlider(parent, playerName, 0.0f, 4.0f, 400)
 	, m_playerId(playerId)
 {
 	// Pull the current volume and update the value

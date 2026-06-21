@@ -62,7 +62,7 @@ static bool ProcessAttach(HMODULE hMod)
 		[](const float deltaTime) {
 			VoiceSettingsStorage::Update(deltaTime);
 			PlayerVoiceManager::Update();
-			VoiceManager::UpdateVoiceRecording();
+			VoiceManager::UpdateVoiceRecording(deltaTime);
 		}
 	);
 

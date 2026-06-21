@@ -49,7 +49,7 @@ public:
 
 	static void StartVoiceRecording();
 	static void StopVoiceRecording();
-	static void UpdateVoiceRecording();
+	static void UpdateVoiceRecording(const float deltaTime);
 
 	////UI FUNCTIONS
 
