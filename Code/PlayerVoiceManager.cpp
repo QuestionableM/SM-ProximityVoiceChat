@@ -40,11 +40,11 @@ FMOD_RESULT F_CALL PlayerVoice::pcm_callback(FMOD_SOUND* sound, void* data, unsi
 				v_voice->m_voiceData.begin() + v_remData);
 		}
 
-		v_voice->m_isPlaying = v_remData;
+		v_voice->m_isSpeaking = v_remData;
 	}
 	else
 	{
-		v_voice->m_isPlaying = false;
+		v_voice->m_isSpeaking = false;
 	}
 	
 	return FMOD_OK;
@@ -59,23 +59,81 @@ PlayerVoice::PlayerVoice(
 	, m_steamId(steamId)
 	, m_playerId(playerId)
 	, m_fVolume(VoiceSettingsStorage::GetPlayerVolume(m_steamId))
-	, m_isPlaying(false)
+	, m_isSpeaking(false)
 	, m_voiceMutex()
 	, m_voiceData()
 {}
 
 PlayerVoice::~PlayerVoice()
 {
-	if (m_pSound)
-		m_pSound->release();
+	this->resetSound();
 }
 
-void PlayerVoice::push_voice(char* buffer, std::size_t buffer_size)
+bool PlayerVoice::recreateStream(FMOD::System* pFmodSystem)
 {
+	this->resetSound();
+
+	FMOD_CREATESOUNDEXINFO v_info;
+	std::memset(&v_info, 0, sizeof(v_info));
+	v_info.cbsize = sizeof(v_info);
+	v_info.numchannels = 1;
+	v_info.defaultfrequency = 11000;
+	v_info.decodebuffersize = 11000;
+	v_info.length = v_info.defaultfrequency * v_info.numchannels * sizeof(float) * 5;
+	v_info.format = FMOD_SOUND_FORMAT_PCM16;
+	v_info.pcmreadcallback = PlayerVoice::pcm_callback;
+	v_info.userdata = this;
+
+	if (pFmodSystem->createStream(nullptr, FMOD_OPENUSER | FMOD_LOOP_NORMAL, &v_info, &m_pSound) != FMOD_OK)
+	{
+		DebugOutL("Couldn't create the sound for player: ", m_playerId);
+		return false;
+	}
+
+	return true;
+}
+
+bool PlayerVoice::recreateFmodChannel(FMOD::System* pFmodSystem)
+{
+	if (pFmodSystem->playSound(m_pSound, nullptr, false, &m_pChannel) != FMOD_OK)
+	{
+		DebugOutL("Couldn't play the sound for player: ", m_playerId);
+		return false;
+	}
+
+	m_pChannel->setMode(FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF);
+	m_pChannel->set3DConeSettings(75.0f, 360.0f, 0.1f);
+	m_pChannel->set3DMinMaxDistance(0.0f, 90.0f);
+	m_pChannel->setReverbProperties(0, 0.0f);
+	m_pChannel->setReverbProperties(1, 0.0f);
+	m_pChannel->setReverbProperties(2, 0.0f);
+	m_pChannel->setReverbProperties(3, 0.0f);
+
+	return true;
+}
+
+void PlayerVoice::pushVoice(
+	const void* buffer,
+	const std::size_t bufferSz)
+{
+	if (!isChannelPlaying())
+	{
+		DebugOutL("Recreating the channel for player ", m_playerId);
+
+		auto v_pAudioMgr = SM::AudioManager::GetInstance();
+		if (!v_pAudioMgr) return;
+
+		auto v_pFmodSystem = v_pAudioMgr->getFmodSystem();
+		if (!v_pFmodSystem) return;
+
+		if (!recreateFmodChannel(v_pFmodSystem))
+			return;
+	}
+
 	std::lock_guard<std::mutex> v_lock(m_voiceMutex);
 
-	std::uint8_t* v_dataStart = reinterpret_cast<std::uint8_t*>(buffer);
-	m_voiceData.insert(m_voiceData.end(), v_dataStart, v_dataStart + buffer_size);
+	const std::uint8_t* v_dataStart = reinterpret_cast<const std::uint8_t*>(buffer);
+	m_voiceData.insert(m_voiceData.end(), v_dataStart, v_dataStart + bufferSz);
 }
 
 void PlayerVoice::setVolume(float new_volume)
@@ -92,10 +150,30 @@ float PlayerVoice::getVolume()
 	return MathUtil::lerp(1.0f, 5.0f, m_fVolume - 1.0f);
 }
 
-bool PlayerVoice::isPlaying()
+void PlayerVoice::resetSound()
 {
-	std::lock_guard<std::mutex> v_lock(m_voiceMutex);
-	return m_isPlaying;
+	if (m_pSound)
+	{
+		m_pSound->release();
+		m_pSound = nullptr;
+	}
+}
+
+bool PlayerVoice::isChannelPlaying()
+{
+	if (!m_pChannel)
+		return false;
+
+	bool v_isPlaying;
+	if (m_pChannel->isPlaying(&v_isPlaying) != FMOD_OK)
+		return false;
+
+	return v_isPlaying;
+}
+
+bool PlayerVoice::isSpeaking()
+{
+	return isChannelPlaying() && m_isSpeaking;
 }
 
 ////////////////////PLAYER VOICE MANAGER/////////////////////
@@ -114,7 +192,7 @@ bool PlayerVoiceManager::IsVoicePlaying(const std::uint32_t playerId)
 	PlayerVoice* v_pCurVoice = PlayerVoiceManager::GetVoice(playerId);
 	if (!v_pCurVoice) return false;
 
-	return v_pCurVoice->isPlaying();
+	return v_pCurVoice->isSpeaking();
 }
 
 bool PlayerVoiceManager::PlayerHasVoice(const std::uint32_t playerId)
@@ -145,43 +223,13 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 		AttachDebugConsole();
 
 		auto v_pNewVoice = std::make_shared<PlayerVoice>(player->getSteamId(), v_playerId);
-
-		FMOD_CREATESOUNDEXINFO v_info;
-		std::memset(&v_info, 0, sizeof(v_info));
-		v_info.cbsize = sizeof(v_info);
-		v_info.numchannels = 1;
-		v_info.defaultfrequency = 11000;
-		v_info.decodebuffersize = 11000;
-		v_info.length = v_info.defaultfrequency * v_info.numchannels * sizeof(float) * 5;
-		v_info.format = FMOD_SOUND_FORMAT_PCM16;
-		v_info.pcmreadcallback = PlayerVoice::pcm_callback;
-		v_info.userdata = v_pNewVoice.get();
-
 		FMOD::System* v_pFmodSystem = v_pAudioMgr->getFmodSystem();
 
-		FMOD_RESULT v_hr = v_pFmodSystem->createStream(
-			nullptr, FMOD_OPENUSER | FMOD_LOOP_NORMAL, &v_info, &v_pNewVoice->m_pSound);
-		if (v_hr != FMOD_OK)
-		{
-			DebugOutL("Couldn't create the sound for player ", v_playerId);
+		if (!v_pNewVoice->recreateStream(v_pFmodSystem))
 			return;
-		}
 
-		v_hr = v_pFmodSystem->playSound(
-			v_pNewVoice->m_pSound, nullptr, false, &v_pNewVoice->m_pChannel);
-		if (v_hr != FMOD_OK)
-		{
-			DebugOutL("Couldn't play the sound for player ", v_playerId);
+		if (!v_pNewVoice->recreateFmodChannel(v_pFmodSystem))
 			return;
-		}
-
-		v_pNewVoice->m_pChannel->setMode(FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF);
-		v_pNewVoice->m_pChannel->set3DConeSettings(75.0f, 360.0f, 0.1f);
-		v_pNewVoice->m_pChannel->set3DMinMaxDistance(0.0f, 90.0f);
-		v_pNewVoice->m_pChannel->setReverbProperties(0, 0.0f);
-		v_pNewVoice->m_pChannel->setReverbProperties(1, 0.0f);
-		v_pNewVoice->m_pChannel->setReverbProperties(2, 0.0f);
-		v_pNewVoice->m_pChannel->setReverbProperties(3, 0.0f);
 
 		sm_playerVoices.emplace(v_playerId, std::move(v_pNewVoice));
 		DebugOutL("Player voice created for player ", v_playerId);

@@ -18,12 +18,16 @@ public:
 	PlayerVoice(const std::uint64_t steamId, const std::uint32_t playerId);
 	~PlayerVoice();
 	
-	void push_voice(char* buffer, std::size_t buffer_size);
+	bool recreateStream(FMOD::System* pFmodSystem);
+	bool recreateFmodChannel(FMOD::System* pFmodSystem);
+	void pushVoice(const void* buffer, const std::size_t bufferSz);
 	
 	void setVolume(float new_volume);
 	float getVolume();
 
-	bool isPlaying();
+	void resetSound();
+	bool isChannelPlaying();
+	bool isSpeaking();
 
 public:
 	FMOD::Sound* m_pSound;
@@ -32,7 +36,7 @@ public:
 	std::uint64_t m_steamId;
 	std::uint32_t m_playerId;
 	float m_fVolume;
-	std::atomic_bool m_isPlaying;
+	std::atomic_bool m_isSpeaking;
 
 	std::mutex m_voiceMutex;
 	std::vector<std::uint8_t> m_voiceData;

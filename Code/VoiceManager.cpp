@@ -62,7 +62,7 @@ void VoiceManager::PlayVoicePacket(
 		return;
 	}
 
-	v_pCurVoice->push_voice(g_decompressedVoiceData, v_decompVoiceSz);
+	v_pCurVoice->pushVoice(g_decompressedVoiceData, v_decompVoiceSz);
 }
 
 bool VoiceManager::ClientPacketHandler(
