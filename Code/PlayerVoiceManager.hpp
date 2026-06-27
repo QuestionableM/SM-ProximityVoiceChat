@@ -49,11 +49,11 @@ public:
 	static bool IsVoicePlaying(const std::uint32_t playerId);
 
 	static bool PlayerHasVoice(const std::uint32_t playerId);
-	static void Update();
+	static void Update(const float deltaTime);
 
 private:
-	static void UpdatePlayerSound(SM::Player* player, const float masterVolume);
-	static void UpdatePlayerSounds();
+	static void UpdatePlayerSound(SM::Player* player, const float deltaTime, const float masterVolume);
+	static void UpdatePlayerSounds(const float deltaTime);
 	static void UpdatePlayerNameTag(SM::Player* player);
 	static void RemoveDeadVoices();
 

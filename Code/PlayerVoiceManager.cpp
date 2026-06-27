@@ -21,7 +21,6 @@ std::unordered_map<std::uint32_t, std::shared_ptr<PlayerVoice>> PlayerVoiceManag
 FMOD_RESULT F_CALL PlayerVoice::pcm_callback(FMOD_SOUND* sound, void* data, unsigned int datalen)
 {
 	PlayerVoice* v_voice;
-
 	if (FMOD_Sound_GetUserData(sound, reinterpret_cast<void**>(&v_voice)) == FMOD_OK)
 	{
 		std::lock_guard<std::mutex> v_lock(v_voice->m_voiceMutex);
@@ -34,17 +33,9 @@ FMOD_RESULT F_CALL PlayerVoice::pcm_callback(FMOD_SOUND* sound, void* data, unsi
 			std::memset(reinterpret_cast<char*>(data) + v_remData, 0, v_datalenSz - v_remData);
 
 		if (v_remData > 0)
-		{
-			v_voice->m_voiceData.erase(
-				v_voice->m_voiceData.begin(),
-				v_voice->m_voiceData.begin() + v_remData);
-		}
+			v_voice->m_voiceData.erase(v_voice->m_voiceData.begin(), v_voice->m_voiceData.begin() + v_remData);
 
 		v_voice->m_isSpeaking = v_remData;
-	}
-	else
-	{
-		v_voice->m_isSpeaking = false;
 	}
 	
 	return FMOD_OK;
@@ -77,9 +68,9 @@ bool PlayerVoice::recreateStream(FMOD::System* pFmodSystem)
 	std::memset(&v_info, 0, sizeof(v_info));
 	v_info.cbsize = sizeof(v_info);
 	v_info.numchannels = 1;
-	v_info.defaultfrequency = 11000;
-	v_info.decodebuffersize = 11000;
-	v_info.length = v_info.defaultfrequency * v_info.numchannels * sizeof(float) * 5;
+	v_info.defaultfrequency = PVC_PLAYER_VOICE_FREQUENCY;
+	v_info.decodebuffersize = 1024;
+	v_info.length = v_info.defaultfrequency * v_info.numchannels * sizeof(std::uint16_t) * 5;
 	v_info.format = FMOD_SOUND_FORMAT_PCM16;
 	v_info.pcmreadcallback = PlayerVoice::pcm_callback;
 	v_info.userdata = this;
@@ -200,13 +191,13 @@ bool PlayerVoiceManager::PlayerHasVoice(const std::uint32_t playerId)
 	return sm_playerVoices.contains(playerId);
 }
 
-void PlayerVoiceManager::Update()
+void PlayerVoiceManager::Update(const float deltaTime)
 {
-	PlayerVoiceManager::UpdatePlayerSounds();
+	PlayerVoiceManager::UpdatePlayerSounds(deltaTime);
 	PlayerVoiceManager::RemoveDeadVoices();
 }
 
-void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float masterVolume)
+void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float deltaTime, const float masterVolume)
 {
 	// Players without the characters should not be processed
 	if (!player->characterExists() || SM::MyPlayer::IsPlayerLocal(player))
@@ -243,7 +234,7 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 	if (!v_pChar) return;
 
 	const float v_actualYaw = v_pChar->getYaw() + DirectX::XM_PIDIV2;
-	FMOD_VECTOR v_data{ std::cos(v_actualYaw), std::sin(v_actualYaw), 0.0f };
+	FMOD_VECTOR v_data{ std::cos(v_actualYaw), 0.0f, std::sin(v_actualYaw) };
 	v_pVoice->m_pChannel->set3DConeOrientation(&v_data);
 
 	// Doppler effect calculation
@@ -271,13 +262,13 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float maste
 	v_pVoice->m_pChannel->setVolume(v_pVoice->getVolume() * masterVolume);
 }
 
-void PlayerVoiceManager::UpdatePlayerSounds()
+void PlayerVoiceManager::UpdatePlayerSounds(const float deltaTime)
 {
 	const float v_masterVolume = SM::GameSettings::GetMasterVolume();
 
 	for (const auto& v_pCurPlayer : SM::PlayerManager::GetAllPlayers())
 	{
-		PlayerVoiceManager::UpdatePlayerSound(v_pCurPlayer.get(), v_masterVolume);
+		PlayerVoiceManager::UpdatePlayerSound(v_pCurPlayer.get(), deltaTime, v_masterVolume);
 		PlayerVoiceManager::UpdatePlayerNameTag(v_pCurPlayer.get());
 	}
 }

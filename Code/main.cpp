@@ -61,7 +61,7 @@ static bool ProcessAttach(HMODULE hMod)
 	SM::Callbacks::RegisterOnRenderCallback(
 		[](const float deltaTime) {
 			VoiceSettingsStorage::Update(deltaTime);
-			PlayerVoiceManager::Update();
+			PlayerVoiceManager::Update(deltaTime);
 			VoiceManager::UpdateVoiceRecording(deltaTime);
 		}
 	);
