@@ -44,9 +44,6 @@ void VoiceManager::PlayVoicePacket(
 	ISteamUser* v_pSteamUser = SteamUser();
 	if (!v_pSteamUser) return;
 
-	const std::uint32_t v_optSampleRate = v_pSteamUser->GetVoiceOptimalSampleRate();
-	v_pCurVoice->m_pChannel->setFrequency(float(v_optSampleRate));
-
 	std::uint32_t v_decompVoiceSz;
 	const EVoiceResult v_result = v_pSteamUser->DecompressVoice(
 		reinterpret_cast<const std::uint8_t*>(decompressedPacket) + v_reader.Offset(),
@@ -54,7 +51,7 @@ void VoiceManager::PlayVoicePacket(
 		g_decompressedVoiceData,
 		sizeof(g_decompressedVoiceData),
 		&v_decompVoiceSz,
-		v_optSampleRate);
+		PVC_PLAYER_VOICE_FREQUENCY);
 
 	if (v_result != k_EVoiceResultOK)
 	{
