@@ -10,6 +10,8 @@
 #include <vector>
 #include <mutex>
 
+#define PVC_PLAYER_VOICE_FREQUENCY 24000
+
 class PlayerVoice
 {
 public:
@@ -23,11 +25,14 @@ public:
 	void pushVoice(const void* buffer, const std::size_t bufferSz);
 	
 	void setVolume(float new_volume);
-	float getVolume();
+	float getVolume() const;
+	float getFrequency() const;
+	float getLoudness();
 
 	void resetSound();
 	bool isChannelPlaying();
 	bool isSpeaking();
+	bool isAudible();
 
 public:
 	FMOD::Sound* m_pSound;
@@ -36,6 +41,7 @@ public:
 	std::uint64_t m_steamId;
 	std::uint32_t m_playerId;
 	float m_fVolume;
+	float m_fDistance;
 	std::atomic_bool m_isSpeaking;
 
 	std::mutex m_voiceMutex;

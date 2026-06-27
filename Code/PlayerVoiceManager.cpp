@@ -100,6 +100,7 @@ bool PlayerVoice::recreateFmodChannel(FMOD::System* pFmodSystem)
 	m_pChannel->setReverbProperties(1, 0.0f);
 	m_pChannel->setReverbProperties(2, 0.0f);
 	m_pChannel->setReverbProperties(3, 0.0f);
+	m_pChannel->setPriority(0);
 
 	return true;
 }
@@ -108,7 +109,7 @@ void PlayerVoice::pushVoice(
 	const void* buffer,
 	const std::size_t bufferSz)
 {
-	if (!isChannelPlaying())
+	if (!isChannelPlaying() || !isAudible())
 	{
 		DebugOutL("Recreating the channel for player ", m_playerId);
 
@@ -191,6 +192,14 @@ bool PlayerVoice::isChannelPlaying()
 bool PlayerVoice::isSpeaking()
 {
 	return isChannelPlaying() && m_isSpeaking;
+}
+
+bool PlayerVoice::isAudible()
+{
+	bool v_isVirtual;
+	const FMOD_RESULT v_res = m_pChannel->isVirtual(&v_isVirtual);
+
+	return v_res == FMOD_OK && !v_isVirtual;
 }
 
 ////////////////////PLAYER VOICE MANAGER/////////////////////
