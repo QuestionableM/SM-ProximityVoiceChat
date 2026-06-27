@@ -50,6 +50,7 @@ PlayerVoice::PlayerVoice(
 	, m_steamId(steamId)
 	, m_playerId(playerId)
 	, m_fVolume(VoiceSettingsStorage::GetPlayerVolume(m_steamId))
+	, m_fDistance(0.0f)
 	, m_isSpeaking(false)
 	, m_voiceMutex()
 	, m_voiceData()
@@ -133,12 +134,37 @@ void PlayerVoice::setVolume(float new_volume)
 	VoiceSettingsStorage::StorePlayerVolume(m_steamId, m_fVolume);
 }
 
-float PlayerVoice::getVolume()
+float PlayerVoice::getVolume() const
 {
 	if (m_fVolume <= 1.0f)
 		return m_fVolume;
 
 	return MathUtil::lerp(1.0f, 5.0f, m_fVolume - 1.0f);
+}
+
+float PlayerVoice::getFrequency() const
+{
+	float v_frequency = 0.0f;
+	m_pChannel->getFrequency(&v_frequency);
+
+	return v_frequency;
+}
+
+float PlayerVoice::getLoudness()
+{
+	std::lock_guard v_lock(m_voiceMutex);
+
+	const std::size_t v_bytesAvailable = std::min<std::size_t>(m_voiceData.size(), 2048) / 2;
+	if (v_bytesAvailable == 0) return 0.0f;
+
+	float v_sum = 0.0f;
+	for (std::size_t a = 0; a < v_bytesAvailable; a++)
+	{
+		const float v_curValue = static_cast<float>(reinterpret_cast<const std::int16_t*>(m_voiceData.data())[a]) / 32768.0f;
+		v_sum += (v_curValue * v_curValue);
+	}
+
+	return std::sqrt(v_sum / float(v_bytesAvailable));
 }
 
 void PlayerVoice::resetSound()
@@ -236,6 +262,13 @@ void PlayerVoiceManager::UpdatePlayerSound(SM::Player* player, const float delta
 	const float v_actualYaw = v_pChar->getYaw() + DirectX::XM_PIDIV2;
 	FMOD_VECTOR v_data{ std::cos(v_actualYaw), 0.0f, std::sin(v_actualYaw) };
 	v_pVoice->m_pChannel->set3DConeOrientation(&v_data);
+
+	const float v_loudness = v_pVoice->getLoudness() * 400.0f;
+	if (v_pVoice->m_fDistance < v_loudness)
+		v_pVoice->m_fDistance = v_loudness;
+
+	v_pVoice->m_fDistance *= std::expf(-1.0f * deltaTime);
+	v_pVoice->m_pChannel->set3DMinMaxDistance(2.0f, std::max(2.0f, v_pVoice->m_fDistance));
 
 	// Doppler effect calculation
 	auto v_pSelfChar = SM::MyPlayer::GetCharacter();
