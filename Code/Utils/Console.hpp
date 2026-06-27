@@ -127,6 +127,21 @@ namespace Engine
 		#endif
 		}
 	};
+
+	template<>
+	struct ConsoleOutputType<std::string_view>
+	{
+		inline static void Output(const std::string_view& msg)
+		{
+		#if defined(ENGINE_ENABLE_CUSTOM_CONSOLE_WINDOW) || !defined(ENGINE_ENABLE_VS_CONSOLE_OUTPUT)
+			WriteConsoleA(Console::Handle, msg.data(), static_cast<DWORD>(msg.size()), NULL, NULL);
+		#endif
+
+		#if defined(ENGINE_ENABLE_VS_CONSOLE_OUTPUT)
+			OutputDebugStringA(msg.data());
+		#endif
+		}
+	};
 	
 	template<>
 	struct ConsoleOutputType<std::string>
