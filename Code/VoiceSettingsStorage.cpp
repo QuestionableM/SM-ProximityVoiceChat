@@ -4,7 +4,6 @@
 
 #include <fstream>
 
-
 VoiceSettingsStorage::VoiceMap VoiceSettingsStorage::sm_steamIdToVolume = {};
 float VoiceSettingsStorage::sm_fConfigSaveTimer = 0.0f;
 bool VoiceSettingsStorage::sm_bConfigLoaded = false;
@@ -30,8 +29,9 @@ void VoiceSettingsStorage::LoadConfig()
 		if (!(v_conf_loader >> v_steam_id)) break;
 		if (!(v_conf_loader >> v_volume)) break;
 
-		DebugOutL(__FUNCTION__ " -> SteamId: ", v_steam_id, ", Volume: ", std::max(std::min(v_volume, 2.0f), 0.0f));
-		sm_steamIdToVolume.emplace(v_steam_id, std::max(std::min(v_volume, 2.0f), 0.0f));
+		const float v_storedVolume = std::max(std::min(v_volume, 4.0f), 0.0f);
+		DebugOutL(__FUNCTION__ " -> SteamId: ", v_steam_id, ", Volume: ", v_storedVolume);
+		sm_steamIdToVolume.emplace(v_steam_id, v_storedVolume);
 	}
 }
 
