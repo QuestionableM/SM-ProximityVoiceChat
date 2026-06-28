@@ -5,7 +5,7 @@
 
 SMSDK_BEGIN_NAMESPACE
 
-struct InventoryGui : public GuiBase
+class InventoryGui : public GuiBase
 {
 	/* 0x0018 */ SDK_PRI char pad_0x18[0x7B0];
 	/* 0x07C8 */ SDK_PUB MyGUI::IntCoord m_pos;
