@@ -7,6 +7,7 @@
 #include <SmSdk/GameSettings.hpp>
 #include <SmSdk/MyPlayer.hpp>
 
+#include <SmSdk/Gui/InGameGuiManager.hpp>
 #include <SmSdk/Gui/GuiInterface.hpp>
 #include <SmSdk/Gui/GuiBase.hpp>
 
@@ -329,7 +330,8 @@ void PlayerVoiceManager::UpdatePlayerNameTag(SM::Player* player)
 	auto v_pMainPanel = v_pGuiBase->getMainPanel();
 	if (!v_pMainPanel) return;
 
-	if (v_pMainPanel->isVisible()
+	if (!SM::InGameGuiManager::IsGuiHidden()
+		&& v_pMainPanel->isVisible()
 		&& PlayerVoiceManager::IsVoicePlaying(player->getId()))
 	{
 		MyGUI::ImageBox* v_pSpeakerIcon = VoiceManager::GetSpeakerImageBox(v_pMainPanel);

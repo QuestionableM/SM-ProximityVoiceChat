@@ -342,5 +342,5 @@ void VoiceManager::UpdateSpeakerUiIcon()
 		(v_pHudMainPanel->getHeight() - v_pSpeakerIcon->getHeight()) / 2
 	));
 
-	v_pSpeakerIcon->setVisible(VoiceManager::sm_isVoiceRecording);
+	v_pSpeakerIcon->setVisible(!SM::InGameGuiManager::IsGuiHidden() && VoiceManager::sm_isVoiceRecording);
 }
