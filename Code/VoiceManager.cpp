@@ -282,6 +282,9 @@ void VoiceManager::CreateSpeakerImage()
 	FreeImage_Unload(v_fibitmap);
 }
 
+#define PVC_ACTIVE_SPEAKER_COLOR 1.0f, 0.815f, 0.274f
+#define PVC_INACTIVE_SPEAKER_COLOR 1.0f, 1.0f, 1.0f
+
 MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* parent, const bool canCreate)
 {
 	MyGUI::Widget* v_widget = parent->findWidget("SpeakerIcon");
@@ -296,6 +299,7 @@ MyGUI::ImageBox* VoiceManager::GetSpeakerImageBox(MyGUI::Widget* parent, const b
 		"ImageBox", MyGUI::FloatCoord(0.0f, 0.0f, 0.0f, 0.0f), MyGUI::Align::Default, "SpeakerIcon");
 
 	v_pNewImgBox->setVisible(false);
+	v_pNewImgBox->setColour(MyGUI::Colour(PVC_ACTIVE_SPEAKER_COLOR));
 	v_pNewImgBox->setImageTexture("SpeakerIcon");
 
 	return v_pNewImgBox;
@@ -322,6 +326,6 @@ void VoiceManager::UpdateSpeakerUiIcon()
 		(v_pHudMainPanel->getHeight() - v_pSpeakerIcon->getHeight()) / 2
 	));
 
-	v_pSpeakerIcon->setColour((m_fSpeakingTimeout > 0.0f) ? MyGUI::Colour(1.0f, 0.815f, 0.274f) : MyGUI::Colour(1.0f, 1.0f, 1.0f));
+	v_pSpeakerIcon->setColour((m_fSpeakingTimeout > 0.0f) ? MyGUI::Colour(PVC_ACTIVE_SPEAKER_COLOR) : MyGUI::Colour(PVC_INACTIVE_SPEAKER_COLOR));
 	v_pSpeakerIcon->setVisible(!SM::InGameGuiManager::IsGuiHidden() && VoiceManager::sm_isVoiceRecording);
 }
