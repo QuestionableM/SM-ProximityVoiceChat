@@ -2,6 +2,9 @@
 
 #include <SmSdk/Gui/GuiSystemManager.hpp>
 #include <SmSdk/Gui/InGameGuiManager.hpp>
+#include <SmSdk/Gui/HudGui2.hpp>
+#include <SmSdk/Gui/ChatGui.hpp>
+
 #include <SmSdk/InputManager.hpp>
 #include <SmSdk/GameState.hpp>
 #include <SmSdk/MyPlayer.hpp>
@@ -155,16 +158,16 @@ bool VoiceManager::ServerPacketHandler(
 
 //////////////////////VOICE RECORDING FUNCTIONS//////////////////////
 
-#define PVC_VOICE_TIMEOUT_DEFAULT 3.0f
-static float sm_fNoVoiceTimeout = 0.0f;
+static char m_packetBuffer[VC_BUFFER_SIZE];
+static char m_compressedPacket[VC_BUFFER_SIZE];
+static float m_fSpeakingTimeout = 0.0f;
 
 void VoiceManager::StartVoiceRecording()
 {
 	if (!sm_isVoiceRecording)
 	{
 		sm_isVoiceRecording = true;
-		sm_fNoVoiceTimeout = PVC_VOICE_TIMEOUT_DEFAULT;
-		VoiceManager::UpdateSpeakerUiIcon();
+		m_fSpeakingTimeout = 0.0f;
 		SteamUser()->StartVoiceRecording();
 	}
 }
@@ -174,32 +177,18 @@ void VoiceManager::StopVoiceRecording()
 	if (sm_isVoiceRecording)
 	{
 		sm_isVoiceRecording = false;
-		VoiceManager::UpdateSpeakerUiIcon();
 		SteamUser()->StopVoiceRecording();
 	}
 }
 
-static bool GetRecordingPointers(SM::SteamNetworkClient** ppClient, SM::Player** ppPlayer)
-{
-	(*ppClient) = SM::GameState::GetSteamNetworkClient();
-	if (!(*ppClient)) return false;
-
-	auto v_pSelfPlayer = SM::MyPlayer::GetPlayer();
-	if (!v_pSelfPlayer) return false;
-
-	(*ppPlayer) = v_pSelfPlayer.get();
-	return true;
-}
-
-static char m_packetBuffer[VC_BUFFER_SIZE];
-static char m_compressedPacket[VC_BUFFER_SIZE];
 void VoiceManager::UpdateVoiceRecording(const float deltaTime)
 {
-	SM::SteamNetworkClient* v_network;
-	SM::Player* v_player;
+	auto v_pNetwork = SM::GameState::GetSteamNetworkClient();
+	auto v_pLocalPlayer = SM::MyPlayer::GetPlayer();
 
-	if (!GetRecordingPointers(&v_network, &v_player)
-		|| !v_player->characterExists()
+	if (!v_pNetwork
+		|| !v_pLocalPlayer
+		|| !v_pLocalPlayer->characterExists()
 		|| SM::GuiSystemManager::IsMouseVisible())
 	{
 		VoiceManager::StopVoiceRecording();
@@ -211,27 +200,18 @@ void VoiceManager::UpdateVoiceRecording(const float deltaTime)
 	else
 		VoiceManager::StopVoiceRecording();
 
-	if (!sm_isVoiceRecording)
-		return;
+
+	VoiceManager::UpdateSpeakerUiIcon();
+	if (!sm_isVoiceRecording) return;
+
+	m_fSpeakingTimeout = std::max(m_fSpeakingTimeout - deltaTime, 0.0f);
 
 	ISteamUser* v_pSteamUser = SteamUser();
 	if (!v_pSteamUser) return;
 
-	if (sm_fNoVoiceTimeout > 0.0f)
-		sm_fNoVoiceTimeout -= deltaTime;
-
 	std::uint32_t v_bytes;
 	EVoiceResult v_result = v_pSteamUser->GetAvailableVoice(&v_bytes);
-	if (v_result != k_EVoiceResultOK)
-	{
-		if (sm_fNoVoiceTimeout <= 0.0f)
-			SM::InGameGuiManager::DisplayAlertText("Your microphone does not emit any data. Please check system settings.", 1.0f);
-
-		return;
-	}
-
-	// Reset the voice timer
-	sm_fNoVoiceTimeout = PVC_VOICE_TIMEOUT_DEFAULT;
+	if (v_result != k_EVoiceResultOK) return;
 
 	constexpr std::size_t v_voiceBufferOffset = sizeof(std::uint32_t) * 2; //player id + buffer size
 	if (v_pSteamUser->GetVoice(
@@ -240,11 +220,12 @@ void VoiceManager::UpdateVoiceRecording(const float deltaTime)
 		sizeof(m_packetBuffer) - v_voiceBufferOffset,
 		&v_bytes) != k_EVoiceResultOK)
 	{
-		DebugErrorL("Corrupted voice packet");
 		return;
 	}
 
-	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_player->m_uId;
+	m_fSpeakingTimeout = 0.15f;
+
+	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[0] = v_pLocalPlayer->m_uId;
 	reinterpret_cast<std::uint32_t*>(m_packetBuffer)[1] = v_bytes;
 
 	m_compressedPacket[0] = C_ID_VOICE_PACKET;
@@ -257,7 +238,7 @@ void VoiceManager::UpdateVoiceRecording(const float deltaTime)
 	if (v_compressedSize > 0)
 	{
 		const EResult v_result = SteamNetworkingSockets()->SendMessageToConnection(
-			v_network->m_hostConnection,
+			v_pNetwork->getHostConnection(),
 			m_compressedPacket,
 			v_compressedSize + 1,
 			k_EP2PSendUnreliableNoDelay,
@@ -336,11 +317,11 @@ void VoiceManager::UpdateSpeakerUiIcon()
 	const int v_iconSpacing = int(20.0f * v_aspectRatio);
 
 	v_pSpeakerIcon->setSize(v_iconSz, v_iconSz);
-
 	v_pSpeakerIcon->setPosition(MyGUI::IntPoint(
 		v_pHudMainPanel->getWidth() - v_pSpeakerIcon->getWidth() - v_iconSpacing,
 		(v_pHudMainPanel->getHeight() - v_pSpeakerIcon->getHeight()) / 2
 	));
 
+	v_pSpeakerIcon->setColour((m_fSpeakingTimeout > 0.0f) ? MyGUI::Colour(1.0f, 0.815f, 0.274f) : MyGUI::Colour(1.0f, 1.0f, 1.0f));
 	v_pSpeakerIcon->setVisible(!SM::InGameGuiManager::IsGuiHidden() && VoiceManager::sm_isVoiceRecording);
 }
