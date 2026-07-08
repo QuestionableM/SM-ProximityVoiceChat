@@ -21,7 +21,7 @@ public:
 	virtual void someFunc4() override;
 
 public:
-	std::unordered_set<int> m_registeredVoices;
+	std::unordered_set<std::uint32_t> m_registeredVoices;
 	//A text that appears when there's no players
 	MyGUI::TextBox* m_pEmptyListText;
 };

@@ -5,7 +5,7 @@
 
 PlayerVoiceSlider::PlayerVoiceSlider(
 	MyGUI::Widget* parent,
-	const std::string& playerName,
+	const std::string_view& playerName,
 	const std::uint32_t playerId
 )
 	: OptionsItemSlider(parent, playerName, 0.0f, 4.0f, 400)

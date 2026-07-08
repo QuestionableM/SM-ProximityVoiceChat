@@ -17,7 +17,7 @@ void VoiceChatSettingsTab::initialize(MyGUI::Widget* parent)
 {
 	OptionsSubMenuBase::initialize(parent);
 
-	m_pEmptyListText = m_pSubMenuWidget->createWidgetReal<MyGUI::TextBox>(
+	m_pEmptyListText = this->getSubMenuWidget()->createWidgetReal<MyGUI::TextBox>(
 		"TextBox", MyGUI::FloatCoord(0, 0, 1.0f, 1.0f), MyGUI::Align::Center);
 
 	m_pEmptyListText->setFontName("SM_HeaderLarge_Wide");
@@ -53,23 +53,23 @@ bool VoiceChatSettingsTab::shouldUpdateVoices()
 {
 	bool v_result = false;
 
-	//Find new voices
-	for (const auto& v_cur_voice : PlayerVoiceManager::sm_playerVoices)
+	// Find new voices
+	for (const auto& v_curVoice : PlayerVoiceManager::sm_playerVoices)
 	{
-		if (m_registeredVoices.find(v_cur_voice.first) != m_registeredVoices.end())
+		if (m_registeredVoices.contains(v_curVoice.first))
 			continue;
 
 		AttachDebugConsole();
-		DebugOutL(__FUNCTION__, " -> Registered a new voice: ", v_cur_voice.first);
+		DebugOutL(__FUNCTION__, " -> Registered a new voice: ", v_curVoice.first);
 
-		m_registeredVoices.emplace(v_cur_voice.first);
+		m_registeredVoices.emplace(v_curVoice.first);
 		v_result = true;
 	}
 
-	//Drop dead voices
+	// Drop dead voices
 	for (auto v_iter = m_registeredVoices.begin(); v_iter != m_registeredVoices.end();)
 	{
-		if (PlayerVoiceManager::sm_playerVoices.find(*v_iter) != PlayerVoiceManager::sm_playerVoices.end())
+		if (PlayerVoiceManager::sm_playerVoices.contains(*v_iter))
 		{
 			v_iter++;
 			continue;
@@ -92,7 +92,7 @@ void VoiceChatSettingsTab::onUpdate()
 	if (!this->shouldUpdateVoices())
 		return;
 
-	this->clearSilent();
+	this->clear(false);
 
 	std::size_t v_voiceCount = 0;
 	for (const auto& v_cur_voice : PlayerVoiceManager::sm_playerVoices)
@@ -100,14 +100,14 @@ void VoiceChatSettingsTab::onUpdate()
 		auto v_pVoiceOwner = SM::PlayerManager::GetPlayer(v_cur_voice.first);
 		if (!v_pVoiceOwner) continue;
 
-		SM::VerticalStackBox& v_stackBox = ((v_voiceCount % 2) == 0)
-			? m_leftStackBox : m_rightStackBox;
+		SM::VerticalStackBox* v_pStackBox = ((v_voiceCount % 2) == 0)
+			? this->getLeftStackBox() : this->getRightStackBox();
 
-		MyGUI::Widget* v_pNewWidget = v_stackBox.createNewOption();
+		MyGUI::Widget* v_pNewWidget = v_pStackBox->createNewOption();
 		auto v_pNewSlider = std::make_shared<PlayerVoiceSlider>(
-			v_pNewWidget, v_pVoiceOwner->m_name, v_pVoiceOwner->m_uId);
+			v_pNewWidget, v_pVoiceOwner->getName(), v_pVoiceOwner->getId());
 
-		m_vecOptionItems.push_back(std::move(v_pNewSlider));
+		this->addOptionItem(v_pNewSlider);
 		v_voiceCount++;
 	}
 
