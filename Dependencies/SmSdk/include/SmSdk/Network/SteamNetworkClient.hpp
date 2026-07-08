@@ -13,15 +13,15 @@ struct SteamNetworkClient : public NetworkClient
 	SDK_PUB SMSDK_API std::uint64_t getHostSteamId() const;
 	SDK_PUB SMSDK_API HSteamNetConnection getHostConnection() const;
 
-	/* 0x0130 */ SDK_PRI char pad_0x130[0x8];
-	/* 0x0138 */ SDK_PUB std::uint64_t m_uHostSteamId;
-	/* 0x0140 */ SDK_PRI char pad_0x140[0x78];
-	/* 0x01B8 */ SDK_PUB HSteamNetConnection m_hostConnection;
-	/* 0x01BC */ SDK_PRI char pad_0x1BC[0x2C];
-	/* 0x01E8 */ SDK_PUB std::string m_passphrase;
-	/* 0x0208 */ SDK_PRI char pad_0x208[0x28];
+	/* 0x0130 */ SDK_MEM_PRI char pad_0x130[0x8];
+	/* 0x0138 */ SDK_MEM_PUB std::uint64_t m_uHostSteamId;
+	/* 0x0140 */ SDK_MEM_PRI char pad_0x140[0x78];
+	/* 0x01B8 */ SDK_MEM_PUB HSteamNetConnection m_hostConnection;
+	/* 0x01BC */ SDK_MEM_PRI char pad_0x1BC[0x2C];
+	/* 0x01E8 */ SDK_MEM_PUB std::string m_passphrase;
+	/* 0x0208 */ SDK_MEM_PRI char pad_0x208[0x28];
 }; // Size: 0x230
 
-static_assert(sizeof(SteamNetworkClient) == 0x230, "SteamNetworkClient: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(SteamNetworkClient, 0x230);
 
 SMSDK_END_NAMESPACE

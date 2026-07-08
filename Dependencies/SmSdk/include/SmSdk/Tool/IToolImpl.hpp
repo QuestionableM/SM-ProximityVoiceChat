@@ -15,6 +15,6 @@ struct IToolImpl
 	SDK_PUB virtual bool isEquipped() { return false; /* implemented by the game */ }
 }; // Size: 0x8
 
-static_assert(sizeof(IToolImpl) == 0x8, "IToolImpl: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(IToolImpl, 0x8);
 
 SMSDK_END_NAMESPACE

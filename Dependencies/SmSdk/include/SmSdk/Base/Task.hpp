@@ -15,6 +15,6 @@ class Task
 	}
 }; // Size: 0x8
 
-static_assert(sizeof(Task) == 0x8, "Task: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(Task, 0x8);
 
 SMSDK_END_NAMESPACE

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "SmSdk/Gui/OptionsItemBase.hpp"
-
-#include "SmSdk/Util/Memory.hpp"
+#include "SmSdk/mygui_include.hpp"
 #include "SmSdk/offsets.hpp"
+
+#include "SmSdk/Gui/OptionsItemBase.hpp"
+#include "SmSdk/Util/Memory.hpp"
 
 #include <functional>
 #include <string>
@@ -20,22 +21,20 @@ class OptionsItemSlider : public OptionsItemBase
 		const float fMaxValue,
 		const std::size_t iScrollRange);
 	
-	SDK_PUB SMSDK_API void initializeSlider(MyGUI::Widget* pParent, const std::string_view& caption);
+	SDK_PRI void initializeSlider(MyGUI::Widget* pParent, const std::string_view& caption);
+	
 	SDK_PUB SMSDK_API void updateValueText();
-
 	SDK_PUB SMSDK_API float getFraction() const;
-#endif
 
 	SDK_PUB SMSDK_API virtual ~OptionsItemSlider() = default;
-	SDK_PUB SMSDK_API void update() override {}
+	SDK_PUB SMSDK_API void update() override;
+#endif
 	
-	SDK_PUB MyGUI::ScrollBar* m_pSlider;
-	SDK_PUB MyGUI::TextBox* m_pValueTextBox;
-	SDK_PUB size_t m_uSteps;
-	SDK_PUB float m_fMinValue;
-	SDK_PUB float m_fMaxValue;
+	/* 0x0010 */ SDK_PUB MyGUI::ScrollBar* m_pSlider;
+	/* 0x0018 */ SDK_PUB MyGUI::TextBox* m_pValueTextBox;
+	/* 0x0044 */ SDK_PUB float m_fMinValue;
+	/* 0x0048 */ SDK_PUB float m_fMaxValue;
+	/* 0x0050 */ SDK_PUB std::size_t m_uSteps;
 };
-
-static_assert(offsetof(OptionsItemSlider, OptionsItemSlider::m_pSlider) == 0x10, "OptionsItemSlider::m_pSlider: Incorrect offset");
 
 SMSDK_END_NAMESPACE

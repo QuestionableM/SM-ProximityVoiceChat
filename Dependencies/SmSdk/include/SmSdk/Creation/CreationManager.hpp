@@ -13,14 +13,14 @@ SMSDK_BEGIN_NAMESPACE
 
 struct BodyState
 {
-	std::shared_ptr<RigidBody> m_pBody;
-	std::shared_ptr<struct BodyPhysicsProxy> m_pPhysicsProxy;
+	SDK_MEM_PUB std::shared_ptr<RigidBody> m_pBody;
+	SDK_MEM_PUB std::shared_ptr<struct BodyPhysicsProxy> m_pPhysicsProxy;
 };
 
 struct JointState
 {
-	std::shared_ptr<Joint> m_pJoint;
-	std::shared_ptr<JointPhysicsProxy> m_pPhysicsProxy;
+	SDK_MEM_PUB std::shared_ptr<Joint> m_pJoint;
+	SDK_MEM_PUB std::shared_ptr<JointPhysicsProxy> m_pPhysicsProxy;
 };
 
 class CreationManager
@@ -36,20 +36,19 @@ class CreationManager
 	SDK_PUB SMSDK_API static BodyState* GetBodyState(const std::uint32_t uId);
 	SDK_PUB SMSDK_API static JointState* GetJointState(const std::uint32_t uId);
 
-	/* 0x0008 */ SDK_PUB std::unordered_map<std::uint32_t, BodyState> m_mapBodyStates;
-	/* 0x0048 */ SDK_PUB std::unordered_map<std::uint32_t, std::shared_ptr<ChildShape>> m_mapChildShapes;
-	/* 0x0088 */ SDK_PUB std::unordered_map<std::uint32_t, JointState> m_mapJointStates;
-	/* 0x00C8 */ SDK_PUB std::unordered_map<std::uint32_t, std::shared_ptr<struct ControllerEntry>> m_mapControllerStates;
-	/* 0x0108 */ SDK_PUB std::unordered_map<std::uint32_t, struct CreationEntry> m_mapCreations;
-	/* 0x0148 */ SDK_PRI char pad_0x148[0x118];
+	/* 0x0008 */ SDK_MEM_PUB std::unordered_map<std::uint32_t, BodyState> m_mapBodyStates;
+	/* 0x0048 */ SDK_MEM_PUB std::unordered_map<std::uint32_t, std::shared_ptr<ChildShape>> m_mapChildShapes;
+	/* 0x0088 */ SDK_MEM_PUB std::unordered_map<std::uint32_t, JointState> m_mapJointStates;
+	/* 0x00C8 */ SDK_MEM_PUB std::unordered_map<std::uint32_t, std::shared_ptr<struct ControllerEntry>> m_mapControllerStates;
+	/* 0x0108 */ SDK_MEM_PUB std::unordered_map<std::uint32_t, struct CreationEntry> m_mapCreations;
+	/* 0x0148 */ SDK_MEM_PRI char pad_0x148[0x118];
 }; // Size: 0x260
 
-static_assert(offsetof(CreationManager, CreationManager::m_mapBodyStates) == 0x8, "CreationManager::m_mapBodyState: Incorrect offset");
-static_assert(offsetof(CreationManager, CreationManager::m_mapChildShapes) == 0x48, "CreationManager::child_shape_map: Incorrect offset");
-static_assert(offsetof(CreationManager, CreationManager::m_mapJointStates) == 0x88, "CreationManager::joint_map: Incorrect offset");
-static_assert(offsetof(CreationManager, CreationManager::m_mapControllerStates) == 0xC8, "CreationManager::interactive_part_map: Incorrect offset");
-static_assert(offsetof(CreationManager, CreationManager::m_mapCreations) == 0x108, "CreationManager::creation_map: Incorrect offset");
-
-static_assert(sizeof(CreationManager) == 0x260, "CreationManager: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(CreationManager, m_mapBodyStates, 0x8);
+SMSDK_CHECK_MEMBER_OFFSET(CreationManager, m_mapChildShapes, 0x48);
+SMSDK_CHECK_MEMBER_OFFSET(CreationManager, m_mapJointStates, 0x88);
+SMSDK_CHECK_MEMBER_OFFSET(CreationManager, m_mapControllerStates, 0xC8);
+SMSDK_CHECK_MEMBER_OFFSET(CreationManager, m_mapCreations, 0x108);
+SMSDK_CHECK_STRUCT_SIZE(CreationManager, 0x260);
 
 SMSDK_END_NAMESPACE

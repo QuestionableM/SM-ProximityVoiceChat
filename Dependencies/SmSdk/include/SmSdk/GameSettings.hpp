@@ -30,18 +30,17 @@ class GameSettings
 		return this->getFloatSetting("EffectVolume", 1.0f);
 	}
 
-	/* 0x0000 */ SDK_PUB std::unordered_map<std::string, int, Hashing::StringHash, std::equal_to<>> m_mapIntSettings;
-	/* 0x0040 */ SDK_PUB std::unordered_map<std::string, float, Hashing::StringHash, std::equal_to<>> m_mapFloatSettings;
-	/* 0x0080 */ SDK_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapStringSettings;
-	/* 0x00C0 */ SDK_PUB std::int32_t m_appliedSettings;
-	/* 0x00C4 */ SDK_PRI char pad_0xC4[0x4];
+	/* 0x0000 */ SDK_MEM_PUB std::unordered_map<std::string, int, Hashing::StringHash, std::equal_to<>> m_mapIntSettings;
+	/* 0x0040 */ SDK_MEM_PUB std::unordered_map<std::string, float, Hashing::StringHash, std::equal_to<>> m_mapFloatSettings;
+	/* 0x0080 */ SDK_MEM_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapStringSettings;
+	/* 0x00C0 */ SDK_MEM_PUB std::int32_t m_appliedSettings;
+	/* 0x00C4 */ SDK_MEM_PRI char pad_0xC4[0x4];
 }; // Size: 0xC8
 
-static_assert(offsetof(GameSettings, GameSettings::m_mapIntSettings) == 0x0, "GameSettings::m_mapIntSettings: Incorrect offset");
-static_assert(offsetof(GameSettings, GameSettings::m_mapFloatSettings) == 0x40, "GameSettings::m_mapFloatSettings: Incorrect offset");
-static_assert(offsetof(GameSettings, GameSettings::m_mapStringSettings) == 0x80, "GameSettings::m_mapStringSettings: Incorrect offset");
-static_assert(offsetof(GameSettings, GameSettings::m_appliedSettings) == 0xC0, "GameSettings::m_appliedSettings: Incorrect offset");
-
-static_assert(sizeof(GameSettings) == 0xC8, "GameSettings: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(GameSettings, m_mapIntSettings, 0x0);
+SMSDK_CHECK_MEMBER_OFFSET(GameSettings, m_mapFloatSettings, 0x40);
+SMSDK_CHECK_MEMBER_OFFSET(GameSettings, m_mapStringSettings, 0x80);
+SMSDK_CHECK_MEMBER_OFFSET(GameSettings, m_appliedSettings, 0xC0);
+SMSDK_CHECK_STRUCT_SIZE(GameSettings, 0xC8);
 
 SMSDK_END_NAMESPACE

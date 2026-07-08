@@ -52,10 +52,10 @@ struct GameState : public InputTarget
 	SDK_PUB SMSDK_API static bool IsCurrentOrNextGameState(const EGameStateType gsType);
 	SDK_PUB SMSDK_API static SteamNetworkClient* GetSteamNetworkClient();
 
-	/* 0x0008 */ SDK_PRI char pad_0x8[0x110];
+	/* 0x0008 */ SDK_MEM_PRI char pad_0x8[0x110];
 }; // Size: 0x118
 
-static_assert(sizeof(GameState) == 0x118, "GameState: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(GameState, 0x118);
 
 struct SimpleTimer
 {
@@ -64,39 +64,38 @@ struct SimpleTimer
 	SDK_PRI virtual void func3() { /* implemented by the game */ }
 	SDK_PRI virtual void func4() { /* implemented by the game */ }
 
-	/* 0x0008 */ SDK_PRI char pad_0x8[0xC];
-	/* 0x0014 */ SDK_PUB float m_fElapsedTime;
+	/* 0x0008 */ SDK_MEM_PRI char pad_0x8[0xC];
+	/* 0x0014 */ SDK_MEM_PUB float m_fElapsedTime;
 }; // Size: 0x18
 
-static_assert(sizeof(SimpleTimer) == 0x18, "SimpleTimer: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(SimpleTimer, 0x18);
 
 struct PlayState : public GameState
 {
-	/* 0x0118 */ SDK_PRI char pad_0x118[0x8];
-	/* 0x0120 */ SDK_PUB std::shared_ptr<ListenServer> m_pListenServer;
-	/* 0x0130 */ SDK_PUB std::shared_ptr<SteamNetworkClient> m_pSteamNetworkClient;
-	/* 0x0140 */ SDK_PRI char pad_0x140[0x8];
-	/* 0x0148 */ SDK_PUB std::shared_ptr<class GameInstance> m_pGameInstance;
-	/* 0x0158 */ SDK_PUB SimpleTimer m_someTimer;
-	/* 0x0170 */ SDK_PUB std::int32_t m_iConnectionTimeoutIdx;
-	/* 0x0174 */ SDK_PRI char pad_0x174[0x1C];
+	/* 0x0118 */ SDK_MEM_PRI char pad_0x118[0x8];
+	/* 0x0120 */ SDK_MEM_PUB std::shared_ptr<ListenServer> m_pListenServer;
+	/* 0x0130 */ SDK_MEM_PUB std::shared_ptr<SteamNetworkClient> m_pSteamNetworkClient;
+	/* 0x0140 */ SDK_MEM_PRI char pad_0x140[0x8];
+	/* 0x0148 */ SDK_MEM_PUB std::shared_ptr<class GameInstance> m_pGameInstance;
+	/* 0x0158 */ SDK_MEM_PUB SimpleTimer m_someTimer;
+	/* 0x0170 */ SDK_MEM_PUB std::int32_t m_iConnectionTimeoutIdx;
+	/* 0x0174 */ SDK_MEM_PRI char pad_0x174[0x1C];
 }; // Size: 0x190
 
-static_assert(sizeof(PlayState) == 0x190, "PlayState: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(PlayState, 0x190);
 
 struct LoadState : public GameState
 {
-	/* 0x0118 */ SDK_PRI char pad_0x118[0x8];
-	/* 0x0120 */ SDK_PUB std::shared_ptr<GameState> m_pNextState;
-	/* 0x0130 */ SDK_PUB std::shared_ptr<GameState> m_pPrevState;
-	/* 0x0140 */ SDK_PUB struct LoadingScreen* m_pLoadingScreen;
-	/* 0x0148 */ SDK_PRI char pad_0x148[0x10];
+	/* 0x0118 */ SDK_MEM_PRI char pad_0x118[0x8];
+	/* 0x0120 */ SDK_MEM_PUB std::shared_ptr<GameState> m_pNextState;
+	/* 0x0130 */ SDK_MEM_PUB std::shared_ptr<GameState> m_pPrevState;
+	/* 0x0140 */ SDK_MEM_PUB struct LoadingScreen* m_pLoadingScreen;
+	/* 0x0148 */ SDK_MEM_PRI char pad_0x148[0x10];
 }; // Size: 0x158
 
-static_assert(offsetof(LoadState, LoadState::m_pNextState) == 0x120, "LoadState::m_pNextState: Incorrect offset");
-static_assert(offsetof(LoadState, LoadState::m_pPrevState) == 0x130, "LoadState::m_pPrevState: Incorrect offset");
-static_assert(offsetof(LoadState, LoadState::m_pLoadingScreen) == 0x140, "LoadState::m_pLoadingScreen: Incorrect offset");
-
-static_assert(sizeof(LoadState) == 0x158, "LoadState: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(LoadState, m_pNextState, 0x120);
+SMSDK_CHECK_MEMBER_OFFSET(LoadState, m_pPrevState, 0x130);
+SMSDK_CHECK_MEMBER_OFFSET(LoadState, m_pLoadingScreen, 0x140);
+SMSDK_CHECK_STRUCT_SIZE(LoadState, 0x158);
 
 SMSDK_END_NAMESPACE

@@ -6,19 +6,21 @@ SMSDK_BEGIN_NAMESPACE
 
 struct AreaTriggerProxy : public PhysicsProxy
 {
-	/* 0x0030 */ SDK_PUB std::int32_t m_iAreaTriggerId;
-	/* 0x0034 */ SDK_PRI char pad_0x34[0xC];
+	/* 0x0030 */ SDK_MEM_PUB std::int32_t m_iAreaTriggerId;
+	/* 0x0034 */ SDK_MEM_PRI char pad_0x34[0xC];
 }; // Size: 0x40
 
-static_assert(offsetof(AreaTriggerProxy, AreaTriggerProxy::m_iAreaTriggerId) == 0x30, "AreaTriggerProxy::m_iAreaTriggerId: Incorrect offset");
+SMSDK_CHECK_MEMBER_OFFSET(AreaTriggerProxy, m_iAreaTriggerId, 0x30);
+SMSDK_CHECK_STRUCT_SIZE(AreaTriggerProxy, 0x40);
 
-static_assert(sizeof(AreaTriggerProxy) == 0x40, "AreaTriggerProxy: Incorrect Size");
-
+//
+// WATER AREA TRIGGER PROXY
+//
 
 struct WaterAreaTriggerProxy : public AreaTriggerProxy
 {
 }; // Size: 0x40
 
-static_assert(sizeof(WaterAreaTriggerProxy) == 0x40, "WaterAreaTriggerProxy: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(WaterAreaTriggerProxy, 0x40);
 
 SMSDK_END_NAMESPACE

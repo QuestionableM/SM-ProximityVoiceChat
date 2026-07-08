@@ -17,7 +17,7 @@ namespace UTILS
 {
 class Contraption;
 
-enum ConsoleLogType : uint32_t
+enum ConsoleLogType : std::uint32_t
 {
 	ConsoleLogType_Default = 0x1,
 	ConsoleLogType_Profile = 0x2,
@@ -77,20 +77,20 @@ class Console
 		this->logNoRepeat(ss.rdbuf()->str(), wColor, eType);
 	}
 
-	/* 0x0008 */ SDK_PRI std::function<void(const char*, unsigned int)> m_unknownFunction;
-	/* 0x0048 */ SDK_PUB std::uint32_t m_uConsoleOutMask;
-	/* 0x004C */ SDK_PUB std::uint32_t m_uFileOutputMask;
-	/* 0x0050 */ SDK_PUB std::uint32_t m_uCallbackOutputMask;
-	/* 0x0054 */ SDK_PRI char pad_0x54[0x4];
-	/* 0x0058 */ SDK_PUB HANDLE m_hConsole;
-	/* 0x0060 */ SDK_PUB std::ofstream m_outStream;
-	/* 0x0168 */ SDK_PRI char pad_0x168[0x10];
-	/* 0x0178 */ SDK_PUB bool m_bCodePageSet;
-	/* 0x0179 */ SDK_PUB bool m_bConsoleAllocated;
-	/* 0x017A */ SDK_PRI char pad_0x17A[0x2];
-	/* 0x017C */ SDK_PUB std::uint32_t m_uWarningCounter;
-	/* 0x0180 */ SDK_PUB std::uint32_t m_uErrorCounter;
-	/* 0x0184 */ SDK_PRI char pad_0x184[0x4];
+	/* 0x0008 */ SDK_MEM_PRI std::function<void(const char*, unsigned int)> m_unknownFunction;
+	/* 0x0048 */ SDK_MEM_PUB std::uint32_t m_uConsoleOutMask;
+	/* 0x004C */ SDK_MEM_PUB std::uint32_t m_uFileOutputMask;
+	/* 0x0050 */ SDK_MEM_PUB std::uint32_t m_uCallbackOutputMask;
+	/* 0x0054 */ SDK_MEM_PRI char pad_0x54[0x4];
+	/* 0x0058 */ SDK_MEM_PUB HANDLE m_hConsole;
+	/* 0x0060 */ SDK_MEM_PUB std::ofstream m_outStream;
+	/* 0x0168 */ SDK_MEM_PRI char pad_0x168[0x10];
+	/* 0x0178 */ SDK_MEM_PUB bool m_bCodePageSet;
+	/* 0x0179 */ SDK_MEM_PUB bool m_bConsoleAllocated;
+	/* 0x017A */ SDK_MEM_PRI char pad_0x17A[0x2];
+	/* 0x017C */ SDK_MEM_PUB std::uint32_t m_uWarningCounter;
+	/* 0x0180 */ SDK_MEM_PUB std::uint32_t m_uErrorCounter;
+	/* 0x0184 */ SDK_MEM_PRI char pad_0x184[0x4];
 };
 }
 

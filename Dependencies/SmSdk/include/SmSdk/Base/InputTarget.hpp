@@ -15,6 +15,6 @@ class InputTarget
 	SDK_PRI virtual void func6() { /* implemented by the game */ }
 }; // Size: 0x8
 
-static_assert(sizeof(InputTarget) == 0x8, "InputTarget: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(InputTarget, 0x8);
 
 SMSDK_END_NAMESPACE

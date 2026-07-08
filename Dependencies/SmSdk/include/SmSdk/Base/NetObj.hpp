@@ -16,12 +16,12 @@ class NetObj
 	SDK_PUB SMSDK_API std::uint32_t getId() const;
 	SDK_PUB SMSDK_API std::uint32_t getRevision() const;
 
-	/* 0x0008 */ SDK_PRI char pad_0x8[0x8];
-	/* 0x0010 */ SDK_PUB std::shared_ptr<NetObj> m_pSelf;
-	/* 0x0020 */ SDK_PUB std::uint32_t m_uId;
-	/* 0x0024 */ SDK_PUB std::uint32_t m_uRevision;
+	/* 0x0008 */ SDK_MEM_PRI char pad_0x8[0x8];
+	/* 0x0010 */ SDK_MEM_PUB std::shared_ptr<NetObj> m_pSelf;
+	/* 0x0020 */ SDK_MEM_PUB std::uint32_t m_uId;
+	/* 0x0024 */ SDK_MEM_PUB std::uint32_t m_uRevision;
 }; // Size: 0x28
 
-static_assert(sizeof(NetObj) == 0x28, "NetObj: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(NetObj, 0x28);
 
 SMSDK_END_NAMESPACE

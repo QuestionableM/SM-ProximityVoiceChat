@@ -21,10 +21,10 @@ class GuiBase
 
 	SDK_PUB SMSDK_API MyGUI::Widget* getMainPanel();
 
-	/* 0x0008 */ SDK_PUB MyGUI::Widget* m_pMainPanel;
-	/* 0x0010 */ SDK_PUB GuiInterface* m_pGuiInterface;
+	/* 0x0008 */ SDK_MEM_PUB MyGUI::Widget* m_pMainPanel;
+	/* 0x0010 */ SDK_MEM_PUB GuiInterface* m_pGuiInterface;
 }; // Size: 0x18
 
-static_assert(sizeof(GuiBase) == 0x18, "GuiBase: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(GuiBase, 0x18);
 
 SMSDK_END_NAMESPACE

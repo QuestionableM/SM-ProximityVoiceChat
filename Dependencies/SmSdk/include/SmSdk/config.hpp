@@ -24,6 +24,31 @@
 # define SMSDK_API
 #endif
 
+#if defined(SMSDK_IMPORT_DLL)
+# define SMSDK_HIDE_RAW_STRUCT_MEMBERS
+#endif
+
+// SDK_MEM_* are used for structure/class variables so they can be easily disabled
+
+#if defined(SMSDK_HIDE_RAW_STRUCT_MEMBERS)
+# define SMSDK_CHECK_MEMBER_OFFSET(...)
+# define SMSDK_CHECK_STRUCT_SIZE(...)
+# define SDK_MEM_PUB private:
+# define SDK_MEM_PRI private:
+# define SDK_MEM_PRO private:
+#else
+# define SMSDK_CHECK_MEMBER_OFFSET(class, member, offset) static_assert(offsetof(class, class::member) == offset, #class "::" #member ": Incorrect offset")
+# define SMSDK_CHECK_STRUCT_SIZE(class, size) static_assert(sizeof(class) == size, #class ": Incorrect Size")
+# define SDK_MEM_PUB public:
+# define SDK_MEM_PRI private:
+# define SDK_MEM_PRO protected:
+#endif
+
+// Used for functions within structures/classes
+#define SDK_PUB public:
+#define SDK_PRI private:
+#define SDK_PRO protected:
+
 #include <cstdint>
 #include <cstddef>
 
@@ -50,16 +75,12 @@ struct PassthroughHash
 	}
 };
 
-#define SDK_PUB public:
-#define SDK_PRI private:
-#define SDK_PRO protected:
-
 #ifdef SMSDK_NAMESPACE
-#define SMSDK_BEGIN_NAMESPACE namespace SMSDK_NAMESPACE {
-#define SMSDK_END_NAMESPACE }
-#define SMSDK_USE_NAMESPACE using namespace SMSDK_NAMESPACE;
+# define SMSDK_BEGIN_NAMESPACE namespace SMSDK_NAMESPACE {
+# define SMSDK_END_NAMESPACE }
+# define SMSDK_USE_NAMESPACE using namespace SMSDK_NAMESPACE;
 #else
-#define SMSDK_BEGIN_NAMESPACE
-#define SMSDK_END_NAMESPACE
-#define SMSDK_USE_NAMESPACE
+# define SMSDK_BEGIN_NAMESPACE
+# define SMSDK_END_NAMESPACE
+# define SMSDK_USE_NAMESPACE
 #endif

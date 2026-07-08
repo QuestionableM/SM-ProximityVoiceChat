@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SmSdk/Util/Hashing.hpp"
+
+#include "SmSdk/win_include.hpp"
 #include "SmSdk/config.hpp"
 
 #include <unordered_map>
@@ -20,12 +22,12 @@ class DirectoryManager
 	SDK_PUB SMSDK_API static bool GetReplacement(const std::string_view& key, std::string_view& replacement);
 	SDK_PUB SMSDK_API static bool ReplacePathR(std::string& path);
 
-	/* 0x0000 */ SDK_PRI char pad_0x0[8];
-	/* 0x0008 */ SDK_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapContentKeyToPathList;
+	/* 0x0000 */ SDK_MEM_PUB SRWLOCK m_lock;
+	/* 0x0008 */ SDK_MEM_PUB std::unordered_map<std::string, std::string, Hashing::StringHash, std::equal_to<>> m_mapContentKeyToPathList;
 }; // Size: 0x48
 
-static_assert(offsetof(DirectoryManager, DirectoryManager::m_mapContentKeyToPathList) == 0x8, "DirectoryManager::m_pathReplacements: Incorrect offset");
-
-static_assert(sizeof(DirectoryManager) == 0x48, "DirectoryManager: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(DirectoryManager, m_lock, 0x0);
+SMSDK_CHECK_MEMBER_OFFSET(DirectoryManager, m_mapContentKeyToPathList, 0x8);
+SMSDK_CHECK_STRUCT_SIZE(DirectoryManager, 0x48);
 
 SMSDK_END_NAMESPACE

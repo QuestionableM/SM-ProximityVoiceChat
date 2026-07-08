@@ -16,6 +16,6 @@ class AudioOptionsMenu : public OptionsSubMenuBase
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }
 }; // Size: 0x168
 
-static_assert(sizeof(AudioOptionsMenu) == 0x168, "AudioOptionsMenu: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(AudioOptionsMenu, 0x168);
 
 SMSDK_END_NAMESPACE

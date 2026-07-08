@@ -25,12 +25,12 @@ class CompoundButton
 
 	SDK_PUB SMSDK_API void mouseButtonClickCallback(MyGUI::Widget* _sender);
 
-	/* 0x0000 */ SDK_PUB MyGUI::Widget* m_pBaseWidget;
-	/* 0x0008 */ SDK_PUB MyGUI::Button* m_pButton;
+	/* 0x0000 */ SDK_MEM_PUB MyGUI::Widget* m_pBaseWidget;
+	/* 0x0008 */ SDK_MEM_PUB MyGUI::Button* m_pButton;
 }; // Size: 0x10
 
-static_assert(offsetof(CompoundButton, CompoundButton::m_pBaseWidget) == 0x0, "CompoundButton::m_pBaseWidget: Incorrect offset");
-static_assert(offsetof(CompoundButton, CompoundButton::m_pButton) == 0x8, "CompoundButton::m_pButton: Incorrect offset");
-static_assert(sizeof(CompoundButton) == 0x10, "CompoundButton: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(CompoundButton, m_pBaseWidget, 0x0);
+SMSDK_CHECK_MEMBER_OFFSET(CompoundButton, m_pButton, 0x8);
+SMSDK_CHECK_STRUCT_SIZE(CompoundButton, 0x10);
 
 SMSDK_END_NAMESPACE

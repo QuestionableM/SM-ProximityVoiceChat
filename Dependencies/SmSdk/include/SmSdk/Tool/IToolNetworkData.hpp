@@ -8,10 +8,10 @@ class IToolNetworkData
 {
 	SDK_PUB virtual ~IToolNetworkData() = default;
 
-	/* 0x0008 */ SDK_PUB bool m_bDataChanged;
+	/* 0x0008 */ SDK_MEM_PUB bool m_bDataChanged;
 }; // Size: 0x10
 
-static_assert(offsetof(IToolNetworkData, IToolNetworkData::m_bDataChanged) == 0x8, "IToolNetworkData::m_bDataChanged: Incorrect offset");
-static_assert(sizeof(IToolNetworkData) == 0x10, "IToolNetworkData: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(IToolNetworkData, m_bDataChanged, 0x8);
+SMSDK_CHECK_STRUCT_SIZE(IToolNetworkData, 0x10);
 
 SMSDK_END_NAMESPACE

@@ -22,16 +22,14 @@ class RadioButtonSet
 
 	SDK_PUB SMSDK_API void onItemMouseClick(MyGUI::Widget* _sender);
 
-	/* 0x0000 */ SDK_PUB MyGUI::Button* m_pSelectedButton;
-	/* 0x0008 */ SDK_PUB std::vector<MyGUI::Button*> m_vecButtons;
-	/* 0x0020 */ SDK_PUB std::function<void(MyGUI::Widget*)> m_pClickCallback;
-
+	/* 0x0000 */ SDK_MEM_PUB MyGUI::Button* m_pSelectedButton;
+	/* 0x0008 */ SDK_MEM_PUB std::vector<MyGUI::Button*> m_vecButtons;
+	/* 0x0020 */ SDK_MEM_PUB std::function<void(MyGUI::Widget*)> m_pClickCallback;
 }; // Size: 0x60
 
-static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_pSelectedButton) == 0x0, "RadioButtonSet::m_pSelectedButton: Incorrect offset");
-static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_vecButtons) == 0x8, "RadioButtonSet::m_vecButtons: Incorrect offset");
-static_assert(offsetof(RadioButtonSet, RadioButtonSet::m_pClickCallback) == 0x20, "RadioButtonSet::m_pCallback: Incorrect offset");
-
-static_assert(sizeof(RadioButtonSet) == 0x60, "RadioButtonSet: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(RadioButtonSet, m_pSelectedButton, 0x0);
+SMSDK_CHECK_MEMBER_OFFSET(RadioButtonSet, m_vecButtons, 0x8);
+SMSDK_CHECK_MEMBER_OFFSET(RadioButtonSet, m_pClickCallback, 0x20);
+SMSDK_CHECK_STRUCT_SIZE(RadioButtonSet, 0x60);
 
 SMSDK_END_NAMESPACE

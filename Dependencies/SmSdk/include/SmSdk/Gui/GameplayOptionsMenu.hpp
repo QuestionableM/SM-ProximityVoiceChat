@@ -14,14 +14,14 @@ class GameplayOptionsMenu : public OptionsSubMenuBase
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }
 
 #if _SM_VERSION_NUM >= 070771
-	SDK_PRI char m_someData[16];
+	SDK_MEM_PRI char m_someData[16];
 #endif
 }; // Size: 0x168
 
 #if _SM_VERSION_NUM >= 070771
-static_assert(sizeof(GameplayOptionsMenu) == 0x178, "GameplayOptionsMenu: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(GameplayOptionsMenu, 0x178);
 #else
-static_assert(sizeof(GameplayOptionsMenu) == 0x168, "GameplayOptionsMenu: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(GameplayOptionsMenu, 0x168);
 #endif
 
 SMSDK_END_NAMESPACE

@@ -15,9 +15,9 @@ class ControlOptionsMenu : public OptionsSubMenuBase
 	SDK_PUB virtual ~ControlOptionsMenu() = default;
 	SDK_PUB void restoreDefaults() override { /* implemented by the game */ }
 
-	/* 0x0168 */ SDK_PRI char pad_0x168[0x20];
+	/* 0x0168 */ SDK_MEM_PRI char pad_0x168[0x20];
 }; // Size: 0x188
 
-static_assert(sizeof(ControlOptionsMenu) == 0x188, "ControlOptionsMenu: Incorrect Size");
+SMSDK_CHECK_STRUCT_SIZE(ControlOptionsMenu, 0x188);
 
 SMSDK_END_NAMESPACE

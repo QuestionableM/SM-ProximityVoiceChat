@@ -15,14 +15,17 @@ class GuiBase;
 
 struct GuiDeferredCallback
 {
-	/* 0x0000 */ SDK_PUB std::string m_identifier;
-	/* 0x0020 */ SDK_PUB std::function<void(void)> m_callback;
+	/* 0x0000 */ SDK_MEM_PUB std::string m_identifier;
+	/* 0x0020 */ SDK_MEM_PUB std::function<void(void)> m_callback;
 }; // Size: 0x60
 
-static_assert(offsetof(GuiDeferredCallback, GuiDeferredCallback::m_identifier) == 0x0, "GuiDeferredCallback::m_identifier: Incorrect offset");
-static_assert(offsetof(GuiDeferredCallback, GuiDeferredCallback::m_callback) == 0x20, "GuiDeferredCallback::m_callback: Incorrect offset");
+SMSDK_CHECK_MEMBER_OFFSET(GuiDeferredCallback, m_identifier, 0x0);
+SMSDK_CHECK_MEMBER_OFFSET(GuiDeferredCallback, m_callback, 0x20);
+SMSDK_CHECK_STRUCT_SIZE(GuiDeferredCallback, 0x60);
 
-static_assert(sizeof(GuiDeferredCallback) == 0x60, "GuiDeferredCallback: Incorrect Size");
+//
+// GUI INTERFACE
+//
 
 class GuiInterface
 {
@@ -42,29 +45,28 @@ class GuiInterface
 
 	SDK_PUB SMSDK_API std::shared_ptr<GuiBase> getGuiBase();
 
-	/* 0x0008 */ SDK_PUB std::shared_ptr<GuiBase> m_pGuiBase;
-	/* 0x0018 */ SDK_PRI bool m_bSomeBool;
-	/* 0x0019 */ SDK_PRI char pad_0x19[0x7];
-	/* 0x0020 */ SDK_PUB std::function<void(void)> m_closeCallback;
-	/* 0x0060 */ SDK_PUB std::unordered_map<std::string, std::function<void(void)>> m_mapEmptyFunctionCallbacks;
-	/* 0x00A0 */ SDK_PUB std::unordered_map<std::string, std::function<void(std::int64_t)>> m_mapOneArgFunctionCallbacks;
-	/* 0x00E0 */ SDK_PUB std::unordered_map<std::string, std::function<void(const std::string&)>> m_mapStringToFunction;
-	/* 0x0120 */ SDK_PRI char pad_0x120[0x80];
-	/* 0x01A0 */ SDK_PUB std::unordered_map<std::string, std::unordered_map<std::string, std::function<void(size_t, const Json::Value&)>>> m_mapMapCallbackStorage;
-	/* 0x01E0 */ SDK_PRI char pad_0x1E0[0x80];
-	/* 0x0260 */ SDK_PUB std::deque<std::function<void(void)>> m_deferredCallbackDeque;
-	/* 0x0288 */ SDK_PUB std::vector<GuiDeferredCallback> m_vecDeferredCallbacks;
+	/* 0x0008 */ SDK_MEM_PUB std::shared_ptr<GuiBase> m_pGuiBase;
+	/* 0x0018 */ SDK_MEM_PRI bool m_bSomeBool;
+	/* 0x0019 */ SDK_MEM_PRI char pad_0x19[0x7];
+	/* 0x0020 */ SDK_MEM_PUB std::function<void(void)> m_closeCallback;
+	/* 0x0060 */ SDK_MEM_PUB std::unordered_map<std::string, std::function<void(void)>> m_mapEmptyFunctionCallbacks;
+	/* 0x00A0 */ SDK_MEM_PUB std::unordered_map<std::string, std::function<void(std::int64_t)>> m_mapOneArgFunctionCallbacks;
+	/* 0x00E0 */ SDK_MEM_PUB std::unordered_map<std::string, std::function<void(const std::string&)>> m_mapStringToFunction;
+	/* 0x0120 */ SDK_MEM_PRI char pad_0x120[0x80];
+	/* 0x01A0 */ SDK_MEM_PUB std::unordered_map<std::string, std::unordered_map<std::string, std::function<void(size_t, const Json::Value&)>>> m_mapMapCallbackStorage;
+	/* 0x01E0 */ SDK_MEM_PRI char pad_0x1E0[0x80];
+	/* 0x0260 */ SDK_MEM_PUB std::deque<std::function<void(void)>> m_deferredCallbackDeque;
+	/* 0x0288 */ SDK_MEM_PUB std::vector<GuiDeferredCallback> m_vecDeferredCallbacks;
 }; // Size: 0x2A0
 
-static_assert(offsetof(GuiInterface, GuiInterface::m_pGuiBase) == 0x8, "GuiInterface::m_pGuiBase: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_closeCallback) == 0x20, "GuiInterface::m_closeCallback: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_mapEmptyFunctionCallbacks) == 0x60, "GuiInterface::m_mapEmptyFunctionCallbacks: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_mapOneArgFunctionCallbacks) == 0xA0, "GuiInterface::m_mapOneArgFunctionCallbacks: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_mapStringToFunction) == 0xE0, "GuiInterface::m_mapStringToFunction: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_mapMapCallbackStorage) == 0x1A0, "GuiInterface::m_mapMapCallbackStorage: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_deferredCallbackDeque) == 0x260, "GuiInterface::m_deferredCallbackDeque: Incorrect offset");
-static_assert(offsetof(GuiInterface, GuiInterface::m_vecDeferredCallbacks) == 0x288, "GuiInterface::m_vecDeferredCallbacks: Incorrect offset");
-
-static_assert(sizeof(GuiInterface) == 0x2A0, "GuiInterface: Incorrect Size");
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_pGuiBase, 0x8);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_closeCallback, 0x20);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_mapEmptyFunctionCallbacks, 0x60);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_mapOneArgFunctionCallbacks, 0xA0);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_mapStringToFunction, 0xE0);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_mapMapCallbackStorage, 0x1A0);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_deferredCallbackDeque, 0x260);
+SMSDK_CHECK_MEMBER_OFFSET(GuiInterface, m_vecDeferredCallbacks, 0x288);
+SMSDK_CHECK_STRUCT_SIZE(GuiInterface, 0x2A0);
 
 SMSDK_END_NAMESPACE
