@@ -30,11 +30,11 @@ class OptionsItemSlider : public OptionsItemBase
 	SDK_PUB SMSDK_API void update() override;
 #endif
 	
-	/* 0x0010 */ SDK_PUB MyGUI::ScrollBar* m_pSlider;
-	/* 0x0018 */ SDK_PUB MyGUI::TextBox* m_pValueTextBox;
-	/* 0x0044 */ SDK_PUB float m_fMinValue;
-	/* 0x0048 */ SDK_PUB float m_fMaxValue;
-	/* 0x0050 */ SDK_PUB std::size_t m_uSteps;
+	SDK_PUB MyGUI::ScrollBar* m_pSlider;
+	SDK_PUB MyGUI::TextBox* m_pValueTextBox;
+	SDK_PUB float m_fMinValue;
+	SDK_PUB float m_fMaxValue;
+	SDK_PUB std::size_t m_uSteps;
 };
 
 SMSDK_END_NAMESPACE
